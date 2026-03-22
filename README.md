@@ -19,6 +19,8 @@ In addition, the initial project structure, including the first packages and fil
 
 Our preliminary vision of the class diagram is the following:
 
+![IMG_1049](https://github.com/user-attachments/assets/fb2d0fe4-600c-44b4-a298-e0220d3015f7)
+
 
 
 **SECOND AND THIRD WEEK**
