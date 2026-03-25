@@ -28,5 +28,7 @@ Our preliminary vision of the class diagram is the following:
 During the second week we've focused on building our SQL databases which we intend to use subsequently.
 Another thing we spent some time working on, was creating a diverse group of tests to validate the results obtained and analyse further the functionality of the APIs selected.
 
+We also focused on developing the different tests to validate the code we built, following the TDD approach.
+
 
 
