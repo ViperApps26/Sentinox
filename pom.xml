@@ -16,6 +16,26 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.2</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.microsoft.playwright/playwright -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.58.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>4.5.4</version>
@@ -28,6 +48,4 @@
             <classifier>models</classifier>
         </dependency>
     </dependencies>
-
-
 </project>

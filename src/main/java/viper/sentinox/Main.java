@@ -9,12 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        List<String> tokens = new ArrayList<>(
-                List.of(
-                        Files.readString(Path.of("OpenFDAToken.txt")),
-                        Files.readString(Path.of("BlueskyToken.txt"))
-                )
-        );
+        List<String> tokens = getTokens();
 
         Scanner scanner = new Scanner(System.in);
         String command = Command.askCommand(scanner);
@@ -23,5 +18,14 @@ public class Main {
             Command.processCommand(command, tokens);
             command = Command.askCommand(scanner);
         }
+    }
+
+    private static List<String> getTokens() throws IOException {
+        return new ArrayList<>(
+                List.of(
+                        Files.readString(Path.of("OpenFDAToken.txt")),
+                        Files.readString(Path.of("BlueskyToken.txt"))
+                )
+        );
     }
 }

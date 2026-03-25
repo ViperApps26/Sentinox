@@ -10,10 +10,10 @@ import java.io.IOException;
 public class OpenFDAConnect {
     private static final String BASE_URL = "https://api.fda.gov";
 
-    public static String medicine = "nolotil";
+    public static String medicine = "zantac";
     public static int limit = 1;
     public static String startDate = "20250101";
-    public static String finalDate = "20250201";
+    public static String finalDate = "20260101";
 
     public static JsonObject connect(String apiKey) throws IOException {
         String path = getOpenFdaPath(apiKey);
@@ -25,7 +25,10 @@ public class OpenFDAConnect {
     }
 
     private static String getOpenFdaPath(String apiKey) {
-        String pattern = "/drug/event.json?api_key=%s&search=receivedate:[%s+TO+%s]+AND+patient.drug.medicinalproduct:%s&limit=%s";
+        String pattern =
+                "/drug/event.json?api_key=%s&search=receivedate:[%s+TO+%s]"
+                        + "+AND+patient.drug.medicinalproduct:%s"
+                        + "&limit=%s";
 
         return String.format(pattern,
                 apiKey,

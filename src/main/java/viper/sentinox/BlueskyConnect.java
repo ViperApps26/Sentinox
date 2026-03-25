@@ -3,13 +3,13 @@ package viper.sentinox;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
 public class BlueskyConnect {
     private static final String BASE_URL = "https://bsky.social/xrpc";
+    public static final String date = "\\d{4}-\\d{2}-\\d{2}";
 
     public static String query = "nolotil";
     public static int limit = 10;
@@ -55,7 +55,7 @@ public class BlueskyConnect {
     }
 
     public static void setStartDate(String newDate) {
-        if (newDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        if (newDate.matches(date)) {
             BlueskyConnect.startDate = newDate + "T00:00:00Z";
         } else {
             System.out.println("Formato inválido, usa YYYY-MM-DD");
@@ -63,8 +63,8 @@ public class BlueskyConnect {
     }
 
     public static void setFinalDate(String newDate) {
-        if (newDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            BlueskyConnect.startDate = newDate + "T00:00:00Z";
+        if (newDate.matches(date)) {
+            BlueskyConnect.finalDate = newDate + "T00:00:00Z";
         } else {
             System.out.println("Formato inválido, usa YYYY-MM-DD");
         }

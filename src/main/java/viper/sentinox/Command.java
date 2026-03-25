@@ -16,7 +16,9 @@ public class Command {
             case "openfda_set_start" -> OpenFDAConnect.setStartDate(parts[1]);
             case "openfda_set_end" -> OpenFDAConnect.setFinalDate(parts[1]);
             case "openfda_print_all" -> OpenFDAPrint.printAllInfo(openFDAToken);
-            case "openfda_print_reactions" -> OpenFDAPrint.printReactions(openFDAToken);
+            case "openfda_print_patient" -> OpenFDAPrint.printPatient(openFDAToken);
+            case "openfda_print_patient_reactions" -> OpenFDAPrint.printPatientReactions(openFDAToken);
+            case "openfda_print_patient_drugs" -> OpenFDAPrint.printPatientDrugs(openFDAToken);
 
             case "bluesky_set_query" -> BlueskyConnect.setQuery(parts[1]);
             case "bluesky_set_limit" -> BlueskyConnect.setLimit(Integer.parseInt(parts[1]));
@@ -44,6 +46,7 @@ public class Command {
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 OPENFDA
                 openfda_print_all: Show all the information about a medicine
+                openfda_print_patient
                 openfda_print_reactions: Show the reactions of a medicine
                 openfda_set_medicine: Set a medicine | medicine
                 openfda_set_limit: Set a limit of results | number
