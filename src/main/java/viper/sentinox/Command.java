@@ -1,24 +1,19 @@
 package viper.sentinox;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Command {
-    public static void processCommand(String command, List<String> tokens) throws IOException {
-        String openFDAToken = tokens.get(0);
-        String blueskyToken = BlueskyGetToken.getToken(tokens.get(1));
+    public static void processCommand(String command, String token) throws IOException {
+        String blueskyToken = BlueskyGetToken.getToken(token);
 
         String[] parts = command.split(" ");
         switch (parts[0]) {
             case "openfda_set_medicine" -> OpenFDAConnect.setMedicine(parts[1]);
-            case "openfda_set_limit" -> OpenFDAConnect.setLimit(Integer.parseInt(parts[1]));
-            case "openfda_set_start" -> OpenFDAConnect.setStartDate(parts[1]);
-            case "openfda_set_end" -> OpenFDAConnect.setFinalDate(parts[1]);
-            case "openfda_print_all" -> OpenFDAPrint.printAllInfo(openFDAToken);
-            case "openfda_print_patient" -> OpenFDAPrint.printPatient(openFDAToken);
-            case "openfda_print_patient_reactions" -> OpenFDAPrint.printPatientReactions(openFDAToken);
-            case "openfda_print_patient_drugs" -> OpenFDAPrint.printPatientDrugs(openFDAToken);
+            case "openfda_print_all" -> OpenFDAPrint.printAllInfo();
+            case "openfda_print_ids" -> OpenFDAPrint.printIds();
+            case "openfda_print_medicine" -> OpenFDAPrint.printIdInfo();
+            case "openfda_print_reactions" -> OpenFDAPrint.printReactions();
 
             case "bluesky_set_query" -> BlueskyConnect.setQuery(parts[1]);
             case "bluesky_set_limit" -> BlueskyConnect.setLimit(Integer.parseInt(parts[1]));
@@ -45,13 +40,8 @@ public class Command {
                 exit: Exit the program
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 OPENFDA
-                openfda_print_all: Show all the information about a medicine
-                openfda_print_patient
-                openfda_print_reactions: Show the reactions of a medicine
+                openfda_print_info: Show all the information about a medicine
                 openfda_set_medicine: Set a medicine | medicine
-                openfda_set_limit: Set a limit of results | number
-                openfda_set_start: Set a start date to search | date("YYYYMMDD")
-                openfda_set_end: Set an end date to search | date("YYYYMMDD")
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 BLUESKY
                 bluesky_set_query: Set a search message | search
