@@ -8,7 +8,7 @@ This repository will host the development of the chosen app
 
 **FIRST WEEK**
 Chosen APIs:
-- DailyMed
+- PubChem
 - Bluesky
 - Sentiment Analysis
 
