@@ -12,6 +12,7 @@ public class Command {
             case "pubchem_set_medicine" -> PubChemConnect.setMedicine(parts[1]);
             case "pubchem_print_all" -> PubChemPrint.printAllInfo();
             case "pubchem_print_reactions" -> PubChemPrint.printReactions();
+            case "pubchem_print_mechanisms" -> PubChemPrint.printMechanism();
 
             case "bluesky_set_query" -> BlueskyConnect.setQuery(parts[1]);
             case "bluesky_set_limit" -> BlueskyConnect.setLimit(Integer.parseInt(parts[1]));
@@ -38,8 +39,10 @@ public class Command {
                 exit: Exit the program
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 PUBCHEM
-                pubchem_print_info: Show all the information about a medicine
                 pubchem_set_medicine: Set a medicine | medicine
+                pubchem_print_all: Show all the information about a medicine
+                pubchem_print_reactions: Show all the reactions about a medicine
+                
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 BLUESKY
                 bluesky_set_query: Set a search message | search

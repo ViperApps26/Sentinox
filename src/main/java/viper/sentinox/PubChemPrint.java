@@ -12,4 +12,10 @@ public class PubChemPrint {
             System.out.println(reaction);
         }
     }
+
+    public static void printMechanism() throws IOException {
+        for (String mechanism: PubChemGet.getMechanisms()) {
+            System.out.println(mechanism);
+        }
+    }
 }
