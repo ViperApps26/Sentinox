@@ -9,11 +9,9 @@ public class Command {
 
         String[] parts = command.split(" ");
         switch (parts[0]) {
-            case "openfda_set_medicine" -> OpenFDAConnect.setMedicine(parts[1]);
-            case "openfda_print_all" -> OpenFDAPrint.printAllInfo();
-            case "openfda_print_ids" -> OpenFDAPrint.printIds();
-            case "openfda_print_medicine" -> OpenFDAPrint.printIdInfo();
-            case "openfda_print_reactions" -> OpenFDAPrint.printReactions();
+            case "pubchem_set_medicine" -> PubChemConnect.setMedicine(parts[1]);
+            case "pubchem_print_all" -> PubChemPrint.printAllInfo();
+            case "pubchem_print_reactions" -> PubChemPrint.printReactions();
 
             case "bluesky_set_query" -> BlueskyConnect.setQuery(parts[1]);
             case "bluesky_set_limit" -> BlueskyConnect.setLimit(Integer.parseInt(parts[1]));
@@ -39,9 +37,9 @@ public class Command {
                 GENERAL
                 exit: Exit the program
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                OPENFDA
-                openfda_print_info: Show all the information about a medicine
-                openfda_set_medicine: Set a medicine | medicine
+                PUBCHEM
+                pubchem_print_info: Show all the information about a medicine
+                pubchem_set_medicine: Set a medicine | medicine
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 BLUESKY
                 bluesky_set_query: Set a search message | search
