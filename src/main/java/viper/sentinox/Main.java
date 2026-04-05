@@ -7,7 +7,16 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String token = Files.readString(Path.of("BlueskyToken.txt"));
+        DatabaseManager.initializeDatabase();
+
+        String token = "";
+        Path tokenPath = Path.of("BlueskyToken.txt");
+
+        if (Files.exists(tokenPath)) {
+            token = Files.readString(tokenPath).trim();
+        } else {
+            System.out.println("Warning: BlueskyToken.txt not found. Bluesky commands will not work.");
+        }
 
         Scanner scanner = new Scanner(System.in);
         String command = Command.askCommand(scanner);
@@ -18,3 +27,8 @@ public class Main {
         }
     }
 }
+
+
+
+
+
