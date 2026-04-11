@@ -1,13 +1,10 @@
 package viper.sentinox;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DataViewer {
 
-    public static void showMedicineSummary() {
+    public static void showMedicineSummary(String databaseURL) {
         String sql = """
             SELECT
                 m.id,
@@ -23,7 +20,7 @@ public class DataViewer {
             ORDER BY m.id DESC
             """;
 
-        try (Connection conn = DatabaseManager.connect();
+        try (Connection conn = DriverManager.getConnection(databaseURL);
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -39,14 +36,14 @@ public class DataViewer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error connecting to the database");
         }
     }
 
-    public static void showMedicines() {
+    public static void showMedicines(String databaseURL) {
         String sql = "SELECT * FROM medicines ORDER BY id DESC";
 
-        try (Connection conn = DatabaseManager.connect();
+        try (Connection conn = DriverManager.getConnection(databaseURL);
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -60,11 +57,11 @@ public class DataViewer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error connecting to the database");
         }
     }
 
-    public static void showPubChemReactions() {
+    public static void showPubChemReactions(String databaseURL) {
         String sql = """
             SELECT r.id, m.name AS medicine, m.cid, r.reaction, r.captured_at
             FROM pubchem_reactions r
@@ -72,7 +69,7 @@ public class DataViewer {
             ORDER BY r.id DESC
             """;
 
-        try (Connection conn = DatabaseManager.connect();
+        try (Connection conn = DriverManager.getConnection(databaseURL);
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -87,14 +84,14 @@ public class DataViewer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error connecting to the database");
         }
     }
 
-    public static void showBlueskyPosts() {
+    public static void showBlueskyPosts(String databaseURL) {
         String sql = "SELECT * FROM bluesky_posts ORDER BY id DESC";
 
-        try (Connection conn = DatabaseManager.connect();
+        try (Connection conn = DriverManager.getConnection(databaseURL);
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -111,7 +108,7 @@ public class DataViewer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error connecting to the database");
         }
     }
 }

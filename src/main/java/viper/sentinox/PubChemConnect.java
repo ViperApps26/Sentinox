@@ -32,9 +32,12 @@ public class PubChemConnect {
         String path = "/pug_view/data/compound/" + cid + "/JSON";
 
         Connection.Response response = request(path);
+
         String body = response.body();
 
-        return new Gson().fromJson(body, JsonObject.class);
+        return body.isEmpty()
+                ? new Gson().fromJson(body, JsonObject.class)
+                : null;
     }
 
     private static Connection.Response cidRequest(String path) throws IOException {

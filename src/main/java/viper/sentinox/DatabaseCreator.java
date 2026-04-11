@@ -5,15 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DatabaseManager {
-
-    private static final String URL = "jdbc:sqlite:sentinox.db";
-
-    public static Connection connect() throws SQLException {
-        return DriverManager.getConnection(URL);
-    }
-
-    public static void initializeDatabase() {
+public class DatabaseCreator {
+    public static void createDatabases(String databaseURL) {
         String createMedicinesTable = """
             CREATE TABLE IF NOT EXISTS medicines (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,17 +40,13 @@ public class DatabaseManager {
             );
             """;
 
-        try (Connection conn = connect();
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute(createMedicinesTable);
-            stmt.execute(createReactionsTable);
-            stmt.execute(createBlueskyTable);
-
-            System.out.println("Database initialised correctly.");
-
+        try (Connection conn = DriverManager.getConnection(databaseURL);
+            Statement stmt = conn.createStatement()) {
+                stmt.execute(createMedicinesTable);
+                stmt.execute(createReactionsTable);
+                stmt.execute(createBlueskyTable);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error connecting to the database");
         }
     }
 }

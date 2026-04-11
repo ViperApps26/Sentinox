@@ -9,20 +9,28 @@ import java.util.ArrayList;
 
 public class PubChemGet {
     public static JsonObject getAllInfo() throws IOException {
-        return PubChemConnect.connect().getAsJsonObject("Record");
+        JsonObject connection = PubChemConnect.connect();
+
+        return connection != null && connection.has("Record")
+                ? connection.getAsJsonObject("Record")
+                : null;
     }
 
     public static ArrayList<String> getReactions() throws IOException {
         ArrayList<String> reactions = new ArrayList<>();
-        extractElements(getSection("Adverse Effects"), reactions);
-
+        JsonObject section = getSection("Adverse Effects");
+        if (section != null) {
+            extractElements(section, reactions);
+        }
         return reactions;
     }
 
     public static ArrayList<String> getMechanisms() throws IOException {
         ArrayList<String> mechanisms = new ArrayList<>();
-        extractElements(getSection("Mechanism of Action"), mechanisms);
-
+        JsonObject section = getSection("Mechanism of Action");
+        if (section != null) {
+            extractElements(section, mechanisms);
+        }
         return mechanisms;
     }
 
@@ -48,9 +56,11 @@ public class PubChemGet {
 
 
     private static JsonObject getSection(String search) throws IOException {
-        JsonArray sections = getAllInfo().getAsJsonArray("Section");
+        JsonObject allInfo = getAllInfo();
 
-        return recursiveSearch(sections, search);
+        return allInfo != null && allInfo.has("Section")
+                ? recursiveSearch(allInfo.getAsJsonArray("Section"), search)
+                : null;
     }
 
     private static JsonObject recursiveSearch(JsonArray sections, String search) {

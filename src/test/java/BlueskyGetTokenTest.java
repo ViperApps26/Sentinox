@@ -25,7 +25,7 @@ class BlueskyGetTokenTest {
    }
 
    @Test
-   void getToken_returnsAccessToken() throws IOException {
+   void getToken_returnsAccessToken() throws IOException, InterruptedException {
       String responseBody = """
                             {
                             "accessJwt": "new-access-token",
@@ -46,7 +46,7 @@ class BlueskyGetTokenTest {
           jsoupMock.when(() ->
           Jsoup.connect("https://bsky.social/xrpc/com.atproto.server.refreshSession")).thenReturn(connection);
 
-          String token = BlueskyGetToken.getToken("old-refresh-token");
+          String token = BlueskyGetToken.getAccessToken("old-refresh-token", "password");
 
           assertEquals("new-access-token", token);
       }

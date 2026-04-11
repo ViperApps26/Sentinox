@@ -1,45 +1,42 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.BlueskyPrint;
+import viper.sentinox.BlueskyGet;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BlueskyPrintTest {
 
+    private static final Path TOKEN_FILE = Path.of("BlueskyToken.txt");
+
     @Test
     void formatPost_returnsPostText() {
         JsonObject post = createPost("Hola mundo");
-        String result = BlueskyPrint.formatPost(post);
+        String result = BlueskyGet.formatPost(post);
         assertEquals("Hola mundo", result);
     }
 
     @Test
-    void getPosts_returnsOnePostWhenQuantityIsOne() {
+    void getPosts_returnsFirstPostText() throws IOException {
+        JsonArray posts = new JsonArray();
+        posts.add(createPost("Post 1"));
+
+        List<String> result = BlueskyGet.getPosts(posts);
+        assertEquals("Post 1", result.getFirst());
+    }
+
+    @Test
+    void getPosts_returnsSecondPostText() throws IOException {
         JsonArray posts = new JsonArray();
         posts.add(createPost("Post 1"));
         posts.add(createPost("Post 2"));
 
-        List<String> result = BlueskyPrint.getPosts(posts, 1);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void getPosts_returnsFirstPostText() {
-        JsonArray posts = new JsonArray();
-        posts.add(createPost("Post 1"));
-        List<String> result = BlueskyPrint.getPosts(posts, 1);
-        assertEquals("Post 1", result.get(0));
-    }
-
-    @Test
-    void getPosts_returnsSecondPostText() {
-        JsonArray posts = new JsonArray();
-        posts.add(createPost("Post 1"));
-        posts.add(createPost("Post 2"));
-        List<String> result = BlueskyPrint.getPosts(posts, 2);
+        List<String> result = BlueskyGet.getPosts(posts);
         assertEquals("Post 2", result.get(1));
     }
 
