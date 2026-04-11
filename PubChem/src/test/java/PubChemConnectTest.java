@@ -43,4 +43,4 @@ class PubChemConnectTest {
         assertFalse(cid.isBlank());
         assertTrue(cid.matches("\\d+"));
     }
-}
+}//test
