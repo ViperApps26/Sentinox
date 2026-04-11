@@ -9,51 +9,67 @@ import java.io.IOException;
 
 public class PubChemConnect {
 
-    private static final String BASE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest";
+    private final String baseUrl;
+    private final Gson gson;
 
-    public static String medicine = "ibuprofen";
+    private String medicine;
 
-    public static String getCID() throws IOException {
+    public PubChemConnect() {
+        this.baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest";
+        this.gson = new Gson();
+        this.medicine = "ibuprofen";
+    }
+
+    public PubChemConnect(String medicine) {
+        this();
+        this.medicine = medicine;
+    }
+
+    public String getCID() throws IOException {
         String path = String.format("/compound/name/%s/cids/JSON", medicine);
 
         Connection.Response response = cidRequest(path);
         String body = response.body();
 
-        JsonObject json = new Gson().fromJson(body, JsonObject.class);
+        JsonObject json = gson.fromJson(body, JsonObject.class);
 
         return json.getAsJsonObject("IdentifierList")
                 .getAsJsonArray("CID")
-                .get(0).getAsString();
+                .get(0)
+                .getAsString();
     }
 
-    public static JsonObject connect() throws IOException {
+    public JsonObject connect() throws IOException {
         String cid = getCID();
-
         String path = "/pug_view/data/compound/" + cid + "/JSON";
 
         Connection.Response response = request(path);
         String body = response.body();
 
-        return new Gson().fromJson(body, JsonObject.class);
+        return gson.fromJson(body, JsonObject.class);
     }
 
-    private static Connection.Response cidRequest(String path) throws IOException {
-        return Jsoup.connect(BASE_URL + "/pug" + path)
+    private Connection.Response cidRequest(String path) throws IOException {
+        return Jsoup.connect(baseUrl + "/pug" + path)
                 .ignoreContentType(true)
                 .header("Accept", "application/json")
                 .method(Connection.Method.GET)
                 .execute();
     }
 
-    private static Connection.Response request(String path) throws IOException {
-        return Jsoup.connect(BASE_URL + path)
+    private Connection.Response request(String path) throws IOException {
+        return Jsoup.connect(baseUrl + path)
                 .ignoreContentType(true)
                 .header("Accept", "application/json")
                 .method(Connection.Method.GET)
                 .execute();
     }
 
-    public static void setMedicine(String medicine) {
-        PubChemConnect.medicine = medicine;
+    public void setMedicine(String medicine) {
+        this.medicine = medicine;
+    }
+
+    public String getMedicine() {
+        return medicine;
     }
 }

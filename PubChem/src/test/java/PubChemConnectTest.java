@@ -1,4 +1,3 @@
-
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,14 +9,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PubChemConnectTest {
 
+    private PubChemConnect pubChemConnect;
+
     @BeforeEach
     void setUp() {
-        PubChemConnect.setMedicine("ibuprofen");
+        pubChemConnect = new PubChemConnect("ibuprofen");
     }
 
     @Test
     void getCID_returnsValidCid() throws IOException {
-        String cid = PubChemConnect.getCID();
+        String cid = pubChemConnect.getCID();
 
         assertNotNull(cid);
         assertFalse(cid.isBlank());
@@ -26,7 +27,7 @@ class PubChemConnectTest {
 
     @Test
     void connect_returnsValidJsonObject() throws IOException {
-        JsonObject result = PubChemConnect.connect();
+        JsonObject result = pubChemConnect.connect();
 
         assertNotNull(result);
         assertTrue(result.has("Record"));
@@ -34,13 +35,12 @@ class PubChemConnectTest {
 
     @Test
     void setMedicine_changesMedicineUsedInRequest() throws IOException {
-        PubChemConnect.setMedicine("paracetamol");
+        pubChemConnect.setMedicine("paracetamol");
 
-        String cid = PubChemConnect.getCID();
+        String cid = pubChemConnect.getCID();
 
         assertNotNull(cid);
         assertFalse(cid.isBlank());
         assertTrue(cid.matches("\\d+"));
     }
 }
-

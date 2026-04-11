@@ -5,20 +5,23 @@ import viper.sentinox.PubChemConnect;
 import viper.sentinox.PubChemGet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PubChemGetTest {
 
+    private PubChemGet pubChemGet;
+
     @BeforeEach
     void setUp() {
-        PubChemConnect.setMedicine("ibuprofen");
+        PubChemConnect pubChemConnect = new PubChemConnect("ibuprofen");
+        pubChemGet = new PubChemGet(pubChemConnect);
     }
 
     @Test
     void getAllInfo_returnsRecordObject() throws IOException {
-        JsonObject record = PubChemGet.getAllInfo();
+        JsonObject record = pubChemGet.getAllInfo();
 
         assertNotNull(record);
         assertTrue(record.has("Section"));
@@ -26,7 +29,7 @@ class PubChemGetTest {
 
     @Test
     void getReactions_returnsReactionList() throws IOException {
-        ArrayList<String> reactions = PubChemGet.getReactions();
+        List<String> reactions = pubChemGet.getReactions();
 
         assertNotNull(reactions);
         assertFalse(reactions.isEmpty());
@@ -34,7 +37,7 @@ class PubChemGetTest {
 
     @Test
     void getReactions_containsNonEmptyStrings() throws IOException {
-        ArrayList<String> reactions = PubChemGet.getReactions();
+        List<String> reactions = pubChemGet.getReactions();
 
         assertNotNull(reactions);
         assertFalse(reactions.isEmpty());
@@ -45,9 +48,3 @@ class PubChemGetTest {
         }
     }
 }
-
-
-
-
-
-

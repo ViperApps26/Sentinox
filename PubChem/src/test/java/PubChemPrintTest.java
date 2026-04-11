@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import viper.sentinox.PubChemConnect;
+import viper.sentinox.PubChemGet;
 import viper.sentinox.PubChemPrint;
 
 import java.io.ByteArrayOutputStream;
@@ -11,9 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PubChemPrintTest {
 
+    private PubChemPrint pubChemPrint;
+
     @BeforeEach
     void setUp() {
-        PubChemConnect.setMedicine("ibuprofen");
+        PubChemConnect pubChemConnect = new PubChemConnect("ibuprofen");
+        PubChemGet pubChemGet = new PubChemGet(pubChemConnect);
+        pubChemPrint = new PubChemPrint(pubChemGet);
     }
 
     @Test
@@ -23,7 +28,7 @@ class PubChemPrintTest {
         System.setOut(new PrintStream(outContent));
 
         try {
-            PubChemPrint.printAllInfo();
+            pubChemPrint.printAllInfo();
             String output = outContent.toString();
 
             assertNotNull(output);
@@ -41,7 +46,7 @@ class PubChemPrintTest {
         System.setOut(new PrintStream(outContent));
 
         try {
-            PubChemPrint.printReactions();
+            pubChemPrint.printReactions();
             String output = outContent.toString();
 
             assertNotNull(output);
