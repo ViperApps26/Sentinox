@@ -1,10 +1,11 @@
 package viper.sentinox;
 
-import java.util.List;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PubChemPrint {
-
     private final PubChemGet pubChemGet;
 
     public PubChemPrint(PubChemGet pubChemGet) {
@@ -12,22 +13,35 @@ public class PubChemPrint {
     }
 
     public void printAllInfo() throws IOException {
-        System.out.println(pubChemGet.getAllInfo());
+        JsonObject allInfo = pubChemGet.getAllInfo();
+        if (allInfo != null) {
+            System.out.println(allInfo);
+        } else {
+            System.out.println("No Results Found");
+        }
     }
 
     public void printReactions() throws IOException {
-        List<String> reactions = pubChemGet.getReactions();
+        ArrayList<String> reactions = pubChemGet.getReactions();
 
-        for (String reaction : reactions) {
-            System.out.println(reaction);
+        if (reactions.isEmpty()) {
+            System.out.println("No Results Found");
+        } else {
+            for (String reaction : reactions) {
+                System.out.println(reaction);
+            }
         }
     }
 
     public void printMechanism() throws IOException {
-        List<String> mechanisms = pubChemGet.getMechanisms();
+        ArrayList<String> mechanisms = pubChemGet.getMechanisms();
 
-        for (String mechanism : mechanisms) {
-            System.out.println(mechanism);
+        if (mechanisms.isEmpty()) {
+            System.out.println("No Results Found");
+        } else {
+            for (String mechanism : mechanisms) {
+                System.out.println(mechanism);
+            }
         }
     }
 }

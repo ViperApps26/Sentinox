@@ -16,7 +16,7 @@ class PubChemPrintTest {
 
     @BeforeEach
     void setUp() {
-        PubChemConnect pubChemConnect = new PubChemConnect("ibuprofen");
+        PubChemConnect pubChemConnect = new PubChemConnect();
         PubChemGet pubChemGet = new PubChemGet(pubChemConnect);
         pubChemPrint = new PubChemPrint(pubChemGet);
     }

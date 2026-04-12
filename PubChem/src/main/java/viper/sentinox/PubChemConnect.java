@@ -2,6 +2,7 @@ package viper.sentinox;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -10,19 +11,12 @@ import java.io.IOException;
 public class PubChemConnect {
 
     private final String baseUrl;
-    private final Gson gson;
 
     private String medicine;
 
     public PubChemConnect() {
         this.baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest";
-        this.gson = new Gson();
         this.medicine = "ibuprofen";
-    }
-
-    public PubChemConnect(String medicine) {
-        this();
-        this.medicine = medicine;
     }
 
     public String getCID() throws IOException {
@@ -31,22 +25,31 @@ public class PubChemConnect {
         Connection.Response response = cidRequest(path);
         String body = response.body();
 
-        JsonObject json = gson.fromJson(body, JsonObject.class);
+        JsonObject json = new Gson().fromJson(body, JsonObject.class);
 
         return json.getAsJsonObject("IdentifierList")
                 .getAsJsonArray("CID")
-                .get(0)
-                .getAsString();
+                .get(0).getAsString();
     }
 
     public JsonObject connect() throws IOException {
         String cid = getCID();
+
         String path = "/pug_view/data/compound/" + cid + "/JSON";
 
         Connection.Response response = request(path);
+
         String body = response.body();
 
-        return gson.fromJson(body, JsonObject.class);
+        return parseOrNull(body);
+    }
+
+    public JsonObject parseOrNull(String body) {
+        try {
+            return new Gson().fromJson(body, JsonObject.class);
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 
     private Connection.Response cidRequest(String path) throws IOException {

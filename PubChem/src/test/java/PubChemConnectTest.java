@@ -13,7 +13,7 @@ class PubChemConnectTest {
 
     @BeforeEach
     void setUp() {
-        pubChemConnect = new PubChemConnect("ibuprofen");
+        pubChemConnect = new PubChemConnect();
     }
 
     @Test

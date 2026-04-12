@@ -1,16 +1,13 @@
 package viper.sentinox;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
-
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PubChemGet {
-
     private final PubChemConnect pubChemConnect;
 
     public PubChemGet(PubChemConnect pubChemConnect) {
@@ -18,73 +15,58 @@ public class PubChemGet {
     }
 
     public JsonObject getAllInfo() throws IOException {
-        return pubChemConnect.connect().getAsJsonObject("Record");
+        JsonObject connection = pubChemConnect.connect();
+
+        return connection != null && connection.has("Record")
+                ? connection.getAsJsonObject("Record")
+                : null;
     }
 
-    public List<String> getReactions() throws IOException {
-        List<String> reactions = new ArrayList<>();
+    public ArrayList<String> getReactions() throws IOException {
+        ArrayList<String> reactions = new ArrayList<>();
         JsonObject section = getSection("Adverse Effects");
-
         if (section != null) {
             extractElements(section, reactions);
         }
-
         return reactions;
     }
 
-    public List<String> getMechanisms() throws IOException {
-        List<String> mechanisms = new ArrayList<>();
+    public ArrayList<String> getMechanisms() throws IOException {
+        ArrayList<String> mechanisms = new ArrayList<>();
         JsonObject section = getSection("Mechanism of Action");
-
         if (section != null) {
             extractElements(section, mechanisms);
         }
-
         return mechanisms;
     }
 
-    private void extractElements(JsonObject sectionParameters, List<String> infoList) {
-        if (sectionParameters == null || !sectionParameters.has("Information")) {
-            return;
-        }
-
+    private void extractElements(JsonObject sectionParameters, ArrayList<String> infoList) {
         JsonArray sectionDetails = sectionParameters.getAsJsonArray("Information");
 
-        for (JsonElement infoDetails : sectionDetails) {
-            JsonObject infoObject = infoDetails.getAsJsonObject();
-
-            if (!infoObject.has("Value")) {
-                continue;
-            }
-
-            JsonObject valueObject = infoObject.getAsJsonObject("Value");
-
-            if (!valueObject.has("StringWithMarkup")) {
-                continue;
-            }
-
-            JsonArray stringsDetails = valueObject.getAsJsonArray("StringWithMarkup");
+        for (JsonElement InfoDetails : sectionDetails) {
+            JsonArray stringsDetails = InfoDetails
+                    .getAsJsonObject()
+                    .getAsJsonObject("Value")
+                    .getAsJsonArray("StringWithMarkup");
 
             for (JsonElement stringDetails : stringsDetails) {
-                JsonObject stringObject = stringDetails.getAsJsonObject();
+                String reaction = stringDetails
+                        .getAsJsonObject()
+                        .get("String")
+                        .getAsString();
 
-                if (stringObject.has("String")) {
-                    String text = stringObject.get("String").getAsString();
-                    infoList.add(text);
-                }
+                infoList.add(reaction);
             }
         }
     }
+
 
     private JsonObject getSection(String search) throws IOException {
         JsonObject allInfo = getAllInfo();
 
-        if (allInfo == null || !allInfo.has("Section")) {
-            return null;
-        }
-
-        JsonArray sections = allInfo.getAsJsonArray("Section");
-        return recursiveSearch(sections, search);
+        return allInfo != null && allInfo.has("Section")
+                ? recursiveSearch(allInfo.getAsJsonArray("Section"), search)
+                : null;
     }
 
     private JsonObject recursiveSearch(JsonArray sections, String search) {
@@ -92,19 +74,19 @@ public class PubChemGet {
             JsonObject section = element.getAsJsonObject();
 
             JsonObject foundSection = verifyTitle(search, section);
-            if (foundSection != null) {
-                return foundSection;
-            }
+            if (foundSection != null) return foundSection;
 
             if (section.has("Section")) {
-                foundSection = recursiveSearch(section.getAsJsonArray("Section"), search);
+                foundSection = recursiveSearch(
+                        section.getAsJsonArray("Section"),
+                        search
+                );
 
                 if (foundSection != null) {
                     return foundSection;
                 }
             }
         }
-
         return null;
     }
 
@@ -116,7 +98,7 @@ public class PubChemGet {
         if (title.equalsIgnoreCase(search)) {
             return section;
         }
-
         return null;
     }
+
 }
