@@ -42,7 +42,7 @@ public class Command {
                 }
             }
             case "bluesky_set_limit" -> {
-                if (validate(parts, 2, 2,-1)) {
+                if (validate(parts, 2, 2,1)) {
                     BlueskyConnect.setLimit(Integer.parseInt(parts[1]));
                 }
             }

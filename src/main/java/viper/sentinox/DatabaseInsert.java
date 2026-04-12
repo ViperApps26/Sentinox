@@ -156,7 +156,7 @@ public class DatabaseInsert {
         }
     }
 
-    public static void getMedicinesList(List<String> medicines, String databaseURL) {
+    private static void getMedicinesList(List<String> medicines, String databaseURL) {
         try (Connection conn = DriverManager.getConnection(databaseURL)) {
             String sql = "SELECT id, name FROM medicines";
 

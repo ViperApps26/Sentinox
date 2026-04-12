@@ -2,6 +2,7 @@ package viper.sentinox;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -35,9 +36,15 @@ public class PubChemConnect {
 
         String body = response.body();
 
-        return body.isEmpty()
-                ? new Gson().fromJson(body, JsonObject.class)
-                : null;
+        return parseOrNull(body);
+    }
+
+    public static JsonObject parseOrNull(String body) {
+        try {
+            return new Gson().fromJson(body, JsonObject.class);
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 
     private static Connection.Response cidRequest(String path) throws IOException {
