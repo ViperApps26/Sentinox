@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+
         String token = args[0];
         String password = args[1];
         String databaseURL = args[2];
@@ -15,10 +16,20 @@ public class Main {
         BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
         BlueskyPrint blueskyPrint = new BlueskyPrint(blueskyGet);
 
-        BlueskyControl blueskyControl = new BlueskyControl(blueskyGetToken, blueskyConnect, blueskyPrint);
+        BlueskyDatabaseCreator blueskyDatabaseCreator = new BlueskyDatabaseCreator();
+        BlueskyInsert blueskyInsert = new BlueskyInsert(blueskyConnect, blueskyGet);
+        BlueskyDataViewer blueskyDataViewer = new BlueskyDataViewer();
+        BlueskyFeeder blueskyFeeder = new BlueskyFeeder(blueskyGetToken, blueskyInsert);
 
+        BlueskyControl blueskyControl = new BlueskyControl(
+                blueskyGetToken,
+                blueskyConnect,
+                blueskyPrint,
+                blueskyFeeder,
+                blueskyDataViewer
+        );
 
-        //DatabaseCreator.createDatabases(databaseURL);
+        blueskyDatabaseCreator.createDatabase(databaseURL);
 
         Scanner scanner = new Scanner(System.in);
         String command = blueskyControl.askCommand(scanner);
@@ -27,6 +38,8 @@ public class Main {
             blueskyControl.processCommand(command, token, password, databaseURL);
             command = blueskyControl.askCommand(scanner);
         }
-        Files.delete(Path.of("BlueskyToken.txt"));
+
+        scanner.close();
+        Files.deleteIfExists(Path.of("BlueskyToken.txt"));
     }
 }

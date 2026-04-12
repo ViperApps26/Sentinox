@@ -4,16 +4,26 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String databaseURL = args[2];
+
+        String databaseURL = args[0];
 
         PubChemConnect pubChemConnect = new PubChemConnect();
         PubChemGet pubChemGet = new PubChemGet(pubChemConnect);
         PubChemPrint pubChemPrint = new PubChemPrint(pubChemGet);
 
-        PubChemControl pubChemControl = new PubChemControl(pubChemConnect, pubChemPrint);
+        PubChemDatabaseCreator pubChemDatabaseCreator = new PubChemDatabaseCreator();
+        PubChemInsert pubChemInsert = new PubChemInsert(pubChemConnect, pubChemGet);
+        PubChemDataViewer pubChemDataViewer = new PubChemDataViewer();
+        PubChemFeeder pubChemFeeder = new PubChemFeeder(pubChemInsert);
 
+        PubChemControl pubChemControl = new PubChemControl(
+                pubChemConnect,
+                pubChemPrint,
+                pubChemFeeder,
+                pubChemDataViewer
+        );
 
-        //DatabaseCreator.createDatabases(databaseURL);
+        pubChemDatabaseCreator.createDatabase(databaseURL);
 
         Scanner scanner = new Scanner(System.in);
         String command = pubChemControl.askCommand(scanner);

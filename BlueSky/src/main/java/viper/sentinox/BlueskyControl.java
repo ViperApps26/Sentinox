@@ -8,36 +8,47 @@ public class BlueskyControl {
     private final BlueskyGetToken blueskyGetToken;
     private final BlueskyConnect blueskyConnect;
     private final BlueskyPrint blueskyPrint;
+    private final BlueskyFeeder blueskyFeeder;
+    private final BlueskyDataViewer blueskyDataViewer;
 
     public BlueskyControl(BlueskyGetToken blueskyGetToken,
                           BlueskyConnect blueskyConnect,
-                          BlueskyPrint blueskyPrint) {
+                          BlueskyPrint blueskyPrint,
+                          BlueskyFeeder blueskyFeeder,
+                          BlueskyDataViewer blueskyDataViewer) {
         this.blueskyGetToken = blueskyGetToken;
         this.blueskyConnect = blueskyConnect;
         this.blueskyPrint = blueskyPrint;
+        this.blueskyFeeder = blueskyFeeder;
+        this.blueskyDataViewer = blueskyDataViewer;
     }
 
-    public void processCommand(String command, String token, String password, String databaseURL) throws IOException, InterruptedException {
+    public void processCommand(String command, String token, String password, String databaseURL)
+            throws IOException, InterruptedException {
+
         String[] parts = command.split(" ");
 
         switch (parts[0]) {
             case "bluesky_set_query" -> {
-                if (validate(parts, 2, 2,-1)) {
+                if (validate(parts, 2, 2, -1)) {
                     blueskyConnect.setQuery(parts[1]);
                 }
             }
+
             case "bluesky_set_limit" -> {
-                if (validate(parts, 2, 2,1)) {
+                if (validate(parts, 2, 2, 1)) {
                     blueskyConnect.setLimit(Integer.parseInt(parts[1]));
                 }
             }
+
             case "bluesky_set_start" -> {
-                if (validate(parts, 2, 2,-1)) {
+                if (validate(parts, 2, 2, -1)) {
                     blueskyConnect.setStartDate(parts[1]);
                 }
             }
+
             case "bluesky_set_end" -> {
-                if (validate(parts, 2, 2,-1)) {
+                if (validate(parts, 2, 2, -1)) {
                     blueskyConnect.setFinalDate(parts[1]);
                 }
             }
@@ -46,22 +57,19 @@ public class BlueskyControl {
                 String blueskyToken = blueskyGetToken.getAccessToken(token, password);
                 blueskyPrint.printPosts(blueskyToken);
             }
-            /*
-            case "bluesky_save_posts" -> {
-                String blueskyToken = blueskyGetToken.getAccessToken(token, password);
-                DatabaseInsert.saveBlueskyPosts(blueskyToken, databaseURL);
-            }
 
-            case "bluesky_show_db" -> DataViewer.showBlueskyPosts(databaseURL);
-            */
+            case "bluesky_save_posts" -> blueskyFeeder.feedCurrentQuery(token, password, databaseURL);
+
+            case "bluesky_show_db" -> blueskyDataViewer.showPosts(databaseURL);
 
             case "help" -> help();
+
             default -> System.out.println("Command not found");
         }
     }
 
     public boolean validate(String[] parts, int minLength, int maxLength, int positionToCheck) {
-        if (parts.length < minLength | parts.length > maxLength) {
+        if (parts.length < minLength || parts.length > maxLength) {
             System.out.println("Incorrect command length");
             return false;
         } else if (positionToCheck >= 0 && !parts[positionToCheck].matches("\\d+")) {
@@ -80,24 +88,19 @@ public class BlueskyControl {
     public void help() {
         System.out.println("""
             - HELP - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            command: description | params
-            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             GENERAL
             exit: Exit the program
             help: Show this help menu
-            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
             BLUESKY
             bluesky_set_query: Set a search message | search
             bluesky_set_limit: Set a limit of results | number
-            bluesky_set_start: Set a start date to search | date("YYYY-MM-DD")
-            bluesky_set_end: Set an end date to search | date("YYYY-MM-DD")
-
+            bluesky_set_start: Set a start date to search | YYYY-MM-DD
+            bluesky_set_end: Set an end date to search | YYYY-MM-DD
             bluesky_print_posts: Show all messages from posts
-            
             bluesky_save_posts: Save posts from Bluesky into the database
-            
             bluesky_show_db: Show all stored Bluesky posts
-            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             """);
     }
 }
