@@ -15,40 +15,35 @@ import java.nio.file.Path;
 public class BlueskyGetToken {
 
     private final String blueskyPds;
-    private final String refreshSessionUrl;
+    private final String refreshUrl;
     private final String identifier;
     private final Path filePath;
     private final HttpClient client;
     private final Gson gson;
 
     public BlueskyGetToken() {
-        this(
-                "https://bsky.social/xrpc/com.atproto.server.createSession",
-                "https://bsky.social/xrpc/com.atproto.server.refreshSession",
-                "vicraft.bsky.social",
-                Path.of("BlueskyToken.txt"),
-                HttpClient.newBuilder().build()
-        );
-    }
-
-    public BlueskyGetToken(String blueskyPds, String refreshSessionUrl, String identifier, Path filePath, HttpClient client) {
-        this.blueskyPds = blueskyPds;
-        this.refreshSessionUrl = refreshSessionUrl;
-        this.identifier = identifier;
-        this.filePath = filePath;
-        this.client = client;
+        this.blueskyPds = "https://bsky.social/xrpc/com.atproto.server.createSession";
+        this.refreshUrl = "https://bsky.social/xrpc/com.atproto.server.refreshSession";
+        this.identifier = "vicraft.bsky.social";
+        this.filePath = Path.of("BlueskyToken.txt");
+        this.client = HttpClient.newBuilder().build();
         this.gson = new Gson();
     }
 
     public String getAccessToken(String token, String password) throws IOException, InterruptedException {
         JsonObject newToken = refreshAccessToken(token, password);
-        saveRefreshToken(newToken);
+
+        Files.writeString(filePath,
+                newToken.get("refreshJwt").getAsString(),
+                StandardCharsets.UTF_8
+        );
+
         return newToken.get("accessJwt").getAsString();
     }
 
     private JsonObject refreshAccessToken(String refreshToken, String password) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(refreshSessionUrl))
+                .uri(URI.create(refreshUrl))
                 .header("Authorization", "Bearer " + refreshToken)
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
@@ -56,8 +51,7 @@ public class BlueskyGetToken {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 400) {
-            String newRefreshToken = getRefreshToken(password);
-            return refreshAccessToken(newRefreshToken, password);
+            return refreshAccessToken(getRefreshToken(password), password);
         }
 
         return gson.fromJson(response.body(), JsonObject.class);
@@ -90,24 +84,11 @@ public class BlueskyGetToken {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private void saveRefreshToken(JsonObject newToken) throws IOException {
-        String refreshJwt = newToken.get("refreshJwt").getAsString();
-        Files.writeString(filePath, refreshJwt, StandardCharsets.UTF_8);
-    }
-
-    public String getBlueskyPds() {
-        return blueskyPds;
-    }
-
-    public String getRefreshSessionUrl() {
-        return refreshSessionUrl;
+    public Path getFilePath() {
+        return filePath;
     }
 
     public String getIdentifier() {
         return identifier;
-    }
-
-    public Path getFilePath() {
-        return filePath;
     }
 }
