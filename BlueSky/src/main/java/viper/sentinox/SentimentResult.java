@@ -15,7 +15,7 @@ public class SentimentResult {
         this.total = positive + negative + neutral;
         this.overall = overall;
     }
-//test
+//test//test
     public int getPositive() {
         return positive;
     }

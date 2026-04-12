@@ -72,4 +72,4 @@ public class PubChemConnect {
     public String getMedicine() {
         return medicine;
     }
-}//test
+}//test//test
