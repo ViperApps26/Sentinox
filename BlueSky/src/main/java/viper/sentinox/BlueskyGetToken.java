@@ -2,56 +2,93 @@ package viper.sentinox;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class BlueskyGetToken {
 
+    private final String blueskyPds;
     private final String refreshUrl;
-    private final Path tokenFilePath;
+    private final String identifier;
+    private final Path filePath;
+    private final HttpClient client;
     private final Gson gson;
 
     public BlueskyGetToken() {
+        this.blueskyPds = "https://bsky.social/xrpc/com.atproto.server.createSession";
         this.refreshUrl = "https://bsky.social/xrpc/com.atproto.server.refreshSession";
-        this.tokenFilePath = Path.of("BlueskyToken.txt");
+        this.identifier = "vicraft.bsky.social";
+        this.filePath = Path.of("BlueskyToken.txt");
+        this.client = HttpClient.newBuilder().build();
         this.gson = new Gson();
     }
 
-    public String getToken(String token) throws IOException {
-        JsonObject newToken = refresh(token);
-        saveRefreshToken(newToken);
-        return extractAccessToken(newToken);
+    public String getAccessToken(String token, String password) throws IOException, InterruptedException {
+        JsonObject newToken = refreshAccessToken(token, password);
+
+        Files.writeString(filePath,
+                newToken.get("refreshJwt").getAsString(),
+                StandardCharsets.UTF_8
+        );
+
+        return newToken.get("accessJwt").getAsString();
     }
 
-    private JsonObject refresh(String refreshToken) throws IOException {
-        Connection.Response response = Jsoup.connect(refreshUrl)
-                .ignoreContentType(true)
+    private JsonObject refreshAccessToken(String refreshToken, String password) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(refreshUrl))
                 .header("Authorization", "Bearer " + refreshToken)
-                .method(Connection.Method.POST)
-                .execute();
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 400) {
+            return refreshAccessToken(getRefreshToken(password), password);
+        }
 
         return gson.fromJson(response.body(), JsonObject.class);
     }
 
-    private void saveRefreshToken(JsonObject newToken) throws IOException {
-        String refreshJwt = newToken.get("refreshJwt").getAsString();
-        Files.writeString(tokenFilePath, refreshJwt, StandardCharsets.UTF_8);
+    public String getRefreshToken(String password) throws IOException, InterruptedException {
+        HttpResponse<String> response = login(password);
+
+        if (response.statusCode() == 200) {
+            JsonObject newToken = gson.fromJson(response.body(), JsonObject.class);
+            return newToken.get("refreshJwt").getAsString();
+        }
+
+        throw new RuntimeException("Error in authentication: " + response.body());
     }
 
-    private String extractAccessToken(JsonObject newToken) {
-        return newToken.get("accessJwt").getAsString();
+    public HttpResponse<String> login(String password) throws IOException, InterruptedException {
+        String jsonBody = String.format(
+                "{\"identifier\":\"%s\", \"password\":\"%s\"}",
+                identifier,
+                password
+        );
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(blueskyPds))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public Path getTokenFilePath() {
-        return tokenFilePath;
+    public Path getFilePath() {
+        return filePath;
     }
 
-    public String getRefreshUrl() {
-        return refreshUrl;
+    public String getIdentifier() {
+        return identifier;
     }
 }

@@ -3,7 +3,7 @@ import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import viper.sentinox.BlueskyConnect;
-import viper.sentinox.BlueskyPrint;
+import viper.sentinox.BlueskyGet;
 
 import java.util.List;
 
@@ -11,18 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BlueskyPrintTest {
 
-    private BlueskyPrint blueskyPrint;
+    private BlueskyGet blueskyGet;
 
     @BeforeEach
     void setUp() {
-        blueskyPrint = new BlueskyPrint(new BlueskyConnect());
+        blueskyGet = new BlueskyGet(new BlueskyConnect());
     }
 
     @Test
     void formatPost_returnsPostText() {
         JsonObject post = createPost("Hola mundo");
 
-        String result = blueskyPrint.formatPost(post);
+        String result = blueskyGet.formatPost(post);
 
         assertEquals("Hola mundo", result);
     }
@@ -33,7 +33,7 @@ class BlueskyPrintTest {
         posts.add(createPost("Post 1"));
         posts.add(createPost("Post 2"));
 
-        List<String> result = blueskyPrint.getPosts(posts, 1);
+        List<String> result = blueskyGet.getPosts(posts);
 
         assertEquals(1, result.size());
     }
@@ -43,9 +43,9 @@ class BlueskyPrintTest {
         JsonArray posts = new JsonArray();
         posts.add(createPost("Post 1"));
 
-        List<String> result = blueskyPrint.getPosts(posts, 1);
+        List<String> result = blueskyGet.getPosts(posts);
 
-        assertEquals("Post 1", result.get(0));
+        assertEquals("Post 1", result.getFirst());
     }
 
     @Test
@@ -54,7 +54,7 @@ class BlueskyPrintTest {
         posts.add(createPost("Post 1"));
         posts.add(createPost("Post 2"));
 
-        List<String> result = blueskyPrint.getPosts(posts, 2);
+        List<String> result = blueskyGet.getPosts(posts);
 
         assertEquals("Post 2", result.get(1));
     }

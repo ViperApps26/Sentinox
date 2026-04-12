@@ -8,7 +8,6 @@ import org.jsoup.Jsoup;
 import java.io.IOException;
 
 public class BlueskyConnect {
-
     private final String baseUrl;
     private final String datePattern;
 
@@ -26,8 +25,10 @@ public class BlueskyConnect {
         this.finalDate = "2025-02-01T00:00:00Z";
     }
 
+
     public JsonObject connect(String token) throws IOException {
         String path = getBlueskyPath();
+
         Connection.Response response = request(path, token);
         String body = response.body();
 
@@ -67,7 +68,7 @@ public class BlueskyConnect {
         if (newDate.matches(datePattern)) {
             this.startDate = newDate + "T00:00:00Z";
         } else {
-            throw new IllegalArgumentException("Formato inválido, usa YYYY-MM-DD");
+            System.out.println("Formato inválido, usa YYYY-MM-DD");
         }
     }
 
@@ -75,7 +76,7 @@ public class BlueskyConnect {
         if (newDate.matches(datePattern)) {
             this.finalDate = newDate + "T00:00:00Z";
         } else {
-            throw new IllegalArgumentException("Formato inválido, usa YYYY-MM-DD");
+            System.out.println("Formato inválido, usa YYYY-MM-DD");
         }
     }
 

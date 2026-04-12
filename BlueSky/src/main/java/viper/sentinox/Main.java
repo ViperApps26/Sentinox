@@ -1,13 +1,32 @@
 package viper.sentinox;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
 
 public class Main {
-    static void main() {
-        IO.println(String.format("Hello and welcome!"));
+    public static void main(String[] args) throws Exception {
+        String token = args[0];
+        String password = args[1];
+        String databaseURL = args[2];
 
-        for (int i = 1; i <= 5; i++) {
-            IO.println("i = " + i);
+        BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
+        BlueskyConnect blueskyConnect = new BlueskyConnect();
+        BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
+        BlueskyPrint blueskyPrint = new BlueskyPrint(blueskyGet);
+
+        Control control = new Control(blueskyGetToken, blueskyConnect, blueskyPrint);
+
+
+        //DatabaseCreator.createDatabases(databaseURL);
+
+        Scanner scanner = new Scanner(System.in);
+        String command = control.askCommand(scanner);
+
+        while (!command.equals("exit")) {
+            control.processCommand(command, token, password, databaseURL);
+            command = control.askCommand(scanner);
         }
-
+        Files.delete(Path.of("BlueskyToken.txt"));
     }
 }

@@ -1,18 +1,16 @@
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import viper.sentinox.BlueskyGetToken;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class BlueskyGetTokenTest {
@@ -25,7 +23,7 @@ class BlueskyGetTokenTest {
     }
 
     @Test
-    void getToken_returnsAccessToken() throws IOException {
+    void getAccessToken_returnsAccessToken_andStoresRefreshToken() throws IOException, InterruptedException {
         String responseBody = """
                 {
                   "accessJwt": "new-access-token",
@@ -33,25 +31,18 @@ class BlueskyGetTokenTest {
                 }
                 """;
 
-        Connection connection = mock(Connection.class);
-        Connection.Response response = mock(Connection.Response.class);
+        HttpClient client = mock(HttpClient.class);
+        HttpResponse<String> response = mock(HttpResponse.class);
 
-        when(connection.ignoreContentType(true)).thenReturn(connection);
-        when(connection.header(anyString(), anyString())).thenReturn(connection);
-        when(connection.method(Connection.Method.POST)).thenReturn(connection);
-        when(connection.execute()).thenReturn(response);
+        when(response.statusCode()).thenReturn(200);
         when(response.body()).thenReturn(responseBody);
+        when(client.send(any(), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        try (MockedStatic<Jsoup> jsoupMock = mockStatic(Jsoup.class)) {
-            jsoupMock.when(() ->
-                            Jsoup.connect("https://bsky.social/xrpc/com.atproto.server.refreshSession"))
-                    .thenReturn(connection);
+        BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
 
-            BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
+        String token = blueskyGetToken.getAccessToken("old-refresh-token", "password123");
 
-            String token = blueskyGetToken.getToken("old-refresh-token");
-
-            assertEquals("new-access-token", token);
-        }
+        assertEquals("new-access-token", token);
+        assertEquals("new-refresh-token", Files.readString(TOKEN_FILE));
     }
 }
