@@ -1,87 +1,103 @@
 package viper.sentinox;
 
 import java.io.IOException;
+import java.util.Scanner;
 
-public class BlueskyCommand {
+public class BlueskyControl {
 
-    private final BlueskyGetToken tokenService;
+    private final BlueskyGetToken blueskyGetToken;
     private final BlueskyConnect blueskyConnect;
     private final BlueskyPrint blueskyPrint;
 
-    public BlueskyCommand(BlueskyGetToken tokenService,
+    public BlueskyControl(BlueskyGetToken blueskyGetToken,
                           BlueskyConnect blueskyConnect,
                           BlueskyPrint blueskyPrint) {
-        this.tokenService = tokenService;
+        this.blueskyGetToken = blueskyGetToken;
         this.blueskyConnect = blueskyConnect;
         this.blueskyPrint = blueskyPrint;
     }
 
-    public void execute(String[] parts, String token, String password, String databaseURL)
-            throws IOException, InterruptedException {
+    public void processCommand(String command, String token, String password, String databaseURL) throws IOException, InterruptedException {
+        String[] parts = command.split(" ");
 
         switch (parts[0]) {
-
             case "bluesky_set_query" -> {
-                if (validate(parts, 2)) {
+                if (validate(parts, 2, 2,-1)) {
                     blueskyConnect.setQuery(parts[1]);
                 }
             }
-
             case "bluesky_set_limit" -> {
-                if (validate(parts, 2)) {
+                if (validate(parts, 2, 2,1)) {
                     blueskyConnect.setLimit(Integer.parseInt(parts[1]));
                 }
             }
-
             case "bluesky_set_start" -> {
-                if (validate(parts, 2)) {
+                if (validate(parts, 2, 2,-1)) {
                     blueskyConnect.setStartDate(parts[1]);
                 }
             }
-
             case "bluesky_set_end" -> {
-                if (validate(parts, 2)) {
+                if (validate(parts, 2, 2,-1)) {
                     blueskyConnect.setFinalDate(parts[1]);
                 }
             }
 
             case "bluesky_print_posts" -> {
-                String accessToken = tokenService.getAccessToken(token, password);
-                blueskyPrint.printPosts(accessToken);
+                String blueskyToken = blueskyGetToken.getAccessToken(token, password);
+                blueskyPrint.printPosts(blueskyToken);
             }
-
+            /*
             case "bluesky_save_posts" -> {
-                String accessToken = tokenService.getAccessToken(token, password);
-                DatabaseInsert.saveBlueskyPosts(accessToken, databaseURL);
+                String blueskyToken = blueskyGetToken.getAccessToken(token, password);
+                DatabaseInsert.saveBlueskyPosts(blueskyToken, databaseURL);
             }
 
             case "bluesky_show_db" -> DataViewer.showBlueskyPosts(databaseURL);
+            */
 
-            case "bluesky_help" -> help();
+            case "help" -> help();
+            default -> System.out.println("Command not found");
         }
+    }
+
+    public boolean validate(String[] parts, int minLength, int maxLength, int positionToCheck) {
+        if (parts.length < minLength | parts.length > maxLength) {
+            System.out.println("Incorrect command length");
+            return false;
+        } else if (positionToCheck >= 0 && !parts[positionToCheck].matches("\\d+")) {
+            System.out.println("Incorrect attribute type");
+            return false;
+        }
+
+        return true;
+    }
+
+    public String askCommand(Scanner scanner) {
+        System.out.println("Write a command\n(Write \"help\" if you don't know any command)");
+        return scanner.nextLine().trim();
     }
 
     public void help() {
         System.out.println("""
-            ------------------------- BLUESKY ----------------------
+            - HELP - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            command: description | params
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            GENERAL
+            exit: Exit the program
+            help: Show this help menu
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            BLUESKY
+            bluesky_set_query: Set a search message | search
+            bluesky_set_limit: Set a limit of results | number
+            bluesky_set_start: Set a start date to search | date("YYYY-MM-DD")
+            bluesky_set_end: Set an end date to search | date("YYYY-MM-DD")
 
-            bluesky_set_query <search>: Set the search query for Bluesky
-            bluesky_set_limit <number>: Set the maximum number of posts
-            bluesky_set_start <YYYY-MM-DD>: Set the start date
-            bluesky_set_end <YYYY-MM-DD>: Set the end date
-            bluesky_print_posts: Print posts from Bluesky
-            bluesky_save_posts: Save posts into the database
-            bluesky_show_db: Show stored Bluesky posts
-
-            -------------------------------------------------------
+            bluesky_print_posts: Show all messages from posts
+            
+            bluesky_save_posts: Save posts from Bluesky into the database
+            
+            bluesky_show_db: Show all stored Bluesky posts
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             """);
-    }
-
-    private boolean validate(String[] parts, int expectedLength) {
-        if (parts.length != expectedLength) {
-            System.out.println("Incorrect command length");
-            return false;
-        }
-        return true;
     }
 }

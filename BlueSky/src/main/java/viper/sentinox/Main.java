@@ -15,17 +15,17 @@ public class Main {
         BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
         BlueskyPrint blueskyPrint = new BlueskyPrint(blueskyGet);
 
-        Control control = new Control(blueskyGetToken, blueskyConnect, blueskyPrint);
+        BlueskyControl blueskyControl = new BlueskyControl(blueskyGetToken, blueskyConnect, blueskyPrint);
 
 
         //DatabaseCreator.createDatabases(databaseURL);
 
         Scanner scanner = new Scanner(System.in);
-        String command = control.askCommand(scanner);
+        String command = blueskyControl.askCommand(scanner);
 
         while (!command.equals("exit")) {
-            control.processCommand(command, token, password, databaseURL);
-            command = control.askCommand(scanner);
+            blueskyControl.processCommand(command, token, password, databaseURL);
+            command = blueskyControl.askCommand(scanner);
         }
         Files.delete(Path.of("BlueskyToken.txt"));
     }
