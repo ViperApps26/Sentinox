@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-
     <parent>
         <groupId>viper.sentinox</groupId>
         <artifactId>sentinox</artifactId>
@@ -53,4 +52,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

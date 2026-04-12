@@ -1,7 +1,7 @@
 package viper.sentinox;
 
-import java.io.IOException;
 import java.util.List;
+import java.io.IOException;
 
 public class PubChemPrint {
 
@@ -30,4 +30,4 @@ public class PubChemPrint {
             System.out.println(mechanism);
         }
     }
-}//test//test
+}

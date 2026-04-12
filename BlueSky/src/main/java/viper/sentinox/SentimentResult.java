@@ -2,8 +2,8 @@ package viper.sentinox;
 
 public class SentimentResult {
 
-    private final int positive;
     private final int negative;
+    private final int positive;
     private final int neutral;
     private final int total;
     private final String overall;
@@ -15,7 +15,7 @@ public class SentimentResult {
         this.total = positive + negative + neutral;
         this.overall = overall;
     }
-//test//test
+
     public int getPositive() {
         return positive;
     }

@@ -1,6 +1,6 @@
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import viper.sentinox.PubChemConnect;
 
 import java.io.IOException;
@@ -43,4 +43,4 @@ class PubChemConnectTest {
         assertFalse(cid.isBlank());
         assertTrue(cid.matches("\\d+"));
     }
-}//test//test
+}

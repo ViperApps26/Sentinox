@@ -1,8 +1,9 @@
 package viper.sentinox;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,4 +119,4 @@ public class PubChemGet {
 
         return null;
     }
-}//test//test
+}

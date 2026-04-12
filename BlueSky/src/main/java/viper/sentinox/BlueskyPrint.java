@@ -28,7 +28,7 @@ public class BlueskyPrint {
         for (String post : posts) {
             System.out.println(post);
         }
-    }//test
+    }
 
     public List<String> getPosts(JsonArray posts, int quantity) {
         List<String> postsArray = new ArrayList<>();

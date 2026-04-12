@@ -1,10 +1,9 @@
 package viper.sentinox;
-
+import java.util.Properties;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-import java.util.Properties;
 
 public class SentimentAnalysis {
 
@@ -73,5 +72,5 @@ public class SentimentAnalysis {
         } else {
             return "Neutral";
         }
-    }//end//test
+    }
 }
