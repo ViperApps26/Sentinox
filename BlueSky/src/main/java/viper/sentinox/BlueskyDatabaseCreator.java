@@ -14,7 +14,6 @@ public class BlueskyDatabaseCreator {
                 medicine TEXT NOT NULL,
                 author_handle TEXT,
                 post_text TEXT NOT NULL,
-                post_uri TEXT,
                 created_at TEXT,
                 captured_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );

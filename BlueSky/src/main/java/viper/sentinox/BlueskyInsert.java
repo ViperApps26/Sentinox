@@ -24,7 +24,6 @@ public class BlueskyInsert {
 
         List<String> authors = blueskyGet.getAuthors(postAttributes);
         List<String> posts = blueskyGet.getPosts(postAttributes);
-        List<String> uris = blueskyGet.getUris(postAttributes);
         List<String> creationDates = blueskyGet.getCreationDate(postAttributes);
 
         if (posts.isEmpty()) {
@@ -38,7 +37,6 @@ public class BlueskyInsert {
                     blueskyConnect.getQuery(),
                     authors,
                     posts,
-                    uris,
                     creationDates
             );
         } catch (SQLException e) {
@@ -50,12 +48,11 @@ public class BlueskyInsert {
                                     String medicine,
                                     List<String> authors,
                                     List<String> posts,
-                                    List<String> uris,
                                     List<String> creationDates) throws SQLException {
 
         String sql = """
-            INSERT INTO bluesky_posts (medicine, author_handle, post_text, post_uri, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO bluesky_posts (medicine, author_handle, post_text, created_at)
+            VALUES (?, ?, ?, ?)
             """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -63,8 +60,7 @@ public class BlueskyInsert {
                 stmt.setString(1, medicine);
                 stmt.setString(2, authors.get(i));
                 stmt.setString(3, posts.get(i));
-                stmt.setString(4, uris.get(i));
-                stmt.setString(5, creationDates.get(i));
+                stmt.setString(4, creationDates.get(i));
                 stmt.executeUpdate();
             }
         }

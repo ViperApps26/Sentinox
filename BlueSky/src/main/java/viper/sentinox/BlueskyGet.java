@@ -55,23 +55,6 @@ public class BlueskyGet {
                 .getAsString();
     }
 
-    public List<String> getUris(JsonArray postAttributes) {
-
-        List<String> uris = new ArrayList<>();
-
-        for (int i = 0; i < postAttributes.size(); i++) {
-            JsonObject uri = postAttributes.get(i).getAsJsonObject();
-            uris.add(formatUri(uri));
-        }
-        return uris;
-    }
-
-    public String formatUri(JsonObject uri) {
-        return uri
-                .get("uri")
-                .getAsString();
-    }
-
     public List<String> getCreationDate(JsonArray postAttributes) {
 
         List<String> dates = new ArrayList<>();
