@@ -31,4 +31,5 @@ Another thing we spent some time working on, was creating a diverse group of tes
 We also focused on developing the different tests to validate the code we built, following the TDD approach.
 
 
+### Sprint 2
 
