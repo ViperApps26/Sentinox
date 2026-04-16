@@ -1,36 +1,42 @@
 package viper.sentinox;
 
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-
+    public static void main(String[] args) {
         String databaseURL = args[0];
 
-        PubChemConnect pubChemConnect = new PubChemConnect();
-        PubChemGet pubChemGet = new PubChemGet(pubChemConnect);
-        PubChemPrint pubChemPrint = new PubChemPrint(pubChemGet);
+        PubChemControl pubChemControl = createPubChemEnvironment();
+        createDatabase(databaseURL);
 
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        autoExecute(scheduler, pubChemControl, databaseURL);
+    }
+
+    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl pubChemControl, String databaseURL) {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                pubChemControl.execute(databaseURL);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, 1, TimeUnit.HOURS);
+    }
+
+    private static PubChemControl createPubChemEnvironment() {
+        PubChemConnect connect = new PubChemConnect();
+        PubChemGet get = new PubChemGet(connect);
+        PubChemInsert insert = new PubChemInsert(connect, get);
+        PubChemFeeder feeder = new PubChemFeeder(insert, connect);
+
+        return new PubChemControl(feeder);
+    }
+
+    private static void createDatabase(String databaseURL) {
         PubChemDatabaseCreator pubChemDatabaseCreator = new PubChemDatabaseCreator();
-        PubChemInsert pubChemInsert = new PubChemInsert(pubChemConnect, pubChemGet);
-        PubChemDataViewer pubChemDataViewer = new PubChemDataViewer();
-        PubChemFeeder pubChemFeeder = new PubChemFeeder(pubChemInsert);
-
-        PubChemControl pubChemControl = new PubChemControl(
-                pubChemConnect,
-                pubChemPrint,
-                pubChemFeeder,
-                pubChemDataViewer
-        );
-
         pubChemDatabaseCreator.createDatabase(databaseURL);
-
-        Scanner scanner = new Scanner(System.in);
-        String command = pubChemControl.askCommand(scanner);
-
-        while (!command.equals("exit")) {
-            pubChemControl.processCommand(command, databaseURL);
-            command = pubChemControl.askCommand(scanner);
-        }
     }
 }

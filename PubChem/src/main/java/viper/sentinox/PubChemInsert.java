@@ -3,6 +3,7 @@ package viper.sentinox;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PubChemInsert {
 
@@ -14,30 +15,18 @@ public class PubChemInsert {
         this.pubChemGet = pubChemGet;
     }
 
-    public void saveReactions(String databaseURL) throws IOException {
-        ArrayList<String> reactions = pubChemGet.getReactions();
 
-        if (reactions.isEmpty()) {
-            System.out.println("No reactions to insert");
-            return;
-        }
-
-        String medicine = pubChemConnect.getMedicine();
-        String cid = pubChemConnect.getCID();
-
+    public void getMedicinesList(List<String> medicines, String databaseURL) {
         try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            insertMedicine(conn, cid, medicine);
-            int medicineId = getMedicineDatabaseId(conn, cid);
+            String sql = "SELECT id, name FROM medicines";
 
-            if (medicineId == -1) {
-                System.out.println("Medicine not found in database");
-                return;
+            try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    medicines.add(rs.getString("name"));
+                }
             }
-
-            insertReactions(conn, medicineId, reactions);
-
         } catch (SQLException e) {
-            System.out.println("Error connecting to the PubChem database");
+            System.out.println("Error connecting to the database");
         }
     }
 
@@ -53,13 +42,6 @@ public class PubChemInsert {
         }
     }
 
-    public void saveMedicinesFromList(String[] medicines, String databaseURL) throws IOException {
-        for (String medicine : medicines) {
-            pubChemConnect.setMedicine(medicine);
-            saveMedicine(databaseURL);
-        }
-    }
-
     private void insertMedicine(Connection conn, String cid, String medicine) throws SQLException {
         String sql = """
             INSERT OR IGNORE INTO medicines (cid, name)
@@ -70,6 +52,46 @@ public class PubChemInsert {
             stmt.setString(1, cid);
             stmt.setString(2, medicine);
             stmt.executeUpdate();
+        }
+    }
+
+    public void saveReactions(String databaseURL) throws IOException {
+        ArrayList<String> reactions = pubChemGet.getReactions();
+
+        String medicine = pubChemConnect.getMedicine();
+        String cid = pubChemConnect.getCID();
+
+        if (reactions.isEmpty()) {
+            System.out.println(medicine + " have no reactions to insert");
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(databaseURL)) {
+            int medicineId = getMedicineDatabaseId(conn, cid);
+
+            if (medicineId == -1) {
+                System.out.println(medicine + " not found in database");
+                return;
+            }
+            insertReactions(conn, medicineId, reactions);
+            System.out.println(medicine + " reactions added correctly");
+        } catch (SQLException e) {
+            System.out.println("Error connecting to the PubChem database");
+        }
+    }
+
+    private void insertReactions(Connection conn, int medicineId, ArrayList<String> reactions) throws SQLException {
+        String sql = """
+            INSERT INTO pubchem_reactions (medicine_id, reaction)
+            VALUES (?, ?)
+            """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (String reaction : reactions) {
+                stmt.setInt(1, medicineId);
+                stmt.setString(2, reaction);
+                stmt.executeUpdate();
+            }
         }
     }
 
@@ -90,20 +112,5 @@ public class PubChemInsert {
         }
 
         return -1;
-    }
-
-    private void insertReactions(Connection conn, int medicineId, ArrayList<String> reactions) throws SQLException {
-        String sql = """
-            INSERT INTO pubchem_reactions (medicine_id, reaction)
-            VALUES (?, ?)
-            """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (String reaction : reactions) {
-                stmt.setInt(1, medicineId);
-                stmt.setString(2, reaction);
-                stmt.executeUpdate();
-            }
-        }
     }
 }

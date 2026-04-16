@@ -14,6 +14,7 @@ public class PubChemGet {
         this.pubChemConnect = pubChemConnect;
     }
 
+
     public JsonObject getAllInfo() throws IOException {
         JsonObject connection = pubChemConnect.connect();
 

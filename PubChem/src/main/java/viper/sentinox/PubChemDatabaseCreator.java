@@ -28,7 +28,7 @@ public class PubChemDatabaseCreator {
             """;
 
         try (Connection conn = DriverManager.getConnection(databaseURL);
-             Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
 
             stmt.execute(createMedicinesTable);
             stmt.execute(createReactionsTable);

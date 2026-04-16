@@ -29,7 +29,6 @@ public class BlueskyDataViewer {
 
         } catch (SQLException e) {
             System.out.println("Error connecting to the Bluesky database");
-            e.printStackTrace();
         }
     }
 }

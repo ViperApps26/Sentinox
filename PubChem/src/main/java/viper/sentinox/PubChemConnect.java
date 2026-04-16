@@ -19,6 +19,7 @@ public class PubChemConnect {
         this.medicine = "ibuprofen";
     }
 
+
     public String getCID() throws IOException {
         String path = String.format("/compound/name/%s/cids/JSON", medicine);
 

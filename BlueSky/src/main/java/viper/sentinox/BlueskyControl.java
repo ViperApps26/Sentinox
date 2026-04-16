@@ -5,20 +5,14 @@ import java.util.Scanner;
 
 public class BlueskyControl {
 
-    private final BlueskyGetToken blueskyGetToken;
     private final BlueskyConnect blueskyConnect;
-    private final BlueskyPrint blueskyPrint;
     private final BlueskyFeeder blueskyFeeder;
     private final BlueskyDataViewer blueskyDataViewer;
 
-    public BlueskyControl(BlueskyGetToken blueskyGetToken,
-                          BlueskyConnect blueskyConnect,
-                          BlueskyPrint blueskyPrint,
+    public BlueskyControl(BlueskyConnect blueskyConnect,
                           BlueskyFeeder blueskyFeeder,
                           BlueskyDataViewer blueskyDataViewer) {
-        this.blueskyGetToken = blueskyGetToken;
         this.blueskyConnect = blueskyConnect;
-        this.blueskyPrint = blueskyPrint;
         this.blueskyFeeder = blueskyFeeder;
         this.blueskyDataViewer = blueskyDataViewer;
     }
@@ -51,11 +45,6 @@ public class BlueskyControl {
                 if (validate(parts, 2, 2, -1)) {
                     blueskyConnect.setFinalDate(parts[1]);
                 }
-            }
-
-            case "bluesky_print_posts" -> {
-                String blueskyToken = blueskyGetToken.getAccessToken(token, password);
-                blueskyPrint.printPosts(blueskyToken);
             }
 
             case "bluesky_save_posts" -> blueskyFeeder.feedCurrentQuery(token, password, databaseURL);
@@ -97,7 +86,6 @@ public class BlueskyControl {
             bluesky_set_limit: Set a limit of results | number
             bluesky_set_start: Set a start date to search | YYYY-MM-DD
             bluesky_set_end: Set an end date to search | YYYY-MM-DD
-            bluesky_print_posts: Show all messages from posts
             bluesky_save_posts: Save posts from Bluesky into the database
             bluesky_show_db: Show all stored Bluesky posts
             - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

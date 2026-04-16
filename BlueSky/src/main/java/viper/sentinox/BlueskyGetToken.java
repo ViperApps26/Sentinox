@@ -83,12 +83,4 @@ public class BlueskyGetToken {
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
-
-    public Path getFilePath() {
-        return filePath;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
 }

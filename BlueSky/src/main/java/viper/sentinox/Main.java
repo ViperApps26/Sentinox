@@ -14,7 +14,6 @@ public class Main {
         BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
         BlueskyConnect blueskyConnect = new BlueskyConnect();
         BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
-        BlueskyPrint blueskyPrint = new BlueskyPrint(blueskyGet);
 
         BlueskyDatabaseCreator blueskyDatabaseCreator = new BlueskyDatabaseCreator();
         BlueskyInsert blueskyInsert = new BlueskyInsert(blueskyConnect, blueskyGet);
@@ -22,9 +21,7 @@ public class Main {
         BlueskyFeeder blueskyFeeder = new BlueskyFeeder(blueskyGetToken, blueskyInsert);
 
         BlueskyControl blueskyControl = new BlueskyControl(
-                blueskyGetToken,
                 blueskyConnect,
-                blueskyPrint,
                 blueskyFeeder,
                 blueskyDataViewer
         );
