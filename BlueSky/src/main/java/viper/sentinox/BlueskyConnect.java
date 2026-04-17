@@ -19,12 +19,11 @@ public class BlueskyConnect {
     public BlueskyConnect() {
         this.baseUrl = "https://bsky.social/xrpc";
         this.datePattern = "\\d{4}-\\d{2}-\\d{2}";
-        this.query = "nolotil";
+        this.query = "ibuprofen";
         this.limit = 10;
         this.startDate = "2025-01-01T00:00:00Z";
         this.finalDate = "2025-02-01T00:00:00Z";
     }
-
 
     public JsonObject connect(String token) throws IOException {
         String path = getBlueskyPath();
@@ -68,7 +67,7 @@ public class BlueskyConnect {
         if (newDate.matches(datePattern)) {
             this.startDate = newDate + "T00:00:00Z";
         } else {
-            System.out.println("Formato inválido, usa YYYY-MM-DD");
+            System.out.println("Invalid format, use YYYY-MM-DD");
         }
     }
 
@@ -76,7 +75,7 @@ public class BlueskyConnect {
         if (newDate.matches(datePattern)) {
             this.finalDate = newDate + "T00:00:00Z";
         } else {
-            System.out.println("Formato inválido, usa YYYY-MM-DD");
+            System.out.println("Invalid format, use YYYY-MM-DD");
         }
     }
 

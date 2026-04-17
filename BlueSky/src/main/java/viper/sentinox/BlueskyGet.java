@@ -11,12 +11,12 @@ public class BlueskyGet {
 
     private final BlueskyConnect blueskyConnect;
 
-    public BlueskyGet (BlueskyConnect blueskyConnect) {
+    public BlueskyGet(BlueskyConnect blueskyConnect) {
         this.blueskyConnect = blueskyConnect;
     }
 
-    public JsonArray getPostsAttributes(String blueskyToken) throws IOException {
-        JsonObject object = blueskyConnect.connect(blueskyToken);
+    public JsonArray getPostsAttributes(String token) throws IOException {
+        JsonObject object = blueskyConnect.connect(token);
         return object.getAsJsonArray("posts");
     }
 
@@ -25,51 +25,40 @@ public class BlueskyGet {
 
         for (int i = 0; i < postAttributes.size(); i++) {
             JsonObject post = postAttributes.get(i).getAsJsonObject();
-            posts.add(formatPost(post));
+            posts.add(
+                    post.getAsJsonObject("record")
+                            .get("text")
+                            .getAsString()
+            );
         }
         return posts;
     }
 
-    public String formatPost(JsonObject post) {
-        return post
-                .getAsJsonObject("record")
-                .get("text")
-                .getAsString();
-    }
-
     public List<String> getAuthors(JsonArray postAttributes) {
-
         List<String> authors = new ArrayList<>();
 
         for (int i = 0; i < postAttributes.size(); i++) {
-            JsonObject author = postAttributes.get(i).getAsJsonObject();
-            authors.add(formatAuthor(author));
+            JsonObject post = postAttributes.get(i).getAsJsonObject();
+            authors.add(
+                    post.getAsJsonObject("author")
+                            .get("handle")
+                            .getAsString()
+            );
         }
         return authors;
     }
 
-    public String formatAuthor(JsonObject author) {
-        return author
-                .getAsJsonObject("author")
-                .get("handle")
-                .getAsString();
-    }
-
-    public List<String> getCreationDate(JsonArray postAttributes) {
-
+    public List<String> getCreationDates(JsonArray postAttributes) {
         List<String> dates = new ArrayList<>();
 
         for (int i = 0; i < postAttributes.size(); i++) {
-            JsonObject date = postAttributes.get(i).getAsJsonObject();
-            dates.add(formatCreatedDate(date));
+            JsonObject post = postAttributes.get(i).getAsJsonObject();
+            dates.add(
+                    post.getAsJsonObject("record")
+                            .get("createdAt")
+                            .getAsString()
+            );
         }
         return dates;
-    }
-
-    public String formatCreatedDate(JsonObject date) {
-        return date
-                .getAsJsonObject("record")
-                .get("createdAt")
-                .getAsString();
     }
 }
