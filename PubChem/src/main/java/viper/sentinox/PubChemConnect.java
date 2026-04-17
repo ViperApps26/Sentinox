@@ -11,14 +11,12 @@ import java.io.IOException;
 public class PubChemConnect {
 
     private final String baseUrl;
-
     private String medicine;
 
     public PubChemConnect() {
         this.baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest";
         this.medicine = "ibuprofen";
     }
-
 
     public String getCID() throws IOException {
         String path = String.format("/compound/name/%s/cids/JSON", medicine);
@@ -30,16 +28,15 @@ public class PubChemConnect {
 
         return json.getAsJsonObject("IdentifierList")
                 .getAsJsonArray("CID")
-                .get(0).getAsString();
+                .get(0)
+                .getAsString();
     }
 
     public JsonObject connect() throws IOException {
         String cid = getCID();
-
         String path = "/pug_view/data/compound/" + cid + "/JSON";
 
         Connection.Response response = request(path);
-
         String body = response.body();
 
         return parseOrNull(body);

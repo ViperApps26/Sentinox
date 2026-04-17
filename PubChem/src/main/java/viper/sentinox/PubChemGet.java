@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class PubChemGet {
+
     private final PubChemConnect pubChemConnect;
 
     public PubChemGet(PubChemConnect pubChemConnect) {
         this.pubChemConnect = pubChemConnect;
     }
-
 
     public JsonObject getAllInfo() throws IOException {
         JsonObject connection = pubChemConnect.connect();
@@ -26,26 +26,30 @@ public class PubChemGet {
     public ArrayList<String> getReactions() throws IOException {
         ArrayList<String> reactions = new ArrayList<>();
         JsonObject section = getSection("Adverse Effects");
+
         if (section != null) {
             extractElements(section, reactions);
         }
+
         return reactions;
     }
 
     public ArrayList<String> getMechanisms() throws IOException {
         ArrayList<String> mechanisms = new ArrayList<>();
         JsonObject section = getSection("Mechanism of Action");
+
         if (section != null) {
             extractElements(section, mechanisms);
         }
+
         return mechanisms;
     }
 
     private void extractElements(JsonObject sectionParameters, ArrayList<String> infoList) {
         JsonArray sectionDetails = sectionParameters.getAsJsonArray("Information");
 
-        for (JsonElement InfoDetails : sectionDetails) {
-            JsonArray stringsDetails = InfoDetails
+        for (JsonElement infoDetails : sectionDetails) {
+            JsonArray stringsDetails = infoDetails
                     .getAsJsonObject()
                     .getAsJsonObject("Value")
                     .getAsJsonArray("StringWithMarkup");
@@ -61,7 +65,6 @@ public class PubChemGet {
         }
     }
 
-
     private JsonObject getSection(String search) throws IOException {
         JsonObject allInfo = getAllInfo();
 
@@ -75,19 +78,19 @@ public class PubChemGet {
             JsonObject section = element.getAsJsonObject();
 
             JsonObject foundSection = verifyTitle(search, section);
-            if (foundSection != null) return foundSection;
+            if (foundSection != null) {
+                return foundSection;
+            }
 
             if (section.has("Section")) {
-                foundSection = recursiveSearch(
-                        section.getAsJsonArray("Section"),
-                        search
-                );
+                foundSection = recursiveSearch(section.getAsJsonArray("Section"), search);
 
                 if (foundSection != null) {
                     return foundSection;
                 }
             }
         }
+
         return null;
     }
 
@@ -99,7 +102,7 @@ public class PubChemGet {
         if (title.equalsIgnoreCase(search)) {
             return section;
         }
+
         return null;
     }
-
 }

@@ -1,116 +1,48 @@
 package viper.sentinox;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PubChemInsert {
 
     private final PubChemConnect pubChemConnect;
     private final PubChemGet pubChemGet;
+    private final PubChemPublisher pubChemPublisher;
+    private final Gson gson;
 
     public PubChemInsert(PubChemConnect pubChemConnect, PubChemGet pubChemGet) {
         this.pubChemConnect = pubChemConnect;
         this.pubChemGet = pubChemGet;
+        this.pubChemPublisher = new PubChemPublisher();
+        this.gson = new Gson();
     }
 
-
-    public void getMedicinesList(List<String> medicines, String databaseURL) {
-        try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            String sql = "SELECT id, name FROM medicines";
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    medicines.add(rs.getString("name"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error connecting to the database");
-        }
-    }
-
-    public void saveMedicine(String databaseURL) throws IOException {
-        String medicine = pubChemConnect.getMedicine();
-        String cid = pubChemConnect.getCID();
-
-        try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            insertMedicine(conn, cid, medicine);
-            System.out.println(medicine + " added correctly");
-        } catch (SQLException e) {
-            System.out.println("Error inserting " + medicine);
-        }
-    }
-
-    private void insertMedicine(Connection conn, String cid, String medicine) throws SQLException {
-        String sql = """
-            INSERT OR IGNORE INTO medicines (cid, name)
-            VALUES (?, ?)
-            """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, cid);
-            stmt.setString(2, medicine);
-            stmt.executeUpdate();
-        }
-    }
-
-    public void saveReactions(String databaseURL) throws IOException {
+    public void publishReactions() throws IOException {
         ArrayList<String> reactions = pubChemGet.getReactions();
 
         String medicine = pubChemConnect.getMedicine();
         String cid = pubChemConnect.getCID();
 
         if (reactions.isEmpty()) {
-            System.out.println(medicine + " have no reactions to insert");
+            System.out.println(medicine + " has no reactions to publish");
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            int medicineId = getMedicineDatabaseId(conn, cid);
+        for (String reaction : reactions) {
+            PubChemEvent event = new PubChemEvent(
+                    System.currentTimeMillis(),
+                    "PubChemFeeder",
+                    medicine,
+                    cid,
+                    reaction
+            );
 
-            if (medicineId == -1) {
-                System.out.println(medicine + " not found in database");
-                return;
-            }
-            insertReactions(conn, medicineId, reactions);
-            System.out.println(medicine + " reactions added correctly");
-        } catch (SQLException e) {
-            System.out.println("Error connecting to the PubChem database");
-        }
-    }
-
-    private void insertReactions(Connection conn, int medicineId, ArrayList<String> reactions) throws SQLException {
-        String sql = """
-            INSERT INTO pubchem_reactions (medicine_id, reaction)
-            VALUES (?, ?)
-            """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (String reaction : reactions) {
-                stmt.setInt(1, medicineId);
-                stmt.setString(2, reaction);
-                stmt.executeUpdate();
-            }
-        }
-    }
-
-    private int getMedicineDatabaseId(Connection conn, String cid) throws SQLException {
-        String sql = """
-            SELECT id FROM medicines
-            WHERE cid = ?
-            """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, cid);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
+            String json = gson.toJson(event);
+            pubChemPublisher.publish(json);
         }
 
-        return -1;
+        System.out.println(medicine + " reactions published correctly");
     }
 }

@@ -1,12 +1,9 @@
 package viper.sentinox;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 public class BlueskyInsert {
@@ -14,6 +11,8 @@ public class BlueskyInsert {
     private final BlueskyConnect blueskyConnect;
     private final BlueskyGet blueskyGet;
     private final SentimentAnalysis sentimentAnalysis;
+    private final BlueskyPublisher blueskyPublisher;
+    private final Gson gson;
 
     public BlueskyInsert(BlueskyConnect blueskyConnect,
                          BlueskyGet blueskyGet,
@@ -21,6 +20,8 @@ public class BlueskyInsert {
         this.blueskyConnect = blueskyConnect;
         this.blueskyGet = blueskyGet;
         this.sentimentAnalysis = sentimentAnalysis;
+        this.blueskyPublisher = new BlueskyPublisher();
+        this.gson = new Gson();
     }
 
     public void savePosts(String token, String databaseURL) throws IOException {
@@ -31,49 +32,41 @@ public class BlueskyInsert {
         List<String> creationDates = blueskyGet.getCreationDates(postAttributes);
 
         if (posts.isEmpty()) {
-            System.out.println(blueskyConnect.getQuery() + " has no posts to insert");
+            System.out.println(blueskyConnect.getQuery() + " has no posts to publish");
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            insertBlueskyPosts(
-                    conn,
-                    blueskyConnect.getQuery(),
-                    authors,
-                    posts,
-                    creationDates
-            );
+        publishBlueskyPosts(
+                blueskyConnect.getQuery(),
+                authors,
+                posts,
+                creationDates
+        );
 
-            System.out.println(blueskyConnect.getQuery() + " posts added correctly");
-
-        } catch (SQLException e) {
-            System.out.println("Error connecting to the Bluesky database");
-            e.printStackTrace();
-        }
+        System.out.println(blueskyConnect.getQuery() + " posts published correctly");
     }
 
-    private void insertBlueskyPosts(Connection conn,
-                                    String medicine,
-                                    List<String> authors,
-                                    List<String> posts,
-                                    List<String> creationDates) throws SQLException {
+    private void publishBlueskyPosts(String medicine,
+                                     List<String> authors,
+                                     List<String> posts,
+                                     List<String> creationDates) {
 
-        String sql = """
-            INSERT INTO bluesky_posts (medicine, author_handle, post_text, sentiment, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """;
+        for (int i = 0; i < posts.size(); i++) {
+            String text = posts.get(i);
+            String sentiment = sentimentAnalysis.analyze(text).getOverall();
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (int i = 0; i < posts.size(); i++) {
-                String sentiment = sentimentAnalysis.analyze(posts.get(i)).getOverall();
+            BlueskyEvent event = new BlueskyEvent(
+                    System.currentTimeMillis(),
+                    "BlueskyFeeder",
+                    medicine,
+                    authors.get(i),
+                    text,
+                    sentiment,
+                    creationDates.get(i)
+            );
 
-                stmt.setString(1, medicine);
-                stmt.setString(2, authors.get(i));
-                stmt.setString(3, posts.get(i));
-                stmt.setString(4, sentiment);
-                stmt.setString(5, creationDates.get(i));
-                stmt.executeUpdate();
-            }
+            String json = gson.toJson(event);
+            blueskyPublisher.publish(json);
         }
     }
 }

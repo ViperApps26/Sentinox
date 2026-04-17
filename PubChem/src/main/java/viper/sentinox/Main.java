@@ -7,19 +7,16 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        String databaseURL = args[0];
-
         PubChemControl pubChemControl = createPubChemEnvironment();
-        createDatabase(databaseURL);
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        autoExecute(scheduler, pubChemControl, databaseURL);
+        autoExecute(scheduler, pubChemControl);
     }
 
-    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl pubChemControl, String databaseURL) {
+    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl pubChemControl) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                pubChemControl.execute(databaseURL);
+                pubChemControl.execute();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -33,10 +30,5 @@ public class Main {
         PubChemFeeder feeder = new PubChemFeeder(insert, connect);
 
         return new PubChemControl(feeder);
-    }
-
-    private static void createDatabase(String databaseURL) {
-        PubChemDatabaseCreator pubChemDatabaseCreator = new PubChemDatabaseCreator();
-        pubChemDatabaseCreator.createDatabase(databaseURL);
     }
 }
