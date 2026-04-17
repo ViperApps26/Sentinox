@@ -1,8 +1,6 @@
 package viper.sentinox;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlueskyFeeder {
 
@@ -18,16 +16,11 @@ public class BlueskyFeeder {
         this.blueskyConnect = blueskyConnect;
     }
 
-    public void feedMedicines(String token, String password, String databaseURL)
+    public void feedMedicinesFromList(String[] medicines,
+                                      String token,
+                                      String password,
+                                      String databaseURL)
             throws IOException, InterruptedException {
-
-        List<String> medicines = new ArrayList<>();
-        blueskyInsert.getMedicinesList(medicines, databaseURL);
-
-        if (medicines.isEmpty()) {
-            System.out.println("No medicines found in database");
-            return;
-        }
 
         String accessToken = blueskyGetToken.getAccessToken(token, password);
 

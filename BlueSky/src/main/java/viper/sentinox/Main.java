@@ -7,6 +7,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
+        if (args.length < 3) {
+            System.out.println("Use: java viper.sentinox.Main <refreshToken> <password> <databaseURL>");
+            return;
+        }
+
         String token = args[0];
         String password = args[1];
         String databaseURL = args[2];
@@ -36,7 +41,8 @@ public class Main {
         BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
         BlueskyConnect blueskyConnect = new BlueskyConnect();
         BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
-        BlueskyInsert blueskyInsert = new BlueskyInsert(blueskyConnect, blueskyGet);
+        SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
+        BlueskyInsert blueskyInsert = new BlueskyInsert(blueskyConnect, blueskyGet, sentimentAnalysis);
         BlueskyFeeder blueskyFeeder = new BlueskyFeeder(blueskyGetToken, blueskyInsert, blueskyConnect);
 
         return new BlueskyControl(blueskyFeeder);

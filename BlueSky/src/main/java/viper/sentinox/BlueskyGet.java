@@ -17,6 +17,11 @@ public class BlueskyGet {
 
     public JsonArray getPostsAttributes(String token) throws IOException {
         JsonObject object = blueskyConnect.connect(token);
+
+        if (object == null || !object.has("posts")) {
+            return new JsonArray();
+        }
+
         return object.getAsJsonArray("posts");
     }
 
@@ -31,6 +36,7 @@ public class BlueskyGet {
                             .getAsString()
             );
         }
+
         return posts;
     }
 
@@ -45,6 +51,7 @@ public class BlueskyGet {
                             .getAsString()
             );
         }
+
         return authors;
     }
 
@@ -59,6 +66,7 @@ public class BlueskyGet {
                             .getAsString()
             );
         }
+
         return dates;
     }
 }

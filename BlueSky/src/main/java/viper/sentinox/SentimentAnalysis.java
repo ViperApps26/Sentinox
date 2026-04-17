@@ -1,9 +1,9 @@
 package viper.sentinox;
+
 import java.util.Properties;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-
 
 public class SentimentAnalysis {
 

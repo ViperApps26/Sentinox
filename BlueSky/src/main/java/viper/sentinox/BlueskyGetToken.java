@@ -33,7 +33,8 @@ public class BlueskyGetToken {
     public String getAccessToken(String token, String password) throws IOException, InterruptedException {
         JsonObject newToken = refreshAccessToken(token, password);
 
-        Files.writeString(filePath,
+        Files.writeString(
+                filePath,
                 newToken.get("refreshJwt").getAsString(),
                 StandardCharsets.UTF_8
         );

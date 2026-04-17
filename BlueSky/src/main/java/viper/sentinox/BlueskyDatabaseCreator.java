@@ -14,6 +14,7 @@ public class BlueskyDatabaseCreator {
                 medicine TEXT NOT NULL,
                 author_handle TEXT,
                 post_text TEXT NOT NULL,
+                sentiment TEXT NOT NULL,
                 created_at TEXT,
                 captured_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
@@ -26,6 +27,7 @@ public class BlueskyDatabaseCreator {
 
         } catch (SQLException e) {
             System.out.println("Error connecting to the Bluesky database");
+            e.printStackTrace();
         }
     }
 }

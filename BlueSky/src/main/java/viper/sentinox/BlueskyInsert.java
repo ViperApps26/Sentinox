@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,26 +13,14 @@ public class BlueskyInsert {
 
     private final BlueskyConnect blueskyConnect;
     private final BlueskyGet blueskyGet;
+    private final SentimentAnalysis sentimentAnalysis;
 
-    public BlueskyInsert(BlueskyConnect blueskyConnect, BlueskyGet blueskyGet) {
+    public BlueskyInsert(BlueskyConnect blueskyConnect,
+                         BlueskyGet blueskyGet,
+                         SentimentAnalysis sentimentAnalysis) {
         this.blueskyConnect = blueskyConnect;
         this.blueskyGet = blueskyGet;
-    }
-
-    public void getMedicinesList(List<String> medicines, String databaseURL) {
-        try (Connection conn = DriverManager.getConnection(databaseURL)) {
-            String sql = "SELECT name FROM medicines";
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql);
-                 ResultSet rs = stmt.executeQuery()) {
-
-                while (rs.next()) {
-                    medicines.add(rs.getString("name"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error connecting to the database");
-        }
+        this.sentimentAnalysis = sentimentAnalysis;
     }
 
     public void savePosts(String token, String databaseURL) throws IOException {
@@ -56,9 +43,12 @@ public class BlueskyInsert {
                     posts,
                     creationDates
             );
+
             System.out.println(blueskyConnect.getQuery() + " posts added correctly");
+
         } catch (SQLException e) {
             System.out.println("Error connecting to the Bluesky database");
+            e.printStackTrace();
         }
     }
 
@@ -69,16 +59,19 @@ public class BlueskyInsert {
                                     List<String> creationDates) throws SQLException {
 
         String sql = """
-            INSERT INTO bluesky_posts (medicine, author_handle, post_text, created_at)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO bluesky_posts (medicine, author_handle, post_text, sentiment, created_at)
+            VALUES (?, ?, ?, ?, ?)
             """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < posts.size(); i++) {
+                String sentiment = sentimentAnalysis.analyze(posts.get(i)).getOverall();
+
                 stmt.setString(1, medicine);
                 stmt.setString(2, authors.get(i));
                 stmt.setString(3, posts.get(i));
-                stmt.setString(4, creationDates.get(i));
+                stmt.setString(4, sentiment);
+                stmt.setString(5, creationDates.get(i));
                 stmt.executeUpdate();
             }
         }
