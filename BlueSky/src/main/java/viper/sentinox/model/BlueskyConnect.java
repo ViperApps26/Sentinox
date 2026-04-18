@@ -6,6 +6,9 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BlueskyConnect implements BlueskyConnectInterface{
     private final String baseUrl;
@@ -21,8 +24,13 @@ public class BlueskyConnect implements BlueskyConnectInterface{
         this.datePattern = "\\d{4}-\\d{2}-\\d{2}";
         this.query = "ibuprofen";
         this.limit = 10;
-        this.startDate = "2025-01-01T00:00:00Z";
-        this.finalDate = "2025-02-01T00:00:00Z";
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime oneMonthAgo = now.minusMonths(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+        this.startDate = oneMonthAgo.format(formatter);
+        this.finalDate = now.format(formatter);
     }
 
     public JsonObject connect(String token) throws IOException {

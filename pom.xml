@@ -13,6 +13,7 @@
     <modules>
         <module>BlueSky</module>
         <module>PubChem</module>
+        <module>EventStoreBuilder</module>
     </modules>
 
     <properties>

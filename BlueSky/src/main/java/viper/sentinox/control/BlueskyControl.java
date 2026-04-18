@@ -2,7 +2,7 @@ package viper.sentinox.control;
 
 import java.io.IOException;
 
-public class BlueskyControl {
+public class BlueskyControl implements BlueskyControlInterface {
 
     private final BlueskyFeeder feeder;
 
