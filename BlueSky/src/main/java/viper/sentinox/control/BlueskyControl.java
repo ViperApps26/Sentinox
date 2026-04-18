@@ -1,19 +1,17 @@
-package viper.sentinox;
+package viper.sentinox.control;
 
 import java.io.IOException;
 
 public class BlueskyControl {
 
-    private final BlueskyFeeder blueskyFeeder;
+    private final BlueskyFeeder feeder;
 
     private final String[] medicines = {
             "ibuprofen",
+            "paracetamol",
             "aspirin",
             "naproxen",
-            "paracetamol",
-            "acetaminophen",
             "amoxicillin",
-            "omeprazole",
             "metformin",
             "atorvastatin",
             "lisinopril",
@@ -25,11 +23,11 @@ public class BlueskyControl {
     };
 
     public BlueskyControl(BlueskyFeeder blueskyFeeder) {
-        this.blueskyFeeder = blueskyFeeder;
+        this.feeder = blueskyFeeder;
     }
 
-    public void execute(String token, String password, String databaseURL)
+    public void execute(String token, String password)
             throws IOException, InterruptedException {
-        blueskyFeeder.feedMedicinesFromList(medicines, token, password, databaseURL);
+        feeder.feedMedicinesFromList(medicines, token, password);
     }
 }

@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,16 +7,16 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PubChemGet {
+public class PubChemGet implements PubChemGetInterface{
 
-    private final PubChemConnect pubChemConnect;
+    private final PubChemConnect connect;
 
-    public PubChemGet(PubChemConnect pubChemConnect) {
-        this.pubChemConnect = pubChemConnect;
+    public PubChemGet(PubChemConnect connect) {
+        this.connect = connect;
     }
 
     public JsonObject getAllInfo() throws IOException {
-        JsonObject connection = pubChemConnect.connect();
+        JsonObject connection = connect.connect();
 
         return connection != null && connection.has("Record")
                 ? connection.getAsJsonObject("Record")

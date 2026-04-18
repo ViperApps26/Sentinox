@@ -1,5 +1,11 @@
 package viper.sentinox;
 
+import viper.sentinox.control.PubChemControl;
+import viper.sentinox.control.PubChemFeeder;
+import viper.sentinox.control.PubChemPublisher;
+import viper.sentinox.model.PubChemConnect;
+import viper.sentinox.model.PubChemGet;
+
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,10 +19,10 @@ public class Main {
         autoExecute(scheduler, pubChemControl);
     }
 
-    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl pubChemControl) {
+    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl control) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                pubChemControl.execute();
+                control.execute();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

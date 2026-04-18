@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class BlueskyGetToken {
+public class BlueskyGetToken implements BlueskyGetTokenInterface {
 
     private final String blueskyPds;
     private final String refreshUrl;
@@ -58,7 +58,7 @@ public class BlueskyGetToken {
         return gson.fromJson(response.body(), JsonObject.class);
     }
 
-    public String getRefreshToken(String password) throws IOException, InterruptedException {
+    private String getRefreshToken(String password) throws IOException, InterruptedException {
         HttpResponse<String> response = login(password);
 
         if (response.statusCode() == 200) {
@@ -69,7 +69,7 @@ public class BlueskyGetToken {
         throw new RuntimeException("Error in authentication: " + response.body());
     }
 
-    public HttpResponse<String> login(String password) throws IOException, InterruptedException {
+    private HttpResponse<String> login(String password) throws IOException, InterruptedException {
         String jsonBody = String.format(
                 "{\"identifier\":\"%s\", \"password\":\"%s\"}",
                 identifier,

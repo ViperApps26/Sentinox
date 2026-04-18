@@ -1,43 +1,46 @@
-package viper.sentinox;
+package viper.sentinox.control;
 
 import com.google.gson.Gson;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import viper.sentinox.model.PubChemConnect;
+import viper.sentinox.model.PubChemEvent;
+import viper.sentinox.model.PubChemGet;
 
 import javax.jms.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PubChemPublisher {
+public class PubChemPublisher implements PubChemPublisherInterface {
 
-    private final PubChemConnect pubChemConnect;
-    private final PubChemGet pubChemGet;
+    private final PubChemConnect connect;
+    private final PubChemGet get;
     private final Gson gson;
     private final String brokerUrl;
     private final String topicName;
 
-    public PubChemPublisher(PubChemConnect pubChemConnect, PubChemGet pubChemGet) {
-        this.pubChemConnect = pubChemConnect;
-        this.pubChemGet = pubChemGet;
+    public PubChemPublisher(PubChemConnect connect, PubChemGet get) {
+        this.connect = connect;
+        this.get = get;
         this.gson = new Gson();
         this.brokerUrl = "tcp://localhost:61616";
         this.topicName = "PubChemReactions";
     }
 
     public void publishReactions() throws IOException {
-        ArrayList<String> reactions = pubChemGet.getReactions();
+        ArrayList<String> reactions = get.getReactions();
 
-        String medicine = pubChemConnect.getMedicine();
-        String cid = pubChemConnect.getCID();
+        String medicine = connect.getMedicine();
+        String cid = connect.getCID();
 
         if (reactions.isEmpty()) {
             System.out.println(medicine + " has no reactions to publish");
         } else {
-            publishEvents(reactions, medicine, cid);
+            publishEachEvent(reactions, medicine, cid);
             System.out.println(medicine + " reactions published correctly");
         }
     }
 
-    private void publishEvents(ArrayList<String> reactions, String medicine, String cid) {
+    private void publishEachEvent(ArrayList<String> reactions, String medicine, String cid) {
         for (String reaction : reactions) {
             PubChemEvent event = new PubChemEvent(
                     System.currentTimeMillis(),
@@ -50,7 +53,7 @@ public class PubChemPublisher {
         }
     }
 
-    public void publish(String jsonMessage) {
+    private void publish(String jsonMessage) {
         Connection connection = null;
         Session session = null;
         MessageProducer producer = null;

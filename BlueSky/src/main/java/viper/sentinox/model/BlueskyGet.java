@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlueskyGet {
+public class BlueskyGet implements BlueskyGetInterface {
 
-    private final BlueskyConnect blueskyConnect;
+    private final BlueskyConnect connect;
 
-    public BlueskyGet(BlueskyConnect blueskyConnect) {
-        this.blueskyConnect = blueskyConnect;
+    public BlueskyGet(BlueskyConnect connect) {
+        this.connect = connect;
     }
 
     public JsonArray getPostsAttributes(String token) throws IOException {
-        JsonObject object = blueskyConnect.connect(token);
+        JsonObject object = connect.connect(token);
 
         if (object == null || !object.has("posts")) {
             return new JsonArray();

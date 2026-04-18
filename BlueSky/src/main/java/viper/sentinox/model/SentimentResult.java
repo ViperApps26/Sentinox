@@ -1,6 +1,6 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
-public class SentimentResult {
+public class SentimentResult implements SentimentResultInterface{
 
     private final int negative;
     private final int positive;
@@ -16,25 +16,7 @@ public class SentimentResult {
         this.overall = overall;
     }
 
-    public int getPositive() {
-        return positive;
-    }
-
-    public int getNegative() {
-        return negative;
-    }
-
-    public int getNeutral() {
-        return neutral;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public String getOverall() {
-        return overall;
-    }
+    public String getOverall() { return overall; }
 
     public int getPositivePercentage() {
         return total == 0 ? 0 : (positive * 100 / total);
