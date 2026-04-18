@@ -8,6 +8,7 @@ public class PubChemControl {
 
     private final String[] medicines = {
             "ibuprofen",
+            "paracetamol",
             "aspirin",
             "naproxen",
             "amoxicillin",
