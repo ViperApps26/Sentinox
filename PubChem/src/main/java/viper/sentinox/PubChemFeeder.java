@@ -4,18 +4,18 @@ import java.io.IOException;
 
 public class PubChemFeeder {
 
-    private final PubChemInsert pubChemInsert;
+    private final PubChemPublisher pubChemPublisher;
     private final PubChemConnect pubChemConnect;
 
-    public PubChemFeeder(PubChemInsert pubChemInsert, PubChemConnect pubChemConnect) {
-        this.pubChemInsert = pubChemInsert;
+    public PubChemFeeder(PubChemPublisher pubChemPublisher, PubChemConnect pubChemConnect) {
+        this.pubChemPublisher = pubChemPublisher;
         this.pubChemConnect = pubChemConnect;
     }
 
     public void feedReactionsFromList(String[] medicines) throws IOException {
         for (String medicine : medicines) {
             pubChemConnect.setMedicine(medicine);
-            pubChemInsert.publishReactions();
+            pubChemPublisher.publishReactions();
         }
     }
 }

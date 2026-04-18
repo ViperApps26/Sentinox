@@ -26,8 +26,8 @@ public class Main {
     private static PubChemControl createPubChemEnvironment() {
         PubChemConnect connect = new PubChemConnect();
         PubChemGet get = new PubChemGet(connect);
-        PubChemInsert insert = new PubChemInsert(connect, get);
-        PubChemFeeder feeder = new PubChemFeeder(insert, connect);
+        PubChemPublisher publisher = new PubChemPublisher(connect, get);
+        PubChemFeeder feeder = new PubChemFeeder(publisher, connect);
 
         return new PubChemControl(feeder);
     }

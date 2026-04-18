@@ -46,24 +46,6 @@ public class SentimentAnalysis {
         return new SentimentResult(positive, negative, neutral, overall);
     }
 
-    public void printAnalysis(String text) {
-        CoreDocument doc = new CoreDocument(text);
-        pipeline.annotate(doc);
-
-        System.out.println("=== Sentence-level analysis ===");
-        for (CoreSentence sentence : doc.sentences()) {
-            System.out.println(sentence.text() + " -> " + sentence.sentiment());
-        }
-
-        SentimentResult result = analyze(text);
-
-        System.out.println("\n=== Global statistics ===");
-        System.out.println("Positive: " + result.getPositive() + " (" + result.getPositivePercentage() + "%)");
-        System.out.println("Negative: " + result.getNegative() + " (" + result.getNegativePercentage() + "%)");
-        System.out.println("Neutral: " + result.getNeutral() + " (" + result.getNeutralPercentage() + "%)");
-        System.out.println("\nOverall sentiment: " + result.getOverall());
-    }
-
     private String calculateOverallSentiment(int positive, int negative, int neutral) {
         if (positive > negative && positive > neutral) {
             return "Positive";
