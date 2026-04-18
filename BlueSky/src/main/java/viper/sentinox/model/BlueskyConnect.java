@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -7,7 +7,7 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class BlueskyConnect {
+public class BlueskyConnect implements BlueskyConnectInterface{
     private final String baseUrl;
     private final String datePattern;
 

@@ -1,13 +1,14 @@
-package viper.sentinox;
+package viper.sentinox.control;
 
 import java.io.IOException;
 
-public class PubChemControl {
+public class PubChemControl implements PubChemControlInterface{
 
-    private final PubChemFeeder pubChemFeeder;
+    private final PubChemFeeder feeder;
 
     private final String[] medicines = {
             "ibuprofen",
+            "paracetamol",
             "aspirin",
             "naproxen",
             "amoxicillin",
@@ -21,11 +22,11 @@ public class PubChemControl {
             "codeine"
     };
 
-    public PubChemControl(PubChemFeeder pubChemFeeder) {
-        this.pubChemFeeder = pubChemFeeder;
+    public PubChemControl(PubChemFeeder feeder) {
+        this.feeder = feeder;
     }
 
     public void execute() throws IOException {
-        pubChemFeeder.feedReactionsFromList(medicines);
+        feeder.feedReactionsFromList(medicines);
     }
 }

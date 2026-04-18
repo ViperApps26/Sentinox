@@ -1,5 +1,13 @@
 package viper.sentinox;
 
+import viper.sentinox.control.BlueskyControl;
+import viper.sentinox.control.BlueskyFeeder;
+import viper.sentinox.control.BlueskyPublisher;
+import viper.sentinox.model.BlueskyConnect;
+import viper.sentinox.model.BlueskyGet;
+import viper.sentinox.model.BlueskyGetToken;
+import viper.sentinox.model.SentimentAnalysis;
+
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -7,30 +15,26 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length < 3) {
-            System.out.println("Use: java viper.sentinox.Main <refreshToken> <password> <databaseURL>");
+        if (args.length < 2) {
+            System.out.println("Use: java viper.sentinox.Main <refreshToken> <password>");
             return;
         }
-
         String token = args[0];
         String password = args[1];
-        String databaseURL = args[2];
 
-        BlueskyControl blueskyControl = createBlueskyEnvironment();
-        createDatabase(databaseURL);
+        BlueskyControl control = createBlueskyEnvironment();
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        autoExecute(scheduler, blueskyControl, token, password, databaseURL);
+        autoExecute(scheduler, control, token, password);
     }
 
     private static void autoExecute(ScheduledExecutorService scheduler,
-                                    BlueskyControl blueskyControl,
+                                    BlueskyControl control,
                                     String token,
-                                    String password,
-                                    String databaseURL) {
+                                    String password) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                blueskyControl.execute(token, password, databaseURL);
+                control.execute(token, password);
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -38,18 +42,13 @@ public class Main {
     }
 
     private static BlueskyControl createBlueskyEnvironment() {
-        BlueskyGetToken blueskyGetToken = new BlueskyGetToken();
-        BlueskyConnect blueskyConnect = new BlueskyConnect();
-        BlueskyGet blueskyGet = new BlueskyGet(blueskyConnect);
-        SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
-        BlueskyInsert blueskyInsert = new BlueskyInsert(blueskyConnect, blueskyGet, sentimentAnalysis);
-        BlueskyFeeder blueskyFeeder = new BlueskyFeeder(blueskyGetToken, blueskyInsert, blueskyConnect);
+        BlueskyGetToken getToken = new BlueskyGetToken();
+        BlueskyConnect connect = new BlueskyConnect();
+        BlueskyGet get = new BlueskyGet(connect);
+        SentimentAnalysis sentiment = new SentimentAnalysis();
+        BlueskyPublisher publisher = new BlueskyPublisher(connect, get, sentiment);
+        BlueskyFeeder feeder = new BlueskyFeeder(getToken, connect, publisher);
 
-        return new BlueskyControl(blueskyFeeder);
-    }
-
-    private static void createDatabase(String databaseURL) {
-        BlueskyDatabaseCreator blueskyDatabaseCreator = new BlueskyDatabaseCreator();
-        blueskyDatabaseCreator.createDatabase(databaseURL);
+        return new BlueskyControl(feeder);
     }
 }

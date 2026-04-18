@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.model;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -8,7 +8,7 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class PubChemConnect {
+public class PubChemConnect implements PubChemConnectInterface {
 
     private final String baseUrl;
     private String medicine;
@@ -16,20 +16,6 @@ public class PubChemConnect {
     public PubChemConnect() {
         this.baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest";
         this.medicine = "ibuprofen";
-    }
-
-    public String getCID() throws IOException {
-        String path = String.format("/compound/name/%s/cids/JSON", medicine);
-
-        Connection.Response response = cidRequest(path);
-        String body = response.body();
-
-        JsonObject json = new Gson().fromJson(body, JsonObject.class);
-
-        return json.getAsJsonObject("IdentifierList")
-                .getAsJsonArray("CID")
-                .get(0)
-                .getAsString();
     }
 
     public JsonObject connect() throws IOException {
@@ -42,7 +28,7 @@ public class PubChemConnect {
         return parseOrNull(body);
     }
 
-    public JsonObject parseOrNull(String body) {
+    private JsonObject parseOrNull(String body) {
         try {
             return new Gson().fromJson(body, JsonObject.class);
         } catch (JsonSyntaxException e) {
@@ -68,6 +54,20 @@ public class PubChemConnect {
 
     public void setMedicine(String medicine) {
         this.medicine = medicine;
+    }
+
+    public String getCID() throws IOException {
+        String path = String.format("/compound/name/%s/cids/JSON", medicine);
+
+        Connection.Response response = cidRequest(path);
+        String body = response.body();
+
+        JsonObject json = new Gson().fromJson(body, JsonObject.class);
+
+        return json.getAsJsonObject("IdentifierList")
+                .getAsJsonArray("CID")
+                .get(0)
+                .getAsString();
     }
 
     public String getMedicine() {

@@ -2,8 +2,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.BlueskyConnect;
-import viper.sentinox.BlueskyGet;
+import viper.sentinox.model.BlueskyConnect;
+import viper.sentinox.model.BlueskyGet;
 
 import java.util.List;
 
@@ -16,15 +16,6 @@ class BlueskyPrintTest {
     @BeforeEach
     void setUp() {
         blueskyGet = new BlueskyGet(new BlueskyConnect());
-    }
-
-    @Test
-    void formatPost_returnsPostText() {
-        JsonObject post = createPost("Hola mundo");
-
-        String result = blueskyGet.formatPost(post);
-
-        assertEquals("Hola mundo", result);
     }
 
     @Test
