@@ -11,6 +11,8 @@ What motivated us to choose this topic?
 We thought about how nowadays, medication and pills are everywhere. Around a 60-80% of the people worldwide take some sort of medication each yea;, it does not necessarily have to be for a specific illness, but also as a reinforcment, such as vitamins. This has made an impact on us, because we take these substances and we follow our doctor's instructions, but how well informed are we about what we intake? and how do the drugs we are prescribed affect another's person's body and health. 
 We found this a real-life issue, and we found it interesting to explore and develop a small solution for it with our application
 
+https://cdn.pixabay.com/photo/2023/10/01/14/40/medicine-8287535_1280.jpg
+
 ### Sprint 1
 
 **FIRST WEEK**
