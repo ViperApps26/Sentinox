@@ -65,6 +65,7 @@ public class PubChemPublisher implements PubChemPublisherInterface {
             sendMessage(session, producer, jsonMessage);
         } catch (Exception e) {
             System.out.println("Error publishing message to ActiveMQ");
+            e.printStackTrace();
         } finally {
             closeResources(producer, session, connection);
         }
@@ -83,7 +84,9 @@ public class PubChemPublisher implements PubChemPublisherInterface {
 
     private MessageProducer createProducer(Session session) throws JMSException {
         Destination destination = session.createTopic(topicName);
-        return session.createProducer(destination);
+        MessageProducer producer = session.createProducer(destination);
+        producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+        return producer;
     }
 
     private void sendMessage(Session session, MessageProducer producer, String jsonMessage) throws JMSException {

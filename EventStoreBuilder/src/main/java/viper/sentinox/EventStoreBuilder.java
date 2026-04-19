@@ -45,6 +45,7 @@ public class EventStoreBuilder implements EventStoreBuilderInterface {
             Thread.sleep(Long.MAX_VALUE);
         } catch (Exception e) {
             System.out.println("Error in Event Store Builder");
+            e.printStackTrace();
         } finally {
             closeSession(session);
             closeConnection(connection);
@@ -78,6 +79,7 @@ public class EventStoreBuilder implements EventStoreBuilderInterface {
                 }
             } catch (Exception e) {
                 System.out.println("Error handling event for topic " + topicName);
+                e.printStackTrace();
             }
         });
     }
@@ -109,8 +111,10 @@ public class EventStoreBuilder implements EventStoreBuilderInterface {
         try (FileWriter fw = new FileWriter(file, true)) {
             fw.write(json);
             fw.write("\n");
+            System.out.println("Event stored in: " + file.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Error writing event to file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
