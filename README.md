@@ -1,5 +1,5 @@
 
-# APP NAME
+# SENTINOX
 
 ## **ViperApps**
 This repository will host the development of the chosen app
@@ -42,4 +42,17 @@ We also focused on developing the different tests to validate the code we built,
 
 
 ### Sprint 2
+
+**FIRST WEEK**
+
+In the initial week, the processes for extracting data from Bluesky and PubChem were automated. These processes were also reorganized into distinct modules. Furthermore, integration with ActiveMQ was established, enabling both modules to broadcast data as JSON events. This development laid the groundwork for an event-driven architecture and facilitated a continuous flow of data throughout the system.
+
+**SECOND WEEK**
+
+During the second week, the event publishing system was completely implemented and standardized across both the Bluesky and PubChem modules. Messages were consistently structured and transmitted to specific topics within ActiveMQ. Furthermore, sentiment analysis was incorporated into the Bluesky pipeline, enhancing the events with additional context. This process ensured a uniform and scalable method for generating events throughout the system.
+
+**THIRD WEEK**
+
+This week marked the completion of the event consumption layer with the implementation of the Event Store Builder. This component effectively subscribes to ActiveMQ topics, subsequently storing all incoming events within a structured file system. A comprehensive end-to-end test of the entire data pipeline was successfully conducted, validating the reliable communication channels between all modules. Furthermore, the week concluded with the integration of enhanced error handling mechanisms and targeted minor optimizations, solidifying the event-driven architecture.
+
 
