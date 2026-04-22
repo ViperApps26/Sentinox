@@ -1,58 +1,58 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.model.BlueskyConnect;
+import viper.sentinox.control.BlueskyConnector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class BlueskyConnectTest {
+class BlueskyConnectorTest {
 
-    private BlueskyConnect blueskyConnect;
+    private BlueskyConnector blueskyConnector;
 
     @BeforeEach
     void setUp() {
-        blueskyConnect = new BlueskyConnect();
+        blueskyConnector = new BlueskyConnector();
     }
 
     @Test
     void setQuery_updatesQuery() {
-        blueskyConnect.setQuery("ibuprofeno");
+        blueskyConnector.setQuery("ibuprofeno");
 
-        assertEquals("ibuprofeno", blueskyConnect.getQuery());
+        assertEquals("ibuprofeno", blueskyConnector.getQuery());
     }
 
     @Test
     void setLimit_updatesLimit() {
-        blueskyConnect.setLimit(5);
+        blueskyConnector.setLimit(5);
 
-        assertEquals(5, blueskyConnect.getLimit());
+        assertEquals(5, blueskyConnector.getLimit());
     }
 
     @Test
     void setStartDate_withValidDate_updatesStartDate() {
-        blueskyConnect.setStartDate("2025-03-10");
+        blueskyConnector.setStartDate("2025-03-10");
 
-        assertEquals("2025-03-10T00:00:00Z", blueskyConnect.getStartDate());
+        assertEquals("2025-03-10T00:00:00Z", blueskyConnector.getStartDate());
     }
 
     @Test
     void setFinalDate_withValidDate_updatesFinalDate() {
-        blueskyConnect.setFinalDate("2025-04-15");
+        blueskyConnector.setFinalDate("2025-04-15");
 
-        assertEquals("2025-04-15T00:00:00Z", blueskyConnect.getFinalDate());
+        assertEquals("2025-04-15T00:00:00Z", blueskyConnector.getFinalDate());
     }
 
     @Test
     void setStartDate_withInvalidDate_throwsException() {
         assertThrows(IllegalArgumentException.class, () ->
-                blueskyConnect.setStartDate("fecha-mal")
+                blueskyConnector.setStartDate("fecha-mal")
         );
     }
 
     @Test
     void setFinalDate_withInvalidDate_throwsException() {
         assertThrows(IllegalArgumentException.class, () ->
-                blueskyConnect.setFinalDate("15/04/2025")
+                blueskyConnector.setFinalDate("15/04/2025")
         );
     }
 }

@@ -1,12 +1,9 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BlueskyControl;
-import viper.sentinox.control.BlueskyFeeder;
-import viper.sentinox.control.BlueskyPublisher;
-import viper.sentinox.model.BlueskyConnect;
-import viper.sentinox.model.BlueskyGet;
-import viper.sentinox.model.BlueskyGetToken;
-import viper.sentinox.model.SentimentAnalysis;
+import viper.sentinox.control.BlueskyGetToken;
+import viper.sentinox.control.feeder.BlueskyFeeder;
+import viper.sentinox.control.store.ActiveMQBlueskyStore;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -21,34 +18,30 @@ public class Main {
         }
         String token = args[0];
         String password = args[1];
+        String url = args[2];
+        String topic = args[3];
 
-        BlueskyControl control = createBlueskyEnvironment();
+        BlueskyControl control = createBlueskyEnvironment(token, url, topic);
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        autoExecute(scheduler, control, token, password);
+        autoExecute(scheduler, control);
     }
 
     private static void autoExecute(ScheduledExecutorService scheduler,
-                                    BlueskyControl control,
-                                    String token,
-                                    String password) {
+                                    BlueskyControl control) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                control.execute(token, password);
+                control.execute();
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }, 0, 1, TimeUnit.HOURS);
     }
 
-    private static BlueskyControl createBlueskyEnvironment() {
-        BlueskyGetToken getToken = new BlueskyGetToken();
-        BlueskyConnect connect = new BlueskyConnect();
-        BlueskyGet get = new BlueskyGet(connect);
-        SentimentAnalysis sentiment = new SentimentAnalysis();
-        BlueskyPublisher publisher = new BlueskyPublisher(connect, get, sentiment);
-        BlueskyFeeder feeder = new BlueskyFeeder(getToken, connect, publisher);
+    private static BlueskyControl createBlueskyEnvironment(String token, String password, String url, String topic) {
+        ActiveMQBlueskyStore store = new ActiveMQBlueskyStore(url, topic);
+        BlueskyFeeder feeder = new BlueskyFeeder(token);
 
-        return new BlueskyControl(feeder);
+        return new BlueskyControl(feeder, store);
     }
 }

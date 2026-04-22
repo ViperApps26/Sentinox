@@ -1,38 +1,34 @@
-package viper.sentinox.control;
+package viper.sentinox.control.store;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import viper.sentinox.model.BlueskyConnect;
+import viper.sentinox.control.BlueskyConnector;
 import viper.sentinox.model.BlueskyEvent;
-import viper.sentinox.model.BlueskyGet;
-import viper.sentinox.model.SentimentAnalysis;
+import viper.sentinox.control.BlueskyGet;
+import viper.sentinox.control.SentimentAnalysis;
 
 import javax.jms.*;
 import java.io.IOException;
 import java.util.List;
 
-public class BlueskyPublisher implements BlueskyPublisherInterface{
+public class ActiveMQBlueskyStore implements BlueskyStore {
 
-    private final BlueskyConnect connect;
+    private final BlueskyConnector connector;
     private final BlueskyGet get;
     private final SentimentAnalysis sentiment;
     private final Gson gson;
-    private final String brokerUrl;
-    private final String topicName;
 
-    public BlueskyPublisher(BlueskyConnect connect,
-                            BlueskyGet get,
-                            SentimentAnalysis sentiment) {
-        this.connect = connect;
+    public ActiveMQBlueskyStore(BlueskyConnector connector,
+                                BlueskyGet get,
+                                SentimentAnalysis sentiment) {
+        this.connector = connector;
         this.get = get;
         this.sentiment = sentiment;
         this.gson = new Gson();
-        this.brokerUrl = "tcp://localhost:61616";
-        this.topicName = "BlueskyPosts";
     }
 
-    public void publishPosts(String token) throws IOException {
+    public void publishPosts(String token, String topic, String url) throws IOException {
         JsonArray postAttributes = get.getPostsAttributes(token);
 
         List<String> authors = get.getAuthors(postAttributes);
@@ -40,22 +36,26 @@ public class BlueskyPublisher implements BlueskyPublisherInterface{
         List<String> creationDates = get.getCreationDates(postAttributes);
 
         if (posts.isEmpty()) {
-            System.out.println(connect.getQuery() + " has no posts to publish");
+            System.out.println(connector.getQuery() + " has no posts to publish");
         } else {
             publishEachEvent(
-                    connect.getQuery(),
+                    connector.getQuery(),
                     authors,
                     posts,
-                    creationDates
+                    creationDates,
+                    topic,
+                    url
             );
-            System.out.println(connect.getQuery() + " posts published correctly");
+            System.out.println(connector.getQuery() + " posts published correctly");
         }
     }
 
     private void publishEachEvent(String medicine,
-                               List<String> authors,
-                               List<String> posts,
-                               List<String> creationDates) {
+                                  List<String> authors,
+                                  List<String> posts,
+                                  List<String> creationDates,
+                                  String topic,
+                                  String url) {
 
         for (int i = 0; i < posts.size(); i++) {
             String text = posts.get(i);
@@ -70,20 +70,20 @@ public class BlueskyPublisher implements BlueskyPublisherInterface{
                     sentiment,
                     creationDates.get(i)
             );
-            publish(gson.toJson(event));
+            publish(gson.toJson(event), topic, url);
         }
     }
 
-    private void publish(String jsonMessage) {
+    private void publish(String jsonMessage, String topic, String url) {
         Connection connection = null;
         Session session = null;
         MessageProducer producer = null;
         try {
-            connection = createConnection();
+            connection = createConnection(url);
             session = createSession(connection);
-            producer = createProducer(session);
+            producer = createProducer(session, topic);
 
-            sendMessage(session, producer, jsonMessage);
+            sendMessage(session, producer, jsonMessage, topic);
         } catch (Exception e) {
             System.out.println("Error publishing message to ActiveMQ");
         } finally {
@@ -91,8 +91,8 @@ public class BlueskyPublisher implements BlueskyPublisherInterface{
         }
     }
 
-    private Connection createConnection() throws JMSException {
-        ConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);
+    private Connection createConnection(String url) throws JMSException {
+        ConnectionFactory factory = new ActiveMQConnectionFactory(url);
         Connection connection = factory.createConnection();
         connection.start();
         return connection;
@@ -102,15 +102,15 @@ public class BlueskyPublisher implements BlueskyPublisherInterface{
         return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 
-    private MessageProducer createProducer(Session session) throws JMSException {
-        Destination destination = session.createTopic(topicName);
+    private MessageProducer createProducer(Session session, String topic) throws JMSException {
+        Destination destination = session.createTopic(topic);
         return session.createProducer(destination);
     }
 
-    private void sendMessage(Session session, MessageProducer producer, String jsonMessage) throws JMSException {
+    private void sendMessage(Session session, MessageProducer producer, String jsonMessage, String topic) throws JMSException {
         TextMessage message = session.createTextMessage(jsonMessage);
         producer.send(message);
-        System.out.println("Message sent to topic " + topicName);
+        System.out.println("Message sent to topic " + topic);
     }
 
     private static void closeResources(MessageProducer producer, Session session, Connection connection) {
@@ -121,5 +121,10 @@ public class BlueskyPublisher implements BlueskyPublisherInterface{
         } catch (Exception e) {
             System.out.println("Error closing ActiveMQ resources");
         }
+    }
+
+    @Override
+    public void save(BlueskyEvent event) {
+
     }
 }

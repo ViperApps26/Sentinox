@@ -1,4 +1,4 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
 
 public interface SentimentResultInterface {
     String getOverall();
