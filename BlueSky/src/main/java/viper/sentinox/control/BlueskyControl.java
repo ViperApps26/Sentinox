@@ -1,10 +1,16 @@
 package viper.sentinox.control;
 
-import java.io.IOException;
+import viper.sentinox.control.feeder.BlueskyFeeder;
+import viper.sentinox.control.store.BlueskyStore;
+import viper.sentinox.model.BlueskyEvent;
 
-public class BlueskyControl implements BlueskyControlInterface {
+import java.io.IOException;
+import java.util.List;
+
+public class BlueskyControl {
 
     private final BlueskyFeeder feeder;
+    private final BlueskyStore store;
 
     private final String[] medicines = {
             "ibuprofen",
@@ -22,12 +28,18 @@ public class BlueskyControl implements BlueskyControlInterface {
             "codeine"
     };
 
-    public BlueskyControl(BlueskyFeeder blueskyFeeder) {
+    public BlueskyControl(BlueskyFeeder blueskyFeeder, BlueskyStore store) {
         this.feeder = blueskyFeeder;
+        this.store = store;
     }
 
-    public void execute(String token, String password)
+    public void execute()
             throws IOException, InterruptedException {
-        feeder.feedMedicinesFromList(medicines, token, password);
+        for (String medicine : medicines) {
+            List<BlueskyEvent> blueskyEvents = feeder.get(medicine);
+            for (BlueskyEvent blueskyEvent : blueskyEvents) {
+                store.save(blueskyEvent);
+            }
+        }
     }
 }

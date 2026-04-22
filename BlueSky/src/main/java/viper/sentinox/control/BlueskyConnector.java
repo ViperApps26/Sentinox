@@ -1,4 +1,4 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class BlueskyConnect implements BlueskyConnectInterface{
+public class BlueskyConnector implements BlueskyConnectorInterface {
     private final String baseUrl;
     private final String datePattern;
 
@@ -19,7 +19,7 @@ public class BlueskyConnect implements BlueskyConnectInterface{
     private String startDate;
     private String finalDate;
 
-    public BlueskyConnect() {
+    public BlueskyConnector() {
         this.baseUrl = "https://bsky.social/xrpc";
         this.datePattern = "\\d{4}-\\d{2}-\\d{2}";
         this.query = "ibuprofen";
@@ -33,7 +33,7 @@ public class BlueskyConnect implements BlueskyConnectInterface{
         this.finalDate = now.format(formatter);
     }
 
-    public JsonObject connect(String token) throws IOException {
+    public JsonObject connector(String token) throws IOException {
         String path = getBlueskyPath();
 
         Connection.Response response = request(path, token);

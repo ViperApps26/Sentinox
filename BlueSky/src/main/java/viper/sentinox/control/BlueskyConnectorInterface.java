@@ -1,10 +1,10 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
 
-public interface BlueskyConnectInterface {
-    JsonObject connect(String token) throws IOException;
+public interface BlueskyConnectorInterface {
+    JsonObject connector(String token) throws IOException;
 
     void setQuery(String query);
     void setLimit(int limit);

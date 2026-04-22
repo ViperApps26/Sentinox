@@ -1,4 +1,4 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
 
 import java.util.Properties;
 import edu.stanford.nlp.pipeline.CoreDocument;

@@ -1,4 +1,4 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
 
 public class SentimentResult implements SentimentResultInterface{
 
