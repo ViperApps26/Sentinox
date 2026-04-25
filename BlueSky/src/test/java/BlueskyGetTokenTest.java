@@ -38,7 +38,7 @@ class BlueskyGetTokenTest {
         when(response.body()).thenReturn(responseBody);
         when(client.send(any(), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        BlueskyGetToken blueskyGetToken = new BlueskyGetToken("old-refresh-token", "password123");
+        BlueskyGetToken blueskyGetToken = new BlueskyGetToken("old-refresh-token", "user123", "password123");
 
         String token = blueskyGetToken.getAccessToken();
 
