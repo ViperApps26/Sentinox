@@ -1,5 +1,5 @@
 package viper.sentinox.control;
 
-public interface SentimentAnalysisInteface {
+public interface SentimentAnalysisAnalyze {
     SentimentResult analyze(String text);
 }

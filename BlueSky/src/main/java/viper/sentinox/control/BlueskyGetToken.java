@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class BlueskyGetToken implements BlueskyGetTokenInterface {
+public class BlueskyGetToken implements BlueskyGetAccessToken {
 
     private final String blueskyPds;
     private final String refreshUrl;
@@ -20,18 +20,22 @@ public class BlueskyGetToken implements BlueskyGetTokenInterface {
     private final Path filePath;
     private final HttpClient client;
     private final Gson gson;
+    private final String token;
+    private final String password;
 
-    public BlueskyGetToken() {
+    public BlueskyGetToken(String token, String password) {
         this.blueskyPds = "https://bsky.social/xrpc/com.atproto.server.createSession";
         this.refreshUrl = "https://bsky.social/xrpc/com.atproto.server.refreshSession";
         this.identifier = "vicraft.bsky.social";
         this.filePath = Path.of("BlueskyToken.txt");
         this.client = HttpClient.newBuilder().build();
         this.gson = new Gson();
+        this.token = token;
+        this.password = password;
     }
 
-    public String getAccessToken(String token, String password) throws IOException, InterruptedException {
-        JsonObject newToken = refreshAccessToken(token, password);
+    public String getAccessToken() throws IOException, InterruptedException {
+        JsonObject newToken = refreshAccessToken(token);
 
         Files.writeString(
                 filePath,
@@ -42,7 +46,7 @@ public class BlueskyGetToken implements BlueskyGetTokenInterface {
         return newToken.get("accessJwt").getAsString();
     }
 
-    private JsonObject refreshAccessToken(String refreshToken, String password) throws IOException, InterruptedException {
+    private JsonObject refreshAccessToken(String refreshToken) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(refreshUrl))
                 .header("Authorization", "Bearer " + refreshToken)
@@ -52,14 +56,14 @@ public class BlueskyGetToken implements BlueskyGetTokenInterface {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 400) {
-            return refreshAccessToken(getRefreshToken(password), password);
+            return refreshAccessToken(getRefreshToken());
         }
 
         return gson.fromJson(response.body(), JsonObject.class);
     }
 
-    private String getRefreshToken(String password) throws IOException, InterruptedException {
-        HttpResponse<String> response = login(password);
+    private String getRefreshToken() throws IOException, InterruptedException {
+        HttpResponse<String> response = login();
 
         if (response.statusCode() == 200) {
             JsonObject newToken = gson.fromJson(response.body(), JsonObject.class);
@@ -69,7 +73,7 @@ public class BlueskyGetToken implements BlueskyGetTokenInterface {
         throw new RuntimeException("Error in authentication: " + response.body());
     }
 
-    private HttpResponse<String> login(String password) throws IOException, InterruptedException {
+    private HttpResponse<String> login() throws IOException, InterruptedException {
         String jsonBody = String.format(
                 "{\"identifier\":\"%s\", \"password\":\"%s\"}",
                 identifier,
