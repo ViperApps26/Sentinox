@@ -5,7 +5,7 @@ import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class SentimentAnalysis implements SentimentAnalysisInteface {
+public class SentimentAnalysis implements SentimentAnalysisAnalyze {
 
     private final StanfordCoreNLP pipeline;
 
@@ -43,7 +43,7 @@ public class SentimentAnalysis implements SentimentAnalysisInteface {
 
         String overall = calculateOverallSentiment(positive, negative, neutral);
 
-        return new SentimentResult(positive, negative, neutral, overall);
+        return new SentimentResult(overall);
     }
 
     private String calculateOverallSentiment(int positive, int negative, int neutral) {

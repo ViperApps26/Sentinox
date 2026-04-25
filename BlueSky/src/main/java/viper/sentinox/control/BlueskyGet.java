@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlueskyGet implements BlueskyGetInterface {
+public class BlueskyGet {
 
     private final BlueskyConnector connector;
 

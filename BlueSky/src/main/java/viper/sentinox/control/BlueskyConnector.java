@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class BlueskyConnector implements BlueskyConnectorInterface {
+public class BlueskyConnector {
     private final String baseUrl;
     private final String datePattern;
 
