@@ -2,7 +2,6 @@ package viper.sentinox.control.store;
 
 import com.google.gson.Gson;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import viper.sentinox.control.BlueskyConnector;
 import viper.sentinox.model.BlueskyEvent;
 
 import javax.jms.*;
@@ -12,14 +11,12 @@ public class ActiveMQBlueskyStore implements BlueskyStore {
     private final Gson gson;
     private final String url;
     private final String topic;
-    private final BlueskyConnector connector;
 
     public ActiveMQBlueskyStore(String url,
                                 String topic) {
         this.url = url;
         this.topic = topic;
         this.gson = new Gson();
-        this.connector = new BlueskyConnector();
     }
 
 
@@ -63,7 +60,7 @@ public class ActiveMQBlueskyStore implements BlueskyStore {
     private void sendMessage(Session session, MessageProducer producer, String jsonMessage) throws JMSException {
         TextMessage message = session.createTextMessage(jsonMessage);
         producer.send(message);
-        System.out.println(connector.getQuery() + "message sent to topic " + topic);
+        System.out.println(jsonMessage + " sent to topic " + topic);
     }
 
     private static void closeResources(MessageProducer producer, Session session, Connection connection) {

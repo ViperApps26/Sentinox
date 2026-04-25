@@ -11,17 +11,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) {
-        if (args.length != 4) {
-            System.out.println("Use: java viper.sentinox.Main <refreshToken> <password> <ActiveMQUrl> <topicName>");
+    public static void main(String[] args) throws IOException, InterruptedException {
+        if (args.length != 5) {
+            System.out.println("Use: java viper.sentinox.Main <refreshToken> <user> <password> <ActiveMQUrl> <topicName>");
             return;
         }
-        String token = args[0];
-        String password = args[1];
-        String url = args[2];
-        String topic = args[3];
+        String refreshToken = args[0];
+        String user = args[1];
+        String password = args[2];
+        String url = args[3];
+        String topic = args[4];
 
-        BlueskyControl control = createBlueskyEnvironment(url, topic, token, password);
+        BlueskyControl control = createBlueskyEnvironment(url, topic, refreshToken, user, password);
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         autoExecute(scheduler, control);
@@ -38,8 +39,8 @@ public class Main {
         }, 0, 1, TimeUnit.HOURS);
     }
 
-    private static BlueskyControl createBlueskyEnvironment(String url, String topic, String token, String password) {
-        BlueskyGetToken getToken = new BlueskyGetToken(token, password);
+    private static BlueskyControl createBlueskyEnvironment(String url, String topic, String refreshToken, String user, String password) throws IOException, InterruptedException {
+        BlueskyGetToken getToken = new BlueskyGetToken(refreshToken, user, password);
 
         ActiveMQBlueskyStore store = new ActiveMQBlueskyStore(url, topic);
         BlueskyFeeder feeder = new BlueskyFeeder(getToken);

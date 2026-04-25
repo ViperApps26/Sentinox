@@ -9,83 +9,100 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.time.Instant;
 
 public class BlueskyGetToken implements BlueskyGetAccessToken {
 
-    private final String blueskyPds;
-    private final String refreshUrl;
-    private final String identifier;
-    private final Path filePath;
-    private final HttpClient client;
-    private final Gson gson;
-    private final String token;
+    private final HttpClient client = HttpClient.newHttpClient();
+    private final Gson gson = new Gson();
+
+    private final String user;
     private final String password;
 
-    public BlueskyGetToken(String token, String password) {
-        this.blueskyPds = "https://bsky.social/xrpc/com.atproto.server.createSession";
-        this.refreshUrl = "https://bsky.social/xrpc/com.atproto.server.refreshSession";
-        this.identifier = "vicraft.bsky.social";
-        this.filePath = Path.of("BlueskyToken.txt");
-        this.client = HttpClient.newBuilder().build();
-        this.gson = new Gson();
-        this.token = token;
+    private String accessToken;
+    private String refreshToken;
+    private Instant accessExpiration;
+
+    public BlueskyGetToken(String refreshToken, String user, String password) throws IOException, InterruptedException {
+        this.refreshToken = refreshToken;
+        this.user = user;
         this.password = password;
+
+        checkAccessToken();
     }
+
 
     public String getAccessToken() throws IOException, InterruptedException {
-        JsonObject newToken = refreshAccessToken(token);
-
-        Files.writeString(
-                filePath,
-                newToken.get("refreshJwt").getAsString(),
-                StandardCharsets.UTF_8
-        );
-
-        return newToken.get("accessJwt").getAsString();
+        checkAccessToken();
+        return accessToken;
     }
 
-    private JsonObject refreshAccessToken(String refreshToken) throws IOException, InterruptedException {
+    private void checkAccessToken() throws IOException, InterruptedException {
+        if (accessToken == null || tokenExpired()) {
+            refreshOrLogin();
+        }
+    }
+
+    private boolean tokenExpired() {
+        return accessExpiration == null || Instant.now().isAfter(accessExpiration);
+    }
+
+    private void refreshOrLogin() throws IOException, InterruptedException {
+        if (!refreshAccessToken()) login();
+    }
+
+
+    private boolean refreshAccessToken() throws IOException, InterruptedException {
+        HttpResponse<String> response = getRefreshResponse();
+
+        if (response.statusCode() == 200) {
+            setNewTokens(response);
+            return true;
+        }
+        return false;
+    }
+
+    private HttpResponse<String> getRefreshResponse() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(refreshUrl))
+                .uri(URI.create("https://bsky.social/xrpc/com.atproto.server.refreshSession"))
                 .header("Authorization", "Bearer " + refreshToken)
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 400) {
-            return refreshAccessToken(getRefreshToken());
-        }
-
-        return gson.fromJson(response.body(), JsonObject.class);
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private String getRefreshToken() throws IOException, InterruptedException {
-        HttpResponse<String> response = login();
 
-        if (response.statusCode() == 200) {
-            JsonObject newToken = gson.fromJson(response.body(), JsonObject.class);
-            return newToken.get("refreshJwt").getAsString();
+    private void login() throws IOException, InterruptedException {
+        HttpResponse<String> response = getCreationResponse();
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Login failed: " + response.body());
         }
-
-        throw new RuntimeException("Error in authentication: " + response.body());
+        setNewTokens(response);
     }
 
-    private HttpResponse<String> login() throws IOException, InterruptedException {
+    private HttpResponse<String> getCreationResponse() throws IOException, InterruptedException {
         String jsonBody = String.format(
                 "{\"identifier\":\"%s\", \"password\":\"%s\"}",
-                identifier,
+                user,
                 password
         );
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(blueskyPds))
+                .uri(URI.create("https://bsky.social/xrpc/com.atproto.server.createSession"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
                 .build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private void setNewTokens(HttpResponse<String> response) {
+        JsonObject json = gson.fromJson(response.body(), JsonObject.class);
+
+        this.accessToken = json.get("accessJwt").getAsString();
+        this.refreshToken = json.get("refreshJwt").getAsString();
+        this.accessExpiration = Instant.now().plusSeconds(3600);
     }
 }
