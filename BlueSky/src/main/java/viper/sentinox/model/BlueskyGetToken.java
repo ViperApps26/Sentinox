@@ -1,4 +1,4 @@
-package viper.sentinox.control;
+package viper.sentinox.model;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

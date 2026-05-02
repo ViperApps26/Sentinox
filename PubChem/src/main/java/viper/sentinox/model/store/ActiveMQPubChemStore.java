@@ -1,4 +1,4 @@
-package viper.sentinox.control;
+package viper.sentinox.model.store;
 
 import com.google.gson.Gson;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -10,7 +10,7 @@ import javax.jms.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PubChemPublisher implements PubChemPublisherInterface {
+public class ActiveMQPubChemStore implements PubChemStore {
 
     private final PubChemConnect connect;
     private final PubChemGet get;
@@ -18,7 +18,7 @@ public class PubChemPublisher implements PubChemPublisherInterface {
     private final String brokerUrl;
     private final String topicName;
 
-    public PubChemPublisher(PubChemConnect connect, PubChemGet get) {
+    public ActiveMQPubChemStore(PubChemConnect connect, PubChemGet get) {
         this.connect = connect;
         this.get = get;
         this.gson = new Gson();

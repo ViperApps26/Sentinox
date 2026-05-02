@@ -3,11 +3,12 @@ package viper.sentinox.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import viper.sentinox.model.feeder.PubChemGetEvents;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PubChemGet implements PubChemGetInterface{
+public class PubChemGet implements PubChemGetEvents {
 
     private final PubChemConnect connect;
 

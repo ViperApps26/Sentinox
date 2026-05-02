@@ -1,13 +1,13 @@
 package viper.sentinox.control;
 
-import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.BlueskyStore;
+import viper.sentinox.model.feeder.BlueskyFeeder;
+import viper.sentinox.model.store.BlueskyStore;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;
 import java.util.List;
 
-public class BlueskyControl {
+public class BlueskyController {
 
     private final BlueskyFeeder feeder;
     private final BlueskyStore store;
@@ -28,7 +28,7 @@ public class BlueskyControl {
             "codeine"
     };
 
-    public BlueskyControl(BlueskyFeeder blueskyFeeder, BlueskyStore store) {
+    public BlueskyController(BlueskyFeeder blueskyFeeder, BlueskyStore store) {
         this.feeder = blueskyFeeder;
         this.store = store;
     }

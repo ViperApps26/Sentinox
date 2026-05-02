@@ -1,6 +1,8 @@
-package viper.sentinox.control.store;
+package viper.sentinox.model.store;
 
 import viper.sentinox.model.BlueskyEvent;
+
+import java.util.List;
 
 
 public interface BlueskyStore {
