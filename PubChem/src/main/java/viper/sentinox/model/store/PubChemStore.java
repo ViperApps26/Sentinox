@@ -1,7 +1,7 @@
-package viper.sentinox.control;
+package viper.sentinox.model.store;
 
 import java.io.IOException;
 
-public interface PubChemPublisherInterface {
+public interface PubChemStore {
     void publishReactions() throws IOException;
 }

@@ -1,9 +1,9 @@
 package viper.sentinox;
 
-import viper.sentinox.control.BlueskyControl;
-import viper.sentinox.control.BlueskyGetToken;
-import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.ActiveMQBlueskyStore;
+import viper.sentinox.control.BlueskyController;
+import viper.sentinox.model.BlueskyGetToken;
+import viper.sentinox.model.feeder.BlueskyFeeder;
+import viper.sentinox.model.store.ActiveMQBlueskyStore;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -22,14 +22,14 @@ public class Main {
         String url = args[3];
         String topic = args[4];
 
-        BlueskyControl control = createBlueskyEnvironment(url, topic, refreshToken, user, password);
+        BlueskyController control = createBlueskyEnvironment(url, topic, refreshToken, user, password);
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         autoExecute(scheduler, control);
     }
 
     private static void autoExecute(ScheduledExecutorService scheduler,
-                                    BlueskyControl control) {
+                                    BlueskyController control) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 control.execute();
@@ -39,12 +39,12 @@ public class Main {
         }, 0, 1, TimeUnit.HOURS);
     }
 
-    private static BlueskyControl createBlueskyEnvironment(String url, String topic, String refreshToken, String user, String password) throws IOException, InterruptedException {
+    private static BlueskyController createBlueskyEnvironment(String url, String topic, String refreshToken, String user, String password) throws IOException, InterruptedException {
         BlueskyGetToken getToken = new BlueskyGetToken(refreshToken, user, password);
 
         ActiveMQBlueskyStore store = new ActiveMQBlueskyStore(url, topic);
         BlueskyFeeder feeder = new BlueskyFeeder(getToken);
 
-        return new BlueskyControl(feeder, store);
+        return new BlueskyController(feeder, store);
     }
 }

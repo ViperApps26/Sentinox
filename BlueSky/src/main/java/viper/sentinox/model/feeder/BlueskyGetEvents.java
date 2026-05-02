@@ -1,4 +1,4 @@
-package viper.sentinox.control.feeder;
+package viper.sentinox.model.feeder;
 
 import viper.sentinox.model.BlueskyEvent;
 

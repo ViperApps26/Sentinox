@@ -1,8 +1,10 @@
 package viper.sentinox.control;
 
+import viper.sentinox.model.feeder.PubChemFeeder;
+
 import java.io.IOException;
 
-public class PubChemControl implements PubChemControlInterface{
+public class PubChemControl implements PubChemControlInterface {
 
     private final PubChemFeeder feeder;
 

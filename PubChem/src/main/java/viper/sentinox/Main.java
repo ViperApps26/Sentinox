@@ -1,8 +1,8 @@
 package viper.sentinox;
 
 import viper.sentinox.control.PubChemControl;
-import viper.sentinox.control.PubChemFeeder;
-import viper.sentinox.control.PubChemPublisher;
+import viper.sentinox.model.feeder.PubChemFeeder;
+import viper.sentinox.model.store.ActiveMQPubChemStore;
 import viper.sentinox.model.PubChemConnect;
 import viper.sentinox.model.PubChemGet;
 
@@ -32,7 +32,7 @@ public class Main {
     private static PubChemControl createPubChemEnvironment() {
         PubChemConnect connect = new PubChemConnect();
         PubChemGet get = new PubChemGet(connect);
-        PubChemPublisher publisher = new PubChemPublisher(connect, get);
+        ActiveMQPubChemStore publisher = new ActiveMQPubChemStore(connect, get);
         PubChemFeeder feeder = new PubChemFeeder(publisher, connect);
 
         return new PubChemControl(feeder);

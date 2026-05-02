@@ -8,7 +8,7 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class PubChemConnect implements PubChemConnectInterface {
+public class PubChemConnect {
 
     private final String baseUrl;
     private String medicine;
