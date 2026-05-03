@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.control.BlueskyGetToken;
+import viper.sentinox.control.token.BlueskyGetToken;
 
 import java.io.IOException;
 import java.net.http.HttpClient;

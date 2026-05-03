@@ -1,7 +1,7 @@
 package viper.sentinox.control;
 
 import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.BlueskyStore;
+import viper.sentinox.control.store.ActiveMQBlueskyStore;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.List;
 public class BlueskyController {
 
     private final BlueskyFeeder feeder;
-    private final BlueskyStore store;
+    private final ActiveMQBlueskyStore store;
 
     private final String[] medicines = {
             "ibuprofen",
@@ -28,7 +28,7 @@ public class BlueskyController {
             "codeine"
     };
 
-    public BlueskyController(BlueskyFeeder blueskyFeeder, BlueskyStore store) {
+    public BlueskyController(BlueskyFeeder blueskyFeeder, ActiveMQBlueskyStore store) {
         this.feeder = blueskyFeeder;
         this.store = store;
     }

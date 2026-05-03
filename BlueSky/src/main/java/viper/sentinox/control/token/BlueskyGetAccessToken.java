@@ -1,4 +1,4 @@
-package viper.sentinox.control;
+package viper.sentinox.control.token;
 
 import java.io.IOException;
 

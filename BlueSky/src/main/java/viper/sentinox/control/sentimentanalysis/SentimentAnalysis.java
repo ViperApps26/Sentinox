@@ -1,4 +1,4 @@
-package viper.sentinox.control;
+package viper.sentinox.control.sentimentanalysis;
 
 import java.util.Properties;
 import edu.stanford.nlp.pipeline.CoreDocument;

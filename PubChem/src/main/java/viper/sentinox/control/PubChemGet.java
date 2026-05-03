@@ -10,14 +10,14 @@ import java.util.ArrayList;
 
 public class PubChemGet implements PubChemGetEvents {
 
-    private final PubChemConnect connect;
+    private final PubChemConnector connector;
 
-    public PubChemGet(PubChemConnect connect) {
-        this.connect = connect;
+    public PubChemGet(PubChemConnector connector) {
+        this.connector = connector;
     }
 
     public JsonObject getAllInfo() throws IOException {
-        JsonObject connection = connect.connect();
+        JsonObject connection = connector.connector();
 
         return connection != null && connection.has("Record")
                 ? connection.getAsJsonObject("Record")
@@ -33,17 +33,6 @@ public class PubChemGet implements PubChemGetEvents {
         }
 
         return reactions;
-    }
-
-    public ArrayList<String> getMechanisms() throws IOException {
-        ArrayList<String> mechanisms = new ArrayList<>();
-        JsonObject section = getSection("Mechanism of Action");
-
-        if (section != null) {
-            extractElements(section, mechanisms);
-        }
-
-        return mechanisms;
     }
 
     private void extractElements(JsonObject sectionParameters, ArrayList<String> infoList) {
