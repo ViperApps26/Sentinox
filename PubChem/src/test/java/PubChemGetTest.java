@@ -1,7 +1,7 @@
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.control.PubChemConnect;
+import viper.sentinox.control.PubChemConnector;
 import viper.sentinox.control.PubChemGet;
 
 import java.io.IOException;
@@ -15,8 +15,8 @@ class PubChemGetTest {
 
     @BeforeEach
     void setUp() {
-        PubChemConnect pubChemConnect = new PubChemConnect();
-        pubChemGet = new PubChemGet(pubChemConnect);
+        PubChemConnector pubChemConnector = new PubChemConnector();
+        pubChemGet = new PubChemGet(pubChemConnector);
     }
 
     @Test

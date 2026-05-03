@@ -1,7 +1,7 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BlueskyController;
-import viper.sentinox.control.BlueskyGetToken;
+import viper.sentinox.control.token.BlueskyGetToken;
 import viper.sentinox.control.feeder.BlueskyFeeder;
 import viper.sentinox.control.store.ActiveMQBlueskyStore;
 

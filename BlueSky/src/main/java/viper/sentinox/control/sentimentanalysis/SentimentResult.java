@@ -1,4 +1,4 @@
-package viper.sentinox.control;
+package viper.sentinox.control.sentimentanalysis;
 
 public class SentimentResult {
     private final String overall;

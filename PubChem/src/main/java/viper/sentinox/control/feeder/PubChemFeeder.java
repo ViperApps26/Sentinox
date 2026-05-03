@@ -1,24 +1,50 @@
 package viper.sentinox.control.feeder;
 
-import viper.sentinox.control.PubChemConnect;
-import viper.sentinox.control.store.ActiveMQPubChemStore;
+import viper.sentinox.control.PubChemConnector;
+import viper.sentinox.control.PubChemGet;
+import viper.sentinox.model.PubChemEvent;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PubChemFeeder {
 
-    private final ActiveMQPubChemStore publisher;
-    private final PubChemConnect connect;
+    private final PubChemConnector connector;
+    private final PubChemGet get;
 
-    public PubChemFeeder(ActiveMQPubChemStore publisher, PubChemConnect connect) {
-        this.publisher = publisher;
-        this.connect = connect;
+    public PubChemFeeder() {
+        this.connector = new PubChemConnector();
+        this.get = new PubChemGet(connector);
     }
 
-    public void feedReactionsFromList(String[] medicines) throws IOException {
-        for (String medicine : medicines) {
-            connect.setMedicine(medicine);
-            publisher.publishReactions();
+    public List<PubChemEvent> get(String medicine) throws IOException {
+        connector.setMedicine(medicine);
+
+        return getEvents();
+    }
+
+    public List<PubChemEvent> getEvents() throws IOException {
+        ArrayList<String> reactions = get.getReactions();
+
+        String medicine = connector.getMedicine();
+        String cid = connector.getCID();
+
+        List<PubChemEvent> events = new ArrayList<>();
+        addEvents(events, reactions, medicine, cid);
+        return events;
+    }
+
+    private void addEvents(List<PubChemEvent> events, ArrayList<String> reactions, String medicine, String cid) {
+        for (String reaction : reactions) {
+            events.add(new PubChemEvent(
+                            System.currentTimeMillis(),
+                            "PubChemFeeder",
+                            medicine,
+                            cid,
+                            reaction
+                    )
+            );
         }
     }
 }

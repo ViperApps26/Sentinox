@@ -6,7 +6,7 @@ import viper.sentinox.model.BlueskyEvent;
 
 import javax.jms.*;
 
-public class ActiveMQBlueskyStore implements BlueskyStore {
+public class ActiveMQBlueskyStore implements BlueskySaveEvents {
 
     private final Gson gson;
     private final String url;

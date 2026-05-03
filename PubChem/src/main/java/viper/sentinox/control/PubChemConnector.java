@@ -8,17 +8,17 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class PubChemConnect {
+public class PubChemConnector {
 
     private final String baseUrl;
     private String medicine;
 
-    public PubChemConnect() {
+    public PubChemConnector() {
         this.baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest";
         this.medicine = "ibuprofen";
     }
 
-    public JsonObject connect() throws IOException {
+    public JsonObject connector() throws IOException {
         String cid = getCID();
         String path = "/pug_view/data/compound/" + cid + "/JSON";
 

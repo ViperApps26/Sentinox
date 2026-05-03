@@ -1,24 +1,24 @@
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import viper.sentinox.control.PubChemConnect;
+import viper.sentinox.control.PubChemConnector;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PubChemConnectTest {
+class PubChemConnectorTest {
 
-    private PubChemConnect pubChemConnect;
+    private PubChemConnector pubChemConnector;
 
     @BeforeEach
     void setUp() {
-        pubChemConnect = new PubChemConnect();
+        pubChemConnector = new PubChemConnector();
     }
 
     @Test
     void getCID_returnsValidCid() throws IOException {
-        String cid = pubChemConnect.getCID();
+        String cid = pubChemConnector.getCID();
 
         assertNotNull(cid);
         assertFalse(cid.isBlank());
@@ -27,7 +27,7 @@ class PubChemConnectTest {
 
     @Test
     void connect_returnsValidJsonObject() throws IOException {
-        JsonObject result = pubChemConnect.connect();
+        JsonObject result = pubChemConnector.connector();
 
         assertNotNull(result);
         assertTrue(result.has("Record"));
@@ -35,9 +35,9 @@ class PubChemConnectTest {
 
     @Test
     void setMedicine_changesMedicineUsedInRequest() throws IOException {
-        pubChemConnect.setMedicine("paracetamol");
+        pubChemConnector.setMedicine("paracetamol");
 
-        String cid = pubChemConnect.getCID();
+        String cid = pubChemConnector.getCID();
 
         assertNotNull(cid);
         assertFalse(cid.isBlank());
