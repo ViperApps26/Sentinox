@@ -14,6 +14,7 @@
         <module>BlueSky</module>
         <module>PubChem</module>
         <module>EventStoreBuilder</module>
+        <module>BusinessUnit</module>
     </modules>
 
     <properties>
