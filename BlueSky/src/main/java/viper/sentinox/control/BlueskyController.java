@@ -1,7 +1,7 @@
 package viper.sentinox.control;
 
-import viper.sentinox.model.feeder.BlueskyFeeder;
-import viper.sentinox.model.store.BlueskyStore;
+import viper.sentinox.control.feeder.BlueskyFeeder;
+import viper.sentinox.control.store.BlueskyStore;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;

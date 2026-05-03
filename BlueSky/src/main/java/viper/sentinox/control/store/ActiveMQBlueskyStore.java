@@ -1,4 +1,4 @@
-package viper.sentinox.model.store;
+package viper.sentinox.control.store;
 
 import com.google.gson.Gson;
 import org.apache.activemq.ActiveMQConnectionFactory;
