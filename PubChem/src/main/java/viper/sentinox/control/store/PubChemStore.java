@@ -1,4 +1,4 @@
-package viper.sentinox.model.store;
+package viper.sentinox.control.store;
 
 import java.io.IOException;
 

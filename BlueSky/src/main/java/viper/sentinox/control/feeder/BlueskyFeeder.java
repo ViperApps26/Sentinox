@@ -1,10 +1,10 @@
-package viper.sentinox.model.feeder;
+package viper.sentinox.control.feeder;
 
 import com.google.gson.JsonArray;
-import viper.sentinox.model.BlueskyConnector;
-import viper.sentinox.model.BlueskyGet;
-import viper.sentinox.model.BlueskyGetToken;
-import viper.sentinox.model.SentimentAnalysis;
+import viper.sentinox.control.BlueskyConnector;
+import viper.sentinox.control.BlueskyGet;
+import viper.sentinox.control.BlueskyGetToken;
+import viper.sentinox.control.SentimentAnalysis;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;

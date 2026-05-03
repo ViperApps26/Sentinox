@@ -1,10 +1,10 @@
-package viper.sentinox.model.store;
+package viper.sentinox.control.store;
 
 import com.google.gson.Gson;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import viper.sentinox.model.PubChemConnect;
+import viper.sentinox.control.PubChemConnect;
 import viper.sentinox.model.PubChemEvent;
-import viper.sentinox.model.PubChemGet;
+import viper.sentinox.control.PubChemGet;
 
 import javax.jms.*;
 import java.io.IOException;

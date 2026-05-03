@@ -1,11 +1,11 @@
-package viper.sentinox.model.feeder;
+package viper.sentinox.control.feeder;
 
-import viper.sentinox.model.PubChemConnect;
-import viper.sentinox.model.store.ActiveMQPubChemStore;
+import viper.sentinox.control.PubChemConnect;
+import viper.sentinox.control.store.ActiveMQPubChemStore;
 
 import java.io.IOException;
 
-public class PubChemFeeder implements PubChemFeederInterface {
+public class PubChemFeeder {
 
     private final ActiveMQPubChemStore publisher;
     private final PubChemConnect connect;

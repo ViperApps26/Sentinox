@@ -1,7 +1,7 @@
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import viper.sentinox.model.PubChemConnect;
+import viper.sentinox.control.PubChemConnect;
 
 import java.io.IOException;
 

@@ -1,10 +1,10 @@
 package viper.sentinox;
 
-import viper.sentinox.control.PubChemControl;
-import viper.sentinox.model.feeder.PubChemFeeder;
-import viper.sentinox.model.store.ActiveMQPubChemStore;
-import viper.sentinox.model.PubChemConnect;
-import viper.sentinox.model.PubChemGet;
+import viper.sentinox.control.PubChemController;
+import viper.sentinox.control.feeder.PubChemFeeder;
+import viper.sentinox.control.store.ActiveMQPubChemStore;
+import viper.sentinox.control.PubChemConnect;
+import viper.sentinox.control.PubChemGet;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -13,13 +13,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        PubChemControl pubChemControl = createPubChemEnvironment();
+        PubChemController pubChemControl = createPubChemEnvironment();
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         autoExecute(scheduler, pubChemControl);
     }
 
-    private static void autoExecute(ScheduledExecutorService scheduler, PubChemControl control) {
+    private static void autoExecute(ScheduledExecutorService scheduler, PubChemController control) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 control.execute();
@@ -29,12 +29,12 @@ public class Main {
         }, 0, 1, TimeUnit.HOURS);
     }
 
-    private static PubChemControl createPubChemEnvironment() {
+    private static PubChemController createPubChemEnvironment() {
         PubChemConnect connect = new PubChemConnect();
         PubChemGet get = new PubChemGet(connect);
         ActiveMQPubChemStore publisher = new ActiveMQPubChemStore(connect, get);
         PubChemFeeder feeder = new PubChemFeeder(publisher, connect);
 
-        return new PubChemControl(feeder);
+        return new PubChemController(feeder);
     }
 }

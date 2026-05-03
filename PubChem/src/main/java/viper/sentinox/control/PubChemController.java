@@ -1,10 +1,10 @@
 package viper.sentinox.control;
 
-import viper.sentinox.model.feeder.PubChemFeeder;
+import viper.sentinox.control.feeder.PubChemFeeder;
 
 import java.io.IOException;
 
-public class PubChemControl implements PubChemControlInterface {
+public class PubChemController implements PubChemControlInterface {
 
     private final PubChemFeeder feeder;
 
@@ -24,7 +24,7 @@ public class PubChemControl implements PubChemControlInterface {
             "codeine"
     };
 
-    public PubChemControl(PubChemFeeder feeder) {
+    public PubChemController(PubChemFeeder feeder) {
         this.feeder = feeder;
     }
 

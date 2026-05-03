@@ -1,9 +1,9 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BlueskyController;
-import viper.sentinox.model.BlueskyGetToken;
-import viper.sentinox.model.feeder.BlueskyFeeder;
-import viper.sentinox.model.store.ActiveMQBlueskyStore;
+import viper.sentinox.control.BlueskyGetToken;
+import viper.sentinox.control.feeder.BlueskyFeeder;
+import viper.sentinox.control.store.ActiveMQBlueskyStore;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
