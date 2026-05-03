@@ -57,3 +57,7 @@ This week marked the completion of the event consumption layer with the implemen
 
 
 ### Sprint 3
+
+**FIRST WEEK**
+
+In the first week of Sprint 3, we built the Business Unit module to consume real-time events from ActiveMQ and store them in an in-memory datamart. We structured it following MVC, ensuring clean separation of responsibilities and preparing the system for data analysis.
