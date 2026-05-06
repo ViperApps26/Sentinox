@@ -1,4 +1,4 @@
-package viper.sentinox.subscriber;
+package viper.sentinox.control.subscriber;
 
 public interface EventSubscriber {
     void subscribe();

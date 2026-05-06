@@ -1,20 +1,17 @@
-package viper.sentinox.subscriber;
+package viper.sentinox.control.subscriber;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import viper.sentinox.model.DataMart;
-import viper.sentinox.view.BusinessUnitView;
 
 public class BusinessEventHandler implements EventHandler {
 
     private final Gson gson;
     private final DataMart dataMart;
-    private final BusinessUnitView view;
 
-    public BusinessEventHandler(DataMart dataMart, BusinessUnitView view) {
+    public BusinessEventHandler(DataMart dataMart) {
         this.gson = new Gson();
         this.dataMart = dataMart;
-        this.view = view;
     }
 
     @Override
@@ -26,7 +23,7 @@ public class BusinessEventHandler implements EventHandler {
         } else if ("PubChemReactions".equals(topicName)) {
             handlePubChemEvent(event);
         } else {
-            view.showMessage("Unknown topic received: " + topicName);
+            System.out.println("Unknown topic received: " + topicName);
         }
     }
 
@@ -35,7 +32,7 @@ public class BusinessEventHandler implements EventHandler {
         String sentiment = event.get("sentiment").getAsString();
 
         dataMart.registerSentiment(medicine, sentiment);
-        view.showMessage("Bluesky event registered for " + medicine);
+        System.out.println("Bluesky event registered for " + medicine);
     }
 
     private void handlePubChemEvent(JsonObject event) {
@@ -43,6 +40,6 @@ public class BusinessEventHandler implements EventHandler {
         String reaction = event.get("reaction").getAsString();
 
         dataMart.registerReaction(medicine, reaction);
-        view.showMessage("PubChem event registered for " + medicine);
+        System.out.println("PubChem event registered for " + medicine);
     }
 }

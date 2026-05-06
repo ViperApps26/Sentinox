@@ -12,7 +12,7 @@ public class PubChemController {
     private final PubChemFeeder feeder;
     private final ActiveMQPubChemStore store;
 
-    private final String[] medicines = {
+    private final String[] medicines = { // TODO: convertir a fichero la lista de las medicinas
             "ibuprofen",
             "paracetamol",
             "aspirin",

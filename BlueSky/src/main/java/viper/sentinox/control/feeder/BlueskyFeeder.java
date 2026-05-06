@@ -1,9 +1,7 @@
 package viper.sentinox.control.feeder;
 
 import com.google.gson.JsonArray;
-import viper.sentinox.control.BlueskyConnector;
-import viper.sentinox.control.BlueskyGet;
-import viper.sentinox.control.token.BlueskyGetToken;
+import viper.sentinox.control.oauth.BlueskyGetToken;
 import viper.sentinox.control.sentimentanalysis.SentimentAnalysis;
 import viper.sentinox.model.BlueskyEvent;
 

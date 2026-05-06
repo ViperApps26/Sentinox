@@ -1,27 +1,23 @@
 package viper.sentinox.control;
 
 import viper.sentinox.model.DataMart;
-import viper.sentinox.subscriber.EventSubscriber;
-import viper.sentinox.view.BusinessUnitView;
+import viper.sentinox.control.subscriber.EventSubscriber;
 
 public class BusinessUnitController {
 
     private final EventSubscriber subscriber;
     private final DataMart dataMart;
-    private final BusinessUnitView view;
 
     public BusinessUnitController(EventSubscriber subscriber,
-                                  DataMart dataMart,
-                                  BusinessUnitView view) {
+                                  DataMart dataMart) {
         this.subscriber = subscriber;
         this.dataMart = dataMart;
-        this.view = view;
     }
 
     public void start() {
-        view.showMessage("Starting Business Unit...");
+        System.out.println("Starting Business Unit...");
         subscriber.subscribe();
-        view.showMessage("Business Unit is running.");
-        view.showMessage(dataMart.getSummary());
+        System.out.println("Business Unit is running.");
+        System.out.println(dataMart.getSummary());
     }
 }

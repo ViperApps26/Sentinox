@@ -1,10 +1,15 @@
 package viper.sentinox;
 
-import viper.sentinox.app.BusinessUnitApplication;
+import viper.sentinox.control.app.BusinessUnitApplication;
 
 public class Main {
-    public static void main(String[] args) {
+    static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Use: java viper.sentinox.Main <ActiveMQUrl>");
+            return;
+        }
+        String brokerUrl = args[0];
         BusinessUnitApplication application = new BusinessUnitApplication();
-        application.run(args);
+        application.run(brokerUrl);
     }
 }

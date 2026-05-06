@@ -1,7 +1,6 @@
-package viper.sentinox.subscriber;
+package viper.sentinox.control.subscriber;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import viper.sentinox.view.BusinessUnitView;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -17,18 +16,15 @@ public class ActiveMQEventSubscriber implements EventSubscriber {
     private final String clientId;
     private final String subscriptionName;
     private final EventHandler eventHandler;
-    private final BusinessUnitView view;
 
     public ActiveMQEventSubscriber(String brokerUrl,
                                    String clientId,
                                    String subscriptionName,
-                                   EventHandler eventHandler,
-                                   BusinessUnitView view) {
+                                   EventHandler eventHandler) {
         this.brokerUrl = brokerUrl;
         this.clientId = clientId;
         this.subscriptionName = subscriptionName;
         this.eventHandler = eventHandler;
-        this.view = view;
     }
 
     @Override
@@ -41,7 +37,7 @@ public class ActiveMQEventSubscriber implements EventSubscriber {
             subscribeToTopic(session, "PubChemReactions", "PubChem");
 
         } catch (Exception e) {
-            view.showError("Error subscribing to ActiveMQ topics", e);
+            System.out.println("Error subscribing to ActiveMQ topics");
         }
     }
 
@@ -69,10 +65,10 @@ public class ActiveMQEventSubscriber implements EventSubscriber {
                     eventHandler.handle(topicName, textMessage.getText());
                 }
             } catch (Exception e) {
-                view.showError("Error handling message from " + topicName, e);
+                System.out.println("Error handling message from " + topicName);
             }
         });
 
-        view.showMessage("Subscribed to topic: " + topicName);
+        System.out.println("Subscribed to topic: " + topicName);
     }
 }

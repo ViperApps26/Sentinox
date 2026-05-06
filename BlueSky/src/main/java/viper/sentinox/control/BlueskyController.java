@@ -12,7 +12,7 @@ public class BlueskyController {
     private final BlueskyFeeder feeder;
     private final ActiveMQBlueskyStore store;
 
-    private final String[] medicines = {
+    private final String[] medicines = {  // TODO: A fichero y pasarlo como argumento (ruta)
             "ibuprofen",
             "paracetamol",
             "aspirin",

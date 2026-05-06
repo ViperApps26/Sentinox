@@ -1,4 +1,4 @@
-package viper.sentinox.control.token;
+package viper.sentinox.control.oauth;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
