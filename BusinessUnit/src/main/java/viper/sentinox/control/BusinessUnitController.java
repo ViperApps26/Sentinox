@@ -1,27 +1,41 @@
 package viper.sentinox.control;
 
-import viper.sentinox.model.DataMart;
-import viper.sentinox.subscriber.EventSubscriber;
-import viper.sentinox.view.BusinessUnitView;
+import viper.sentinox.model.MedicineDataMart;
+import viper.sentinox.subscriber.ActiveMQBusinessSubscriber;
+import viper.sentinox.view.ConsoleView;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BusinessUnitController {
 
-    private final EventSubscriber subscriber;
-    private final DataMart dataMart;
-    private final BusinessUnitView view;
+    private final ActiveMQBusinessSubscriber subscriber;
+    private final MedicineDataMart dataMart;
+    private final ConsoleView view;
 
-    public BusinessUnitController(EventSubscriber subscriber,
-                                  DataMart dataMart,
-                                  BusinessUnitView view) {
+    public BusinessUnitController(ActiveMQBusinessSubscriber subscriber,
+                                  MedicineDataMart dataMart,
+                                  ConsoleView view) {
         this.subscriber = subscriber;
         this.dataMart = dataMart;
         this.view = view;
     }
 
     public void start() {
-        view.showMessage("Starting Business Unit...");
-        subscriber.subscribe();
-        view.showMessage("Business Unit is running.");
-        view.showMessage(dataMart.getSummary());
+        view.show("Starting Business Unit...");
+        startSummaryPrinter();
+        subscriber.start();
+    }
+
+    private void startSummaryPrinter() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(
+                () -> view.show(dataMart.getSummary()),
+                30,
+                30,
+                TimeUnit.SECONDS
+        );
     }
 }

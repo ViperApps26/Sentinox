@@ -1,15 +1,12 @@
 package viper.sentinox.view;
 
-public class ConsoleBusinessUnitView implements BusinessUnitView {
+public class ConsoleView {
 
-    @Override
-    public void showMessage(String message) {
+    public void show(String message) {
         System.out.println(message);
     }
 
-    @Override
     public void showError(String message, Exception e) {
         System.out.println(message);
-        e.printStackTrace();
     }
 }

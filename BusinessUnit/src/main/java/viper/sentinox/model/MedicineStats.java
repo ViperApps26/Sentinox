@@ -39,7 +39,7 @@ public class MedicineStats {
                 Negative opinions: %d
                 Neutral opinions: %d
                 Total opinions: %d
-                Reactions stored: %d
+                Adverse reactions stored: %d
                 """.formatted(
                 positive,
                 negative,
