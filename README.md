@@ -26,6 +26,7 @@ Finally, we used a sentiment analysis tool to process the qualitative informatio
 ### Modules
 
 **Bluesky module**
+
 The Bluesky module is responsible for collecting public opinions about different medicines from the Bluesky social media platform. It searches for posts related to a predefined list of medicines and extracts relevant information such as the post text, author, creation date, and the medicine being mentioned.
 
 After retrieving the posts, the module applies sentiment analysis to classify each opinion as positive, negative, or neutral. Once the event is created, it is published to ActiveMQ through the BlueskyPosts topic, so that the rest of the system can consume it in real time.
@@ -34,6 +35,7 @@ To execute this module, it is necessary to provide the Bluesky token, an user, a
 
 
 **PubChem module**
+
 The PubChem module is in charge of retrieving scientific information about medicines from the PubChem API. For each medicine in the list, it searches for the corresponding compound and extracts information related to adverse effects.
 
 Each adverse effect is transformed into an event containing the medicine name, its PubChem CID, and the reaction or side effect found. These events are then sent to ActiveMQ through the PubChemReactions topic. This module provides the medical and scientific context needed to complement the social media information obtained from Bluesky.
@@ -56,28 +58,33 @@ For every medicine, the datamart stores sentiment information from Bluesky posts
 
 To execute this module, ActiveMQ must be running and the feeder modules should be publishing events. The BusinessUnit listens to the broker, receives the events, and updates the datamart continuously. It needs the broker URL.
 
+
 ### System and application arquitecture
 
 //diagrams
 
 ### Principles and patterns
 
-*Principle of Single Responsibility (SRP)*
+- *Principle of Single Responsibility (SRP)*
+
 By making sure that every class in the project has a single, well-defined responsibility, we implemented the Single Responsibility Principle. Certain classes, for instance, are just in charge of retrieving data from APIs; others are in charge of publishing events to ActiveMQ; yet others are in charge of processing or storing the data.
 
 The system is easier to debug and expand in subsequent iterations because to this separation, which also enhances readability and maintainability.
 
-*The Open-Closed Principle (OCP)*
+- *The Open-Closed Principle (OCP)*
+  
 The system was designed with the Open-Closed Principle in mind, allowing the addition of new features without needlessly changing the current code.
 
 For example, rather than changing the current structure, new classes can be created to add new event processors, subjects, or data sources into the system. This increases the architecture's scalability and lowers the possibility of introducing mistakes into components that are already functional.
 
-*Demeter's Law*
+- *Demeter's Law*
+  
 To lessen coupling between classes and modules, the Law of Demeter was adhered to. Instead of relying on the internal workings of other components, each class simply interacts with the objects that are directly relevant to it.
 
 Because modifications made within one module have less of an effect on the application as a whole, the architecture becomes cleaner and easier to maintain.
 
-*GitFlow*
+- *GitFlow*
+  
 To better manage the project versions and arrange the development process, we employed the GitFlow workflow.
 
 Features were developed, modifications were tested, and stable versions were integrated into the main branch using separate branches. This made it possible for us to create various system components in a safer manner, monitor the project's progress, and prevent conflicts.
