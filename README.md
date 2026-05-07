@@ -4,17 +4,88 @@
 ## **ViperApps**
 This repository will host the development of the chosen app
 
-What is the app about?
-Our intention is to create an app in which, throughout the search of a chosen medicine by the user, it returns a history of people's opinions that have been shared on the social media platform BlueSky. To provide further information, the diverse adverse effects of the chosen medication are also displayed for the user to see. 
+### What is the app about?
+Our intention is to create an application in which, through the search of a medicine chosen by the user, a history of people’s opinions shared on the social media platform Bluesky is returned. To provide further information, the different adverse effects of the selected medication are also displayed for the user to see.
 
 What motivated us to choose this topic?
-We thought about how nowadays, medication and pills are everywhere. Around a 60-80% of the people worldwide take some sort of medication each yea;, it does not necessarily have to be for a specific illness, but also as a reinforcment, such as vitamins. This has made an impact on us, because we take these substances and we follow our doctor's instructions, but how well informed are we about what we intake? and how do the drugs we are prescribed affect another's person's body and health. 
-We found this a real-life issue, and we found it interesting to explore and develop a small solution for it with our application
+We thought about how nowadays medication and pills are present everywhere in everyday life. Around 60–80% of people worldwide take some type of medication every year; this does not necessarily have to be for a specific illness, but also as reinforcement products such as vitamins.
+
+This made an impact on us because we consume these substances and follow our doctors’ instructions, but we often do not know enough about what we are actually taking or how these drugs may affect different people and their health. We considered this a real-life issue and found it interesting to explore and develop a small solution for it through our application.
+
 
 ![Medicine Image](https://cdn.pixabay.com/photo/2023/10/01/14/40/medicine-8287535_1280.jpg)
 
 
-### Sprint 1
+
+### APIs and Tools used
+
+The APIs we decided to use are PubChem and Bluesky. PubChem provides scientifically supported information about different drugs, including known adverse effects and medical data. Bluesky allows us to collect public comments posted by users about their personal experiences with different medicines, such as how they felt or what effects they noticed.
+
+Finally, we used a sentiment analysis tool to process the qualitative information obtained from Bluesky posts. This allows us to classify users opinions as positive, negative, or neutral, making the social media data easier to analyze.
+
+### Modules
+
+**Bluesky module**
+The Bluesky module is responsible for collecting public opinions about different medicines from the Bluesky social media platform. It searches for posts related to a predefined list of medicines and extracts relevant information such as the post text, author, creation date, and the medicine being mentioned.
+
+After retrieving the posts, the module applies sentiment analysis to classify each opinion as positive, negative, or neutral. Once the event is created, it is published to ActiveMQ through the BlueskyPosts topic, so that the rest of the system can consume it in real time.
+
+To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL, the topic where the events will be published and the route of the file with the list of medicines (BlueskyPosts).
+
+
+**PubChem module**
+The PubChem module is in charge of retrieving scientific information about medicines from the PubChem API. For each medicine in the list, it searches for the corresponding compound and extracts information related to adverse effects.
+
+Each adverse effect is transformed into an event containing the medicine name, its PubChem CID, and the reaction or side effect found. These events are then sent to ActiveMQ through the PubChemReactions topic. This module provides the medical and scientific context needed to complement the social media information obtained from Bluesky.
+
+To execute this module, it needs the ActiveMQ broker URL and the topic where PubChem events will be published (PubChemReactions).
+
+**EventStoreBuilder module**
+
+The EventStoreBuilder module is responsible for consuming the events published in ActiveMQ and storing them locally. It subscribes to the topics used by the feeders, mainly BlueskyPosts and PubChemReactions, and receives the events as they are produced.
+
+Each event is stored in a structured file system using JSON Lines format. The files are organized by topic, source system, and date, which makes it possible to recover historical information later. This module acts as the bridge between the real-time event flow and the historical event storage.
+
+To execute this module, ActiveMQ must be running, since it needs to subscribe to the broker topics and listen for incoming events.
+
+**BusinessUnit module**
+
+The BusinessUnit module is the part of the system that gives value to the final user. It consumes real-time events from ActiveMQ and updates a local datamart with aggregated information about each medicine.
+
+For every medicine, the datamart stores sentiment information from Bluesky posts and adverse reactions from PubChem. This allows the system to compare public perception with known medical effects. At this stage, the datamart is implemented in memory, which keeps the design simple and makes real-time updates fast.
+
+To execute this module, ActiveMQ must be running and the feeder modules should be publishing events. The BusinessUnit listens to the broker, receives the events, and updates the datamart continuously. It needs the broker URL.
+
+### System and application arquitecture
+
+//diagrams
+
+### Principles and patterns
+
+*Principle of Single Responsibility (SRP)*
+By making sure that every class in the project has a single, well-defined responsibility, we implemented the Single Responsibility Principle. Certain classes, for instance, are just in charge of retrieving data from APIs; others are in charge of publishing events to ActiveMQ; yet others are in charge of processing or storing the data.
+
+The system is easier to debug and expand in subsequent iterations because to this separation, which also enhances readability and maintainability.
+
+*The Open-Closed Principle (OCP)*
+The system was designed with the Open-Closed Principle in mind, allowing the addition of new features without needlessly changing the current code.
+
+For example, rather than changing the current structure, new classes can be created to add new event processors, subjects, or data sources into the system. This increases the architecture's scalability and lowers the possibility of introducing mistakes into components that are already functional.
+
+*Demeter's Law*
+To lessen coupling between classes and modules, the Law of Demeter was adhered to. Instead of relying on the internal workings of other components, each class simply interacts with the objects that are directly relevant to it.
+
+Because modifications made within one module have less of an effect on the application as a whole, the architecture becomes cleaner and easier to maintain.
+
+*GitFlow*
+To better manage the project versions and arrange the development process, we employed the GitFlow workflow.
+
+Features were developed, modifications were tested, and stable versions were integrated into the main branch using separate branches. This made it possible for us to create various system components in a safer manner, monitor the project's progress, and prevent conflicts.
+
+
+### Brief explanation of how the sprints were carried out
+
+#### Sprint 1
 
 **FIRST WEEK**
 Chosen APIs:
@@ -41,7 +112,7 @@ Another thing we spent some time working on, was creating a diverse group of tes
 We also focused on developing the different tests to validate the code we built, following the TDD approach.
 
 
-### Sprint 2
+#### Sprint 2
 
 **FIRST WEEK**
 
@@ -56,7 +127,7 @@ During the second week, the event publishing system was completely implemented a
 This week marked the completion of the event consumption layer with the implementation of the Event Store Builder. This component effectively subscribes to ActiveMQ topics, subsequently storing all incoming events within a structured file system. A comprehensive end-to-end test of the entire data pipeline was successfully conducted, validating the reliable communication channels between all modules. Furthermore, the week concluded with the integration of enhanced error handling mechanisms and targeted minor optimizations, solidifying the event-driven architecture.
 
 
-### Sprint 3
+#### Sprint 3
 
 **FIRST WEEK**
 
