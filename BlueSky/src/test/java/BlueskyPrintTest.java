@@ -2,8 +2,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.control.BlueskyConnector;
-import viper.sentinox.control.BlueskyGet;
+import viper.sentinox.control.feeder.BlueskyConnector;
+import viper.sentinox.control.feeder.BlueskyGet;
 
 import java.util.List;
 

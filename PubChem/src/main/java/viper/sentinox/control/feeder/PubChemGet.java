@@ -1,9 +1,8 @@
-package viper.sentinox.control;
+package viper.sentinox.control.feeder;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import viper.sentinox.control.feeder.PubChemGetEvents;
 
 import java.io.IOException;
 import java.util.ArrayList;

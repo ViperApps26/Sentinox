@@ -1,7 +1,5 @@
 package viper.sentinox.control.feeder;
 
-import viper.sentinox.control.PubChemConnector;
-import viper.sentinox.control.PubChemGet;
 import viper.sentinox.model.PubChemEvent;
 
 import java.io.IOException;

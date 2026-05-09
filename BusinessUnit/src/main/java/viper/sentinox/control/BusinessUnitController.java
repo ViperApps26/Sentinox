@@ -1,41 +1,39 @@
 package viper.sentinox.control;
 
-import viper.sentinox.model.MedicineDataMart;
-import viper.sentinox.subscriber.ActiveMQBusinessSubscriber;
-import viper.sentinox.view.ConsoleView;
+import viper.sentinox.control.subscriber.BusinessUnitEventHandler;
+import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import javax.jms.JMSException;
 
 public class BusinessUnitController {
 
-    private final ActiveMQBusinessSubscriber subscriber;
-    private final MedicineDataMart dataMart;
-    private final ConsoleView view;
+    private final BusinessUnitSubscriber subscriber;
+    private final BusinessUnitEventHandler handler;
 
-    public BusinessUnitController(ActiveMQBusinessSubscriber subscriber,
-                                  MedicineDataMart dataMart,
-                                  ConsoleView view) {
+    public BusinessUnitController(BusinessUnitSubscriber subscriber, BusinessUnitEventHandler handler) {
         this.subscriber = subscriber;
-        this.dataMart = dataMart;
-        this.view = view;
+        this.handler = handler;
     }
 
     public void start() {
-        view.show("Starting Business Unit...");
-        startSummaryPrinter();
-        subscriber.start();
+        try {
+            storeMessages();
+        } catch (Exception e) {
+            System.out.println("Error in Business Unit: " + e.getMessage());
+        } finally {
+            subscriber.close();
+        }
     }
 
-    private void startSummaryPrinter() {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    public void storeMessages() throws JMSException, InterruptedException {
+        subscriber.connect();
 
-        scheduler.scheduleAtFixedRate(
-                () -> view.show(dataMart.getSummary()),
-                30,
-                30,
-                TimeUnit.SECONDS
-        );
+        subscriber.subscribe("BlueskyPosts", "BusinessUnit_Bluesky", message ->
+                handler.handleMessage(message, "BlueskyPosts"));
+
+        subscriber.subscribe("PubChemReactions", "BusinessUnit_PubChem", message ->
+                handler.handleMessage(message, "PubChemReactions"));
+
+        subscriber.waitForever();
     }
 }

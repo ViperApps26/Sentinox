@@ -1,60 +1,49 @@
 package viper.sentinox.model;
 
-import com.google.gson.JsonObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class MedicineDataMart {
+public class MedicineDataMart implements DataMart {
 
-    private final Map<String, MedicineStats> statsByMedicine;
+    private final Map<String, MedicineStats> medicineStatsMap;
 
     public MedicineDataMart() {
-        this.statsByMedicine = new HashMap<>();
+        this.medicineStatsMap = new HashMap<>();
     }
 
-    public synchronized void registerBlueskyEvent(JsonObject event) {
-        String medicine = event.get("medicine").getAsString();
-        String sentiment = event.get("sentiment").getAsString();
 
+    @Override
+    public synchronized void registerBlueskyEvent(String medicine, String comment, String sentiment) {
         MedicineStats stats = getOrCreateStats(medicine);
+        stats.addComment(comment);
         stats.addSentiment(sentiment);
     }
 
-    public synchronized void registerPubChemEvent(JsonObject event) {
-        String medicine = event.get("medicine").getAsString();
-        String reaction = event.get("reaction").getAsString();
-
+    @Override
+    public synchronized void registerPubChemEvent(String medicine, String reaction) {
         MedicineStats stats = getOrCreateStats(medicine);
         stats.addReaction(reaction);
     }
 
-    public synchronized String getSummary() {
-        if (statsByMedicine.isEmpty()) {
-            return """
-                    
-                    ========== DATAMART SUMMARY ==========
-                    No data registered yet.
-                    ======================================
-                    """;
+    private MedicineStats getOrCreateStats(String medicine) {
+        return medicineStatsMap.computeIfAbsent(medicine, key -> new MedicineStats());
+    }
+
+    public synchronized String getMedicinesSummary() {
+        if (medicineStatsMap.isEmpty()) {
+            return "No data registered yet.";
         }
 
         StringBuilder summary = new StringBuilder();
         summary.append("\n========== DATAMART SUMMARY ==========\n");
 
-        for (Map.Entry<String, MedicineStats> entry : statsByMedicine.entrySet()) {
+        for (Map.Entry<String, MedicineStats> entry : medicineStatsMap.entrySet()) {
             summary.append("\nMedicine: ")
                     .append(entry.getKey())
                     .append("\n")
-                    .append(entry.getValue().getSummary());
+                    .append(entry.getValue().getMedicineSummary());
         }
-
-        summary.append("======================================");
-
+        summary.append("======================================\n");
         return summary.toString();
-    }
-
-    private MedicineStats getOrCreateStats(String medicine) {
-        return statsByMedicine.computeIfAbsent(medicine, key -> new MedicineStats());
     }
 }

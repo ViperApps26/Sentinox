@@ -1,31 +1,23 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BusinessUnitController;
-import viper.sentinox.model.MedicineDataMart;
-import viper.sentinox.subscriber.ActiveMQBusinessSubscriber;
-import viper.sentinox.view.ConsoleView;
+import viper.sentinox.control.app.BusinessUnitEnvironment;
 
 public class Main {
-
     public static void main(String[] args) {
-
+        if (args.length != 2) {
+            System.out.println("Use: java viper.sentinox.Main <ActiveMQUrl> <clientID>");
+            return;
+        }
         String brokerUrl = args[0];
+        String clientID = args[1];
 
-        ConsoleView view = new ConsoleView();
-        MedicineDataMart dataMart = new MedicineDataMart();
+        start(brokerUrl, clientID);
+    }
 
-        ActiveMQBusinessSubscriber subscriber = new ActiveMQBusinessSubscriber(
-                brokerUrl,
-                dataMart,
-                view
-        );
-
-        BusinessUnitController controller = new BusinessUnitController(
-                subscriber,
-                dataMart,
-                view
-        );
-
+    private static void start(String brokerUrl, String clientID) {
+        BusinessUnitEnvironment environment = new BusinessUnitEnvironment();
+        BusinessUnitController controller = environment.prepare(brokerUrl, clientID);
         controller.start();
     }
-}
+} // Test
