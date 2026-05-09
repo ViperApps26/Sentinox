@@ -18,14 +18,18 @@ public class MedicineDataMart implements DataMart {
     @Override
     public synchronized void registerBlueskyEvent(String medicine, String comment, String sentiment) {
         MedicineStats stats = getOrCreateStats(medicine);
-        stats.addComment(comment);
-        stats.addSentiment(sentiment);
+        if (!stats.getComments().contains(comment)) {
+            stats.addComment(comment);
+            stats.addSentiment(sentiment);
+        }
     }
 
     @Override
     public synchronized void registerPubChemEvent(String medicine, String reaction) {
         MedicineStats stats = getOrCreateStats(medicine);
-        stats.addReaction(reaction);
+        if (!stats.getReactions().contains(reaction)) {
+            stats.addReaction(reaction);
+        }
     }
 
     private MedicineStats getOrCreateStats(String medicine) {

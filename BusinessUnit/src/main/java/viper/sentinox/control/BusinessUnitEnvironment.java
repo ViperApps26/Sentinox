@@ -1,10 +1,9 @@
-package viper.sentinox.control.app;
+package viper.sentinox.control;
 
-import viper.sentinox.control.BusinessUnitAPI;
-import viper.sentinox.control.BusinessUnitController;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.DataMartFeader.EventStoreReader;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
-import viper.sentinox.control.subscriber.BusinessUnitEventHandler;
+import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
+import viper.sentinox.view.BusinessUnitAPI;
 
 public class BusinessUnitEnvironment {
 
@@ -20,6 +19,8 @@ public class BusinessUnitEnvironment {
 
         BusinessUnitAPI api = new BusinessUnitAPI(dataMart);
 
-        return new BusinessUnitController(subscriber, handler, api);
+        EventStoreReader reader = new EventStoreReader(handler);
+
+        return new BusinessUnitController(subscriber, handler, api, reader);
     }
 }

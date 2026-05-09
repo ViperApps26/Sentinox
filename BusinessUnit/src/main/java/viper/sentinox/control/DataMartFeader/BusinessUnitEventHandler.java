@@ -1,4 +1,4 @@
-package viper.sentinox.control.subscriber;
+package viper.sentinox.control.DataMartFeader;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

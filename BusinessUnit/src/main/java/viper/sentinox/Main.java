@@ -1,7 +1,7 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BusinessUnitController;
-import viper.sentinox.control.app.BusinessUnitEnvironment;
+import viper.sentinox.control.BusinessUnitEnvironment;
 
 public class Main {
     public static void main(String[] args) {

@@ -86,4 +86,11 @@ public class MedicineStats {
                 """.formatted(positive, negative, neutral);
     }
 
+    public List<String> getReactions() {
+        return reactions;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
 }
