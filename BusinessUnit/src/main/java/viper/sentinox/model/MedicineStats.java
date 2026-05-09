@@ -9,21 +9,27 @@ public class MedicineStats {
     private int negative;
     private int neutral;
     private final List<String> reactions;
+    private final List<String> comments;
 
     public MedicineStats() {
         this.positive = 0;
         this.negative = 0;
         this.neutral = 0;
         this.reactions = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     public void addSentiment(String sentiment) {
-        if ("Positive".equalsIgnoreCase(sentiment)) {
-            positive++;
-        } else if ("Negative".equalsIgnoreCase(sentiment)) {
-            negative++;
-        } else {
-            neutral++;
+        switch (sentiment) {
+            case "Positive" -> positive++;
+            case "Negative" -> negative++;
+            default -> neutral++;
+        }
+    }
+
+    public void addComment(String comment) {
+        if (comment != null && !comment.isBlank()) {
+            comments.add(comment);
         }
     }
 
@@ -33,19 +39,21 @@ public class MedicineStats {
         }
     }
 
-    public String getSummary() {
+    public String getMedicineSummary() {
         return """
                 Positive opinions: %d
                 Negative opinions: %d
                 Neutral opinions: %d
                 Total opinions: %d
                 Reactions stored: %d
+                Comments stored: %d
                 """.formatted(
                 positive,
                 negative,
                 neutral,
                 positive + negative + neutral,
-                reactions.size()
+                reactions.size(),
+                comments.size()
         );
     }
 }

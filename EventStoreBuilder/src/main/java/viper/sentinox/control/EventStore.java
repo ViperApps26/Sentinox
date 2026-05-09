@@ -1,4 +1,4 @@
-package viper.sentinox;
+package viper.sentinox.control;
 
 public interface EventStore {
     void store();

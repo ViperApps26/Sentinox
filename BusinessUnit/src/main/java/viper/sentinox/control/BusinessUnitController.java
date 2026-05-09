@@ -1,23 +1,39 @@
 package viper.sentinox.control;
 
-import viper.sentinox.model.DataMart;
-import viper.sentinox.control.subscriber.EventSubscriber;
+import viper.sentinox.control.subscriber.BusinessUnitEventHandler;
+import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
+
+import javax.jms.JMSException;
 
 public class BusinessUnitController {
 
-    private final EventSubscriber subscriber;
-    private final DataMart dataMart;
+    private final BusinessUnitSubscriber subscriber;
+    private final BusinessUnitEventHandler handler;
 
-    public BusinessUnitController(EventSubscriber subscriber,
-                                  DataMart dataMart) {
+    public BusinessUnitController(BusinessUnitSubscriber subscriber, BusinessUnitEventHandler handler) {
         this.subscriber = subscriber;
-        this.dataMart = dataMart;
+        this.handler = handler;
     }
 
     public void start() {
-        System.out.println("Starting Business Unit...");
-        subscriber.subscribe();
-        System.out.println("Business Unit is running.");
-        System.out.println(dataMart.getSummary());
+        try {
+            storeMessages();
+        } catch (Exception e) {
+            System.out.println("Error in Business Unit: " + e.getMessage());
+        } finally {
+            subscriber.close();
+        }
+    }
+
+    public void storeMessages() throws JMSException, InterruptedException {
+        subscriber.connect();
+
+        subscriber.subscribe("BlueskyPosts", "BusinessUnit_Bluesky", message ->
+                handler.handleMessage(message, "BlueskyPosts"));
+
+        subscriber.subscribe("PubChemReactions", "BusinessUnit_PubChem", message ->
+                handler.handleMessage(message, "PubChemReactions"));
+
+        subscriber.waitForever();
     }
 }

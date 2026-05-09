@@ -1,0 +1,13 @@
+ibuprofen
+paracetamol
+aspirin
+naproxen
+amoxicillin
+metformin
+atorvastatin
+lisinopril
+sertraline
+fluoxetine
+diazepam
+morphine
+codeine
