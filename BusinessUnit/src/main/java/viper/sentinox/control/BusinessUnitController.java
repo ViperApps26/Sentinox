@@ -9,14 +9,19 @@ public class BusinessUnitController {
 
     private final BusinessUnitSubscriber subscriber;
     private final BusinessUnitEventHandler handler;
+    private final BusinessUnitAPI api;
 
-    public BusinessUnitController(BusinessUnitSubscriber subscriber, BusinessUnitEventHandler handler) {
+    public BusinessUnitController(BusinessUnitSubscriber subscriber,
+                                  BusinessUnitEventHandler handler,
+                                  BusinessUnitAPI api) {
         this.subscriber = subscriber;
         this.handler = handler;
+        this.api = api;
     }
 
     public void start() {
         try {
+            api.start();
             storeMessages();
         } catch (Exception e) {
             System.out.println("Error in Business Unit: " + e.getMessage());

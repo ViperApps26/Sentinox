@@ -20,4 +20,4 @@ public class Main {
         BusinessUnitController controller = environment.prepare(brokerUrl, clientID);
         controller.start();
     }
-} // Test
+}

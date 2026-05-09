@@ -41,19 +41,49 @@ public class MedicineStats {
 
     public String getMedicineSummary() {
         return """
+                Comments stored: %d
                 Positive opinions: %d
                 Negative opinions: %d
                 Neutral opinions: %d
-                Total opinions: %d
                 Reactions stored: %d
-                Comments stored: %d
                 """.formatted(
+                comments.size(),
                 positive,
                 negative,
                 neutral,
-                positive + negative + neutral,
-                reactions.size(),
-                comments.size()
+                reactions.size()
+
         );
     }
+
+    public String getReactionsSummary() {
+        if (reactions.isEmpty()) {
+            return "No reactions recorded.";
+        }
+        StringBuilder sb = new StringBuilder("Reactions:\n");
+        for (String reaction : reactions) {
+            sb.append("  * ").append(reaction).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String getCommentsSummary() {
+        if (comments.isEmpty()) {
+            return "No comments recorded.";
+        }
+        StringBuilder sb = new StringBuilder("Comments:\n");
+        for (String comment : comments) {
+            sb.append("  * ").append(comment).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String getSentimentSummary() {
+        return """
+                Positive: %d
+                Negative: %d
+                Neutral: %d
+                """.formatted(positive, negative, neutral);
+    }
+
 }
