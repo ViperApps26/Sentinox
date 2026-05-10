@@ -9,7 +9,7 @@ public class MedicineStats {
     private int negative;
     private int neutral;
     private final List<String> reactions;
-    private final List<String> comments;
+    private final List<Comment> comments;
 
     public MedicineStats() {
         this.positive = 0;
@@ -27,8 +27,8 @@ public class MedicineStats {
         }
     }
 
-    public void addComment(String comment) {
-        if (comment != null && !comment.isBlank()) {
+    public void addComment(Comment comment) {
+        if (comment != null) {
             comments.add(comment);
         }
     }
@@ -39,21 +39,29 @@ public class MedicineStats {
         }
     }
 
-    public String getMedicineSummary() {
-        return """
-                Positive opinions: %d
-                Negative opinions: %d
-                Neutral opinions: %d
-                Total opinions: %d
-                Reactions stored: %d
-                Comments stored: %d
-                """.formatted(
-                positive,
-                negative,
-                neutral,
-                positive + negative + neutral,
-                reactions.size(),
-                comments.size()
-        );
+    public List<String> getReactions() {
+        return reactions;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public List<String> getCommentTexts() {
+        return comments.stream()
+                .map(Comment::getText)
+                .toList();
+    }
+
+    public int getPositive() {
+        return positive;
+    }
+
+    public int getNegative() {
+        return negative;
+    }
+
+    public int getNeutral() {
+        return neutral;
     }
 }

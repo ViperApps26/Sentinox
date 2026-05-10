@@ -11,3 +11,4 @@ fluoxetine
 diazepam
 morphine
 codeine
+diclofenac
