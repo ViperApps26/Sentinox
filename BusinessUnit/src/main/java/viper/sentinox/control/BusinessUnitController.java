@@ -3,7 +3,6 @@ package viper.sentinox.control;
 import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
 import viper.sentinox.control.DataMartFeader.EventStoreReader;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
-import viper.sentinox.view.BusinessUnitAPI;
 
 import javax.jms.JMSException;
 
@@ -11,22 +10,18 @@ public class BusinessUnitController {
 
     private final BusinessUnitSubscriber subscriber;
     private final BusinessUnitEventHandler handler;
-    private final BusinessUnitAPI api;
     private final EventStoreReader eventStoreReader;
 
     public BusinessUnitController(BusinessUnitSubscriber subscriber,
                                   BusinessUnitEventHandler handler,
-                                  BusinessUnitAPI api,
                                   EventStoreReader eventStoreReader) {
         this.subscriber = subscriber;
         this.handler = handler;
-        this.api = api;
         this.eventStoreReader = eventStoreReader;
     }
 
     public void start() {
         try {
-            api.start();
             eventStoreReader.loadHistoricalEvents();
             storeMessages();
         } catch (Exception e) {

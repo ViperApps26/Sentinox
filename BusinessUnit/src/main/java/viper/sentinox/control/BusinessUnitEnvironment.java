@@ -3,13 +3,10 @@ package viper.sentinox.control;
 import viper.sentinox.control.DataMartFeader.EventStoreReader;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
 import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
-import viper.sentinox.view.BusinessUnitAPI;
 
 public class BusinessUnitEnvironment {
 
-    public BusinessUnitController prepare(String brokerUrl, String clientID) {
-        MedicineDataMart dataMart = new MedicineDataMart();
-
+    public BusinessUnitController prepare(String brokerUrl, String clientID, MedicineDataMart dataMart) {
         BusinessUnitEventHandler handler = new BusinessUnitEventHandler(dataMart);
 
         BusinessUnitSubscriber subscriber = new BusinessUnitSubscriber(
@@ -17,10 +14,8 @@ public class BusinessUnitEnvironment {
                 clientID
         );
 
-        BusinessUnitAPI api = new BusinessUnitAPI(dataMart);
-
         EventStoreReader reader = new EventStoreReader(handler);
 
-        return new BusinessUnitController(subscriber, handler, api, reader);
+        return new BusinessUnitController(subscriber, handler, reader);
     }
 }

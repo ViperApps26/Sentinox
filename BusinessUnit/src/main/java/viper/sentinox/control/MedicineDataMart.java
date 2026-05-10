@@ -1,9 +1,12 @@
 package viper.sentinox.control;
 
+import viper.sentinox.model.Comment;
 import viper.sentinox.model.DataMart;
 import viper.sentinox.model.MedicineStats;
 
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MedicineDataMart implements DataMart {
@@ -16,9 +19,10 @@ public class MedicineDataMart implements DataMart {
 
 
     @Override
-    public synchronized void registerBlueskyEvent(String medicine, String comment, String sentiment) {
+    public synchronized void registerBlueskyEvent(String medicine, String author, String text, String sentiment, Instant date) {
         MedicineStats stats = getOrCreateStats(medicine);
-        if (!stats.getComments().contains(comment)) {
+        Comment comment = new Comment(author, text, sentiment, date);
+        if (!stats.getCommentTexts().contains(comment.getText())) {
             stats.addComment(comment);
             stats.addSentiment(sentiment);
         }
@@ -36,46 +40,33 @@ public class MedicineDataMart implements DataMart {
         return medicineStatsMap.computeIfAbsent(medicine, key -> new MedicineStats());
     }
 
-    public synchronized String getMedicinesSummary() {
-        if (medicineStatsMap.isEmpty()) {
-            return "No data registered yet.";
-        }
-
-        StringBuilder summary = new StringBuilder();
-        summary.append("\n========== DATAMART SUMMARY ==========\n");
-
-        for (Map.Entry<String, MedicineStats> entry : medicineStatsMap.entrySet()) {
-            summary.append("\nMedicine: ")
-                    .append(entry.getKey())
-                    .append("\n")
-                    .append(entry.getValue().getMedicineSummary());
-        }
-        summary.append("======================================\n");
-        return summary.toString();
+    public synchronized List<String> getMedicineReactions(String medicine) {
+        MedicineStats stats = medicineStatsMap.get(medicine);
+        return stats.getReactions();
     }
 
-    public synchronized String getMedicineDetails(String medicine) {
+    public synchronized List<Comment> getMedicineComments(String medicine) {
         MedicineStats stats = medicineStatsMap.get(medicine);
-        if (stats == null) return "Medicine not found.";
-        return stats.getMedicineSummary();
+        return stats.getComments();
     }
 
-    public synchronized String getMedicineReactions(String medicine) {
+    public synchronized int getMedicineSentimentPositive(String medicine) {
         MedicineStats stats = medicineStatsMap.get(medicine);
-        if (stats == null) return "Medicine not found.";
-        return stats.getReactionsSummary();
+        return stats.getPositive();
     }
 
-    public synchronized String getMedicineComments(String medicine) {
+    public synchronized int getMedicineSentimentNegative(String medicine) {
         MedicineStats stats = medicineStatsMap.get(medicine);
-        if (stats == null) return "Medicine not found.";
-        return stats.getCommentsSummary();
+        return stats.getNegative();
     }
 
-    public synchronized String getMedicineSentiment(String medicine) {
+    public synchronized int getMedicineSentimentNeutral(String medicine) {
         MedicineStats stats = medicineStatsMap.get(medicine);
-        if (stats == null) return "Medicine not found.";
-        return stats.getSentimentSummary();
+        return stats.getNeutral();
+    }
+
+    public Map<String, MedicineStats> getAllStats() {
+        return medicineStatsMap;
     }
 
 }

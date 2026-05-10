@@ -9,7 +9,7 @@ public class MedicineStats {
     private int negative;
     private int neutral;
     private final List<String> reactions;
-    private final List<String> comments;
+    private final List<Comment> comments;
 
     public MedicineStats() {
         this.positive = 0;
@@ -27,8 +27,8 @@ public class MedicineStats {
         }
     }
 
-    public void addComment(String comment) {
-        if (comment != null && !comment.isBlank()) {
+    public void addComment(Comment comment) {
+        if (comment != null) {
             comments.add(comment);
         }
     }
@@ -39,58 +39,29 @@ public class MedicineStats {
         }
     }
 
-    public String getMedicineSummary() {
-        return """
-                Comments stored: %d
-                Positive opinions: %d
-                Negative opinions: %d
-                Neutral opinions: %d
-                Reactions stored: %d
-                """.formatted(
-                comments.size(),
-                positive,
-                negative,
-                neutral,
-                reactions.size()
-
-        );
-    }
-
-    public String getReactionsSummary() {
-        if (reactions.isEmpty()) {
-            return "No reactions recorded.";
-        }
-        StringBuilder sb = new StringBuilder("Reactions:\n");
-        for (String reaction : reactions) {
-            sb.append("  * ").append(reaction).append("\n");
-        }
-        return sb.toString();
-    }
-
-    public String getCommentsSummary() {
-        if (comments.isEmpty()) {
-            return "No comments recorded.";
-        }
-        StringBuilder sb = new StringBuilder("Comments:\n");
-        for (String comment : comments) {
-            sb.append("  * ").append(comment).append("\n");
-        }
-        return sb.toString();
-    }
-
-    public String getSentimentSummary() {
-        return """
-                Positive: %d
-                Negative: %d
-                Neutral: %d
-                """.formatted(positive, negative, neutral);
-    }
-
     public List<String> getReactions() {
         return reactions;
     }
 
-    public List<String> getComments() {
+    public List<Comment> getComments() {
         return comments;
+    }
+
+    public List<String> getCommentTexts() {
+        return comments.stream()
+                .map(Comment::getText)
+                .toList();
+    }
+
+    public int getPositive() {
+        return positive;
+    }
+
+    public int getNegative() {
+        return negative;
+    }
+
+    public int getNeutral() {
+        return neutral;
     }
 }

@@ -2,17 +2,18 @@ package viper.sentinox.control.DataMartFeader;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import viper.sentinox.model.DataMart;
+import viper.sentinox.control.MedicineDataMart;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;
+import java.time.Instant;
 
 public class BusinessUnitEventHandler implements EventHandler {
 
     private final Gson gson = new Gson();
-    private final DataMart dataMart;
+    private final MedicineDataMart dataMart;
 
-    public BusinessUnitEventHandler(DataMart dataMart) {
+    public BusinessUnitEventHandler(MedicineDataMart dataMart) {
         this.dataMart = dataMart;
     }
 
@@ -40,10 +41,12 @@ public class BusinessUnitEventHandler implements EventHandler {
 
     private void handleBlueskyEvent(JsonObject event) {
         String medicine = event.get("medicine").getAsString();
-        String comment = event.get("text").getAsString();
+        String author = event.get("author").getAsString();
+        String text = event.get("text").getAsString();
         String sentiment = event.get("sentiment").getAsString();
+        Instant date = Instant.parse(event.get("createdAt").getAsString());
 
-        dataMart.registerBlueskyEvent(medicine, comment, sentiment);
+        dataMart.registerBlueskyEvent(medicine, author, text, sentiment, date);
         System.out.println("Bluesky event registered for " + medicine);
     }
 
