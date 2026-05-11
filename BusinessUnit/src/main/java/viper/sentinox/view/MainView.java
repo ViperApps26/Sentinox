@@ -210,7 +210,12 @@ public class MainView {
 
     private void pressJointAnalysisButton() {
         jointBtn.setOnAction(e -> {
-            // TODO: Add Joint Analysis
+            String med = medicineList.getSelectionModel().getSelectedItem();
+
+            if (med != null && medicineHasComments() && medicineHasReactions()) {
+                JointAnalysisView view = new JointAnalysisView(stage, dataMart, med);
+                stage.setScene(new Scene(view.getRoot(), 1000, 650));
+            }
         });
     }
 
