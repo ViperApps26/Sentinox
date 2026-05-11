@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -5,7 +6,7 @@ import viper.sentinox.control.feeder.PubChemConnector;
 import viper.sentinox.control.feeder.PubChemGet;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,36 +16,64 @@ class PubChemGetTest {
 
     @BeforeEach
     void setUp() {
-        PubChemConnector pubChemConnector = new PubChemConnector();
-        pubChemGet = new PubChemGet(pubChemConnector);
+        PubChemConnector connector = new FakePubChemConnector();
+        pubChemGet = new PubChemGet(connector);
     }
 
     @Test
     void getAllInfo_returnsRecordObject() throws IOException {
-        JsonObject record = pubChemGet.getAllInfo();
+        JsonObject result = pubChemGet.getAllInfo();
 
-        assertNotNull(record);
-        assertTrue(record.has("Section"));
+        assertNotNull(result);
+        assertTrue(result.has("Section"));
     }
 
     @Test
-    void getReactions_returnsReactionList() throws IOException {
-        List<String> reactions = pubChemGet.getReactions();
+    void getReactions_returnsAdverseEffects() throws IOException {
+        ArrayList<String> reactions = pubChemGet.getReactions();
 
         assertNotNull(reactions);
-        assertFalse(reactions.isEmpty());
+        assertEquals(2, reactions.size());
+        assertEquals("Headache", reactions.get(0));
+        assertEquals("Nausea", reactions.get(1));
     }
 
-    @Test
-    void getReactions_containsNonEmptyStrings() throws IOException {
-        List<String> reactions = pubChemGet.getReactions();
+    private static class FakePubChemConnector extends PubChemConnector {
 
-        assertNotNull(reactions);
-        assertFalse(reactions.isEmpty());
+        @Override
+        public JsonObject connector() {
+            String response = """
+                    {
+                      "Record": {
+                        "Section": [
+                          {
+                            "TOCHeading": "Clinical Information",
+                            "Section": [
+                              {
+                                "TOCHeading": "Adverse Effects",
+                                "Information": [
+                                  {
+                                    "Value": {
+                                      "StringWithMarkup": [
+                                        {
+                                          "String": "Headache"
+                                        },
+                                        {
+                                          "String": "Nausea"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                    """;
 
-        for (String reaction : reactions) {
-            assertNotNull(reaction);
-            assertFalse(reaction.isBlank());
+            return new Gson().fromJson(response, JsonObject.class);
         }
     }
 }
