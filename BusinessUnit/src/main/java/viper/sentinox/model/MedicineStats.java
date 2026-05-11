@@ -8,8 +8,11 @@ public class MedicineStats {
     private int positive;
     private int negative;
     private int neutral;
+
     private final List<String> reactions;
     private final List<Comment> comments;
+
+    private JointAnalysisResult jointAnalysisResult;
 
     public MedicineStats() {
         this.positive = 0;
@@ -17,6 +20,12 @@ public class MedicineStats {
         this.neutral = 0;
         this.reactions = new ArrayList<>();
         this.comments = new ArrayList<>();
+        this.jointAnalysisResult = new JointAnalysisResult(
+                0,
+                0,
+                0,
+                "There is not enough information to compare user comments and known adverse reactions."
+        );
     }
 
     public void addSentiment(String sentiment) {
@@ -63,5 +72,13 @@ public class MedicineStats {
 
     public int getNeutral() {
         return neutral;
+    }
+
+    public JointAnalysisResult getJointAnalysisResult() {
+        return jointAnalysisResult;
+    }
+
+    public void setJointAnalysisResult(JointAnalysisResult jointAnalysisResult) {
+        this.jointAnalysisResult = jointAnalysisResult;
     }
 }
