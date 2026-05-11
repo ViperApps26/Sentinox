@@ -1,6 +1,6 @@
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import viper.sentinox.control.feeder.PubChemConnector;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ class PubChemConnectorTest {
     }
 
     @Test
-    void connect_returnsValidJsonObject() throws IOException {
+    void connector_returnsValidJsonObject() throws IOException {
         JsonObject result = pubChemConnector.connector();
 
         assertNotNull(result);
@@ -42,5 +42,12 @@ class PubChemConnectorTest {
         assertNotNull(cid);
         assertFalse(cid.isBlank());
         assertTrue(cid.matches("\\d+"));
+    }
+
+    @Test
+    void getMedicine_returnsCurrentMedicine() {
+        pubChemConnector.setMedicine("aspirin");
+
+        assertEquals("aspirin", pubChemConnector.getMedicine());
     }
 }
