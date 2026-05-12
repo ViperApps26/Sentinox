@@ -5,19 +5,12 @@ import java.util.List;
 
 public class MedicineStats {
 
-    private int positive;
-    private int negative;
-    private int neutral;
-
     private final List<String> reactions;
     private final List<Comment> comments;
 
     private JointAnalysisResult jointAnalysisResult;
 
     public MedicineStats() {
-        this.positive = 0;
-        this.negative = 0;
-        this.neutral = 0;
         this.reactions = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.jointAnalysisResult = new JointAnalysisResult(
@@ -26,14 +19,6 @@ public class MedicineStats {
                 0,
                 "There is not enough information to compare user comments and known adverse reactions."
         );
-    }
-
-    public void addSentiment(String sentiment) {
-        switch (sentiment) {
-            case "Positive" -> positive++;
-            case "Negative" -> negative++;
-            default -> neutral++;
-        }
     }
 
     public void addComment(Comment comment) {
@@ -60,18 +45,6 @@ public class MedicineStats {
         return comments.stream()
                 .map(Comment::getText)
                 .toList();
-    }
-
-    public int getPositive() {
-        return positive;
-    }
-
-    public int getNegative() {
-        return negative;
-    }
-
-    public int getNeutral() {
-        return neutral;
     }
 
     public JointAnalysisResult getJointAnalysisResult() {

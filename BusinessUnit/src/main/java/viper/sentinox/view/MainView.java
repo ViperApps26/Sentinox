@@ -42,6 +42,7 @@ public class MainView {
         this.stage = stage;
         this.dataMart = dataMart;
         this.allMedicines = FXCollections.observableArrayList(dataMart.getAllStats().keySet());
+
         configureLayout();
         configureBehavior();
         startAutoRefresh();

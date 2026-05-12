@@ -1,4 +1,8 @@
-package viper.sentinox.model;
+package viper.sentinox.control;
+
+import viper.sentinox.model.Comment;
+import viper.sentinox.model.JointAnalysisResult;
+import viper.sentinox.model.MedicineStats;
 
 import java.util.List;
 
@@ -84,11 +88,11 @@ public class JointAnalysisCalculator {
 
     private String buildConclusion(double percentage) {
         if (percentage >= 60) {
-            return "High agreement: user comments frequently mention known adverse reactions.";
+            return "High agreement: User comments frequently mention known adverse reactions.";
         } else if (percentage >= 30) {
-            return "Moderate agreement: some user comments match known adverse reactions.";
+            return "Moderate agreement: Some user comments match known adverse reactions.";
         } else {
-            return "Low agreement: user comments do not strongly match known adverse reactions.";
+            return "Low agreement: User comments do not strongly match known adverse reactions.";
         }
     }
 }

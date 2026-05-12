@@ -31,6 +31,7 @@ public class CommentsView {
         this.stage = stage;
         this.dataMart = dataMart;
         this.medicine = medicine;
+
         configureLayout();
         startAutoRefresh();
     }
