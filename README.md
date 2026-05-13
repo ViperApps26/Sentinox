@@ -1,7 +1,7 @@
 
-# SENTINOX
+# Viper Apps
 
-## **ViperApps**
+## **SENTINOX**
 This repository will host the development of the chosen app
 
 ### What is the app about?
