@@ -139,3 +139,8 @@ This week marked the completion of the event consumption layer with the implemen
 **FIRST WEEK**
 
 In the first week of Sprint 3, we built the Business Unit module to consume real-time events from ActiveMQ and store them in an in-memory datamart. We structured it following MVC, ensuring clean separation of responsibilities and preparing the system for data analysis.
+
+**SECOND WEEK**
+
+During the second week of the third sprint, access to stored historical events was integrated into the event store and combined with real-time events consumed from ActiveMQ.
+Furthermore, a JavaFX graphical interface was developed with the objective of assisting users when consulting information about medicines, visualising Bluesky comments, side effects obtained from PubChem, and accessing the joint analysis of both data sources. Finally, we validated the queries related to both real-time and historical data.
