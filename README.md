@@ -23,6 +23,26 @@ The APIs we decided to use are PubChem and Bluesky. PubChem provides scientifica
 
 Finally, we used a sentiment analysis tool to process the qualitative information obtained from Bluesky posts. This allows us to classify users opinions as positive, negative, or neutral, making the social media data easier to analyze.
 
+
+**DataMart Structure**
+
+ViperApps' datamart is an in-memory structure created to arrange and offer quick access to all the drug-related data gathered from Bluesky and PubChem.
+The MedicineDataMart class, which internally contains a Map<String, MedicineStats>, is the main part of the datamart. The name of the medication is represented by the map's key, and all the statistics and information pertaining to that medication are stored in the accompanying value.
+
+The MedicineStats class represents each medication and includes:
+- a PubChem list of adverse reactions.
+- Bluesky provided a compilation of user comments.
+- There are three types of sentiment counters: neutral, negative, and positive.
+
+The Comment class was developed to represent user comments, encompassing:
+- the author comment's
+- text comment
+- categorization of emotions
+- date of publication.
+
+The BusinessUnit module updates the datamart on a regular basis. The BusinessUnitEventHandler processes both historical events loaded from the event store and real-time events ingested from ActiveMQ, registering the data into the datamart.
+
+
 ### Modules
 
 **Bluesky module**
@@ -61,7 +81,17 @@ To execute this module, ActiveMQ must be running and the feeder modules should b
 
 ### System and application arquitecture
 
-//diagrams
+Because it integrates both real-time and historical data processing, our application uses a Lambda architecture. The Bluesky and PubChem modules create live events from ActiveMQ, which are consumed by the BusinessUnit module. However, it may also recreate the datamart using past events that are kept in the event store via.events files. The system's general architecture is depicted in the diagram below.
+
+<img width="629" height="329" alt="Screenshot 2026-05-13 at 22 19 27" src="https://github.com/user-attachments/assets/c5457a4a-7acd-42b8-a9fc-8bfe47d63896" />
+
+
+We shall now discuss the application architecture after outlining the fundamental system architecture. This graphic focuses on the project's internal structure, demonstrating how the various levels interact with one another and how the program was organized using the MVC approach.
+
+
+<img width="382" height="575" alt="Screenshot 2026-05-13 at 22 39 02" src="https://github.com/user-attachments/assets/b23a3ab6-0a15-416f-aeed-b144ba325e26" />
+
+
 
 ### Principles and patterns
 
