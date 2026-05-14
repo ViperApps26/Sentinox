@@ -12,3 +12,9 @@ diazepam
 morphine
 codeine
 diclofenac
+insulin
+simvastatin
+cetirizine
+lidocaine
+ketamine
+fluoxetine

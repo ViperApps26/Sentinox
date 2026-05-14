@@ -14,7 +14,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import viper.sentinox.control.MedicineDataMart;
-import viper.sentinox.model.JointAnalysisResult;
+import viper.sentinox.model.JointAnalysis;
 
 import java.util.Objects;
 
@@ -107,7 +107,7 @@ public class JointAnalysisView {
     }
 
     private void refreshAnalysis() {
-        JointAnalysisResult result = dataMart.getMedicineJointAnalysis(medicine);
+        JointAnalysis result = dataMart.getMedicineJointAnalysis(medicine);
 
         String text = """
                 Medicine: %s
