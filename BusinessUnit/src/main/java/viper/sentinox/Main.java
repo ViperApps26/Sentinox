@@ -2,7 +2,7 @@ package viper.sentinox;
 
 import viper.sentinox.control.BusinessUnitController;
 import viper.sentinox.control.BusinessUnitEnvironment;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.view.ViperApp;
 
 public class Main {

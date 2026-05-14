@@ -3,7 +3,7 @@ package viper.sentinox.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import javafx.scene.image.Image;
 
 import java.util.Objects;

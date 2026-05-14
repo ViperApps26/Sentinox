@@ -13,7 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.model.Comment;
 
 import java.util.Objects;

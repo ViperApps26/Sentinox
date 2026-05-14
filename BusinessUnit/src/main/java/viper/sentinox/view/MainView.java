@@ -15,7 +15,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
+import viper.sentinox.model.Comment;
+import viper.sentinox.model.JointAnalysis;
 
 import java.util.Objects;
 
@@ -25,18 +27,19 @@ public class MainView {
 
     private final TextField searchField = new TextField();
     private final ListView<String> medicineList = new ListView<>();
-    private final Label summaryLabel = new Label();
+    private final VBox summaryContent = new VBox(15);
+    private ListView<Comment> commentsListView;
+    private ListView<String> reactionsListView;
+    private String currentMedicine = null;
 
-    private final Button commentsBtn = new Button("Comments");
-    private final Button reactionsBtn = new Button("Reactions");
-    private final Button jointBtn = new Button("Joint Analysis");
+    private boolean commentsExpanded = false;
+    private boolean reactionsExpanded = false;
+
+    private final Button commentsBtn = new Button("Recommend Medicine");
 
     private final Stage stage;
     private final MedicineDataMart dataMart;
     private final ObservableList<String> allMedicines;
-
-    private static final String ACTIVE_BUTTON_STYLE = "-fx-background-color: rgba(0,128,0); -fx-text-fill: white;";
-    private static final String INACTIVE_BUTTON_STYLE = "-fx-background-color: rgba(0,128,0,0.5); -fx-text-fill: white;";
 
     public MainView(Stage stage, MedicineDataMart dataMart) {
         this.stage = stage;
@@ -57,9 +60,8 @@ public class MainView {
         ImageView logoView = getLogoView();
         HBox searchBox = getSearchBarView(logoView);
         setMedicinesList();
-        VBox summaryBox = getSummaryBox();
+        ScrollPane summaryBox = getSummaryBox();
         SplitPane center = getSplitPane(summaryBox);
-        setInfoButtonsState(false);
         HBox topButtons = getInfoButtons();
         placeInfoButtonsAboveSearchBar(topButtons, searchBox, center);
     }
@@ -100,57 +102,63 @@ public class MainView {
 
     private void setMedicinesList() {
         medicineList.setItems(allMedicines);
-        medicineList.setStyle("-fx-background-color: rgba(255,255,255,0.8);");
+        medicineList.setStyle("""
+                    -fx-background-color: rgba(255,255,255,0.92);
+                    -fx-background-radius: 20;
+                    -fx-border-radius: 20;
+                    -fx-padding: 10;
+                    -fx-font-size: 14px;
+                """);
     }
 
-    private VBox getSummaryBox() {
-        summaryLabel.setWrapText(true);
-        summaryLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        VBox summaryBox = new VBox(10, summaryLabel);
-        summaryBox.setPadding(new Insets(10));
-        summaryBox.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 10;");
-        return summaryBox;
+    private ScrollPane getSummaryBox() {
+        summaryContent.setPadding(new Insets(20));
+        summaryContent.setSpacing(15);
+
+        VBox container = getSummaryStyle();
+
+        return getScrollPane(container);
     }
 
-    private SplitPane getSplitPane(VBox summaryBox) {
+    private VBox getSummaryStyle() {
+        VBox container = new VBox(summaryContent);
+        container.setPadding(new Insets(15));
+        container.setStyle("""
+                    -fx-background-color: rgba(255,255,255,0.92);
+                    -fx-background-radius: 20;
+                    -fx-border-radius: 20;
+                    -fx-border-color: rgba(0,0,0,0.08);
+                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5);
+                """);
+        return container;
+    }
+
+    private static ScrollPane getScrollPane(VBox container) {
+        ScrollPane scrollPane = new ScrollPane(container);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("""
+                    -fx-background: transparent;
+                    -fx-background-color: transparent;
+                """);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        return scrollPane;
+    }
+
+    private SplitPane getSplitPane(ScrollPane summaryBox) {
         SplitPane center = new SplitPane(medicineList, summaryBox);
         center.setDividerPositions(0.3);
         return center;
     }
 
-    private void setInfoButtonsState(boolean hasSelection) {
-        commentsBtn.setDisable(!hasSelection);
-        reactionsBtn.setDisable(!hasSelection);
-        jointBtn.setDisable(!hasSelection);
-        setInfoButtonsColor(hasSelection);
-    }
-
-    private void setInfoButtonsColor(boolean hasSelection) {
-        if (!hasSelection) {
-            colorize(commentsBtn, false);
-            colorize(reactionsBtn, false);
-            colorize(jointBtn, false);
-            return;
-        }
-        colorize(commentsBtn, medicineHasComments());
-        colorize(reactionsBtn, medicineHasReactions());
-        colorize(jointBtn, medicineHasComments() && medicineHasReactions());
-    }
-
-    private void colorize(Button btn, boolean active) {
-        btn.setStyle(active ? ACTIVE_BUTTON_STYLE : INACTIVE_BUTTON_STYLE);
-    }
-
-    private boolean medicineHasComments() {
-        return !dataMart.getMedicineComments(medicineList.getSelectionModel().getSelectedItem()).isEmpty();
-    }
-
-    private boolean medicineHasReactions() {
-        return !dataMart.getMedicineReactions(medicineList.getSelectionModel().getSelectedItem()).isEmpty();
-    }
-
     private HBox getInfoButtons() {
-        HBox topButtons = new HBox(10, commentsBtn, reactionsBtn, jointBtn);
+        commentsBtn.setStyle("""
+                    -fx-background-color: linear-gradient(to right, #1e8449, #27ae60);
+                    -fx-text-fill: white;
+                    -fx-font-weight: bold;
+                    -fx-background-radius: 12;
+                    -fx-cursor: hand;
+                """);
+        HBox topButtons = new HBox(10, commentsBtn);
         topButtons.setAlignment(Pos.CENTER);
         topButtons.setPadding(new Insets(5));
         return topButtons;
@@ -169,85 +177,259 @@ public class MainView {
         selectMedicine();
         writeInSearchBar();
         pressCommentsButton();
-        pressReactionsButton();
-        pressJointAnalysisButton();
     }
 
     private void selectMedicine() {
         medicineList.getSelectionModel().selectedItemProperty().addListener(
                 (obs, old, selected) -> {
+                    currentMedicine = selected;
                     updateSummary(selected);
-                    boolean hasSelection = selected != null;
-                    setInfoButtonsState(hasSelection);
                 }
         );
     }
 
     private void writeInSearchBar() {
         searchField.textProperty().addListener((obs, old, text)
-                -> applyFilter()
+                -> refreshList()
         );
     }
 
     private void pressCommentsButton() {
         commentsBtn.setOnAction(e -> {
             String med = medicineList.getSelectionModel().getSelectedItem();
-            if (med != null && medicineHasComments()) {
-                CommentsView view = new CommentsView(stage, dataMart, med);
-                stage.setScene(new Scene(view.getRoot(), 1000, 650));
-            }
-        });
-    }
-
-    private void pressReactionsButton() {
-        reactionsBtn.setOnAction(e -> {
-            String med = medicineList.getSelectionModel().getSelectedItem();
-            if (med != null && medicineHasReactions()) {
-                ReactionsView view = new ReactionsView(stage, dataMart, med);
-                stage.setScene(new Scene(view.getRoot(), 1000, 650));
-            }
-        });
-    }
-
-    private void pressJointAnalysisButton() {
-        jointBtn.setOnAction(e -> {
-            String med = medicineList.getSelectionModel().getSelectedItem();
-
-            if (med != null && medicineHasComments() && medicineHasReactions()) {
-                JointAnalysisView view = new JointAnalysisView(stage, dataMart, med);
-                stage.setScene(new Scene(view.getRoot(), 1000, 650));
-            }
-        });
+            CommentsView view = new CommentsView(stage, dataMart, med);
+            stage.setScene(new Scene(view.getRoot(), 1000, 650));
+        });  // TODO: Poner la función extra
     }
 
 
     private void updateSummary(String medicine) {
+        summaryContent.getChildren().clear();
         if (medicine == null) {
-            summaryLabel.setText("");
             return;
         }
-        String text = "%s Data:\n%d reactions - %d comments"
-                .formatted(
-                        medicine,
-                        dataMart.getMedicineReactions(medicine).size(),
-                        dataMart.getMedicineComments(medicine).size()
-                );
-        summaryLabel.setText(text);
+        JointAnalysis result = dataMart.getMedicineJointAnalysis(medicine);
+        Label title = getTitleLabel(medicine);
+        VBox statsBox = getStatsBox(medicine);
+        VBox analysisBox = getJointAnalysisBox(result);
+        TitledPane commentsPane = getCommentsPane(medicine);
+        TitledPane reactionsPane = getReactionsPane(medicine);
+
+        summaryContent.getChildren().addAll(
+                title,
+                statsBox,
+                analysisBox,
+                commentsPane,
+                reactionsPane
+        );
+    }
+
+    private TitledPane getCommentsPane(String medicine) {
+        TitledPane commentsPane = buildCommentsPane(medicine);
+        commentsPane.setExpanded(commentsExpanded);
+        commentsPane.expandedProperty().addListener((obs, oldVal, newVal)
+                -> commentsExpanded = newVal
+        );
+        return commentsPane;
+    }
+
+    private TitledPane getReactionsPane(String medicine) {
+        TitledPane reactionsPane = buildReactionsPane(medicine);
+        reactionsPane.setExpanded(reactionsExpanded);
+        reactionsPane.expandedProperty().addListener((obs, oldVal, newVal)
+                -> reactionsExpanded = newVal
+        );
+        return reactionsPane;
+    }
+
+    private static Label getTitleLabel(String medicine) {
+        Label title = new Label("💊 " + medicine);
+        title.setStyle("""
+                    -fx-font-size: 24px;
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #145a32;
+                """);
+        return title;
+    }
+
+    private VBox getStatsBox(String medicine) {
+        return createCard("""
+                📊 General Statistics
+                
+                • Reactions detected: %d
+                • User comments: %d
+                """.formatted(
+                dataMart.getMedicineReactions(medicine).size(),
+                dataMart.getMedicineComments(medicine).size()
+        ));
+    }
+
+    private VBox getJointAnalysisBox(JointAnalysis result) {
+        return createCard("""
+                🔬 Joint Analysis
+                
+                ✔ Matched reactions: %d
+                📈 Total known reactions: %d
+                🤝 Agreement level: %.2f%%
+                
+                🔍 Conclusion:
+                %s
+                """.formatted(
+                result.getMatchedReactions(),
+                result.getTotalReactions(),
+                result.getAgreementPercentage(),
+                result.getConclusion()
+        ));
+    }
+
+    private VBox createCard(String text) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setStyle("""
+                    -fx-font-size: 14px;
+                    -fx-text-fill: #2c3e50;
+                    -fx-line-spacing: 4px;
+                """);
+
+        VBox box = new VBox(label);
+        box.setPadding(new Insets(15));
+        box.setStyle("""
+                    -fx-background-color: white;
+                    -fx-background-radius: 15;
+                    -fx-border-radius: 15;
+                    -fx-border-color: rgba(0,0,0,0.05);
+                """);
+        return box;
+    }
+
+    private TitledPane buildCommentsPane(String medicine) {
+        commentsListView = new ListView<>();
+
+        commentsListView.setItems(FXCollections.observableArrayList(
+                dataMart.getMedicineComments(medicine)
+        ));
+        commentsListView.setPrefHeight(250);
+        commentsListView.setCellFactory(lv -> createCommentCell());
+
+        return createTitledPane("💬 Comments", commentsListView);
+    }
+
+    private ListCell<Comment> createCommentCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(Comment comment, boolean empty) {
+                super.updateItem(comment, empty);
+
+                if (empty || comment == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                setGraphic(buildCommentRow(comment));
+            }
+        };
+    }
+
+    private HBox buildCommentRow(Comment comment) {
+        Label icon = createSentimentLabel(comment);
+
+        VBox textBox = new VBox(
+                createAuthorLabel(comment),
+                createDateLabel(comment),
+                createCommentText(comment)
+        );
+        textBox.setSpacing(4);
+
+        HBox row = new HBox(10, icon, textBox);
+        row.setAlignment(Pos.TOP_LEFT);
+        return row;
+    }
+
+    private Label createSentimentLabel(Comment comment) {
+        Label label = new Label(sentimentIcon(comment));
+        label.setStyle("-fx-font-size: 20px;");
+        return label;
+    }
+
+    private Label createAuthorLabel(Comment comment) {
+        Label label = new Label(comment.getAuthor());
+        label.setStyle("-fx-font-weight: bold;");
+        return label;
+    }
+
+    private Label createDateLabel(Comment comment) {
+        Label label = new Label(comment.getDate());
+        label.setStyle("-fx-text-fill: gray; -fx-font-size: 11px;");
+        return label;
+    }
+
+    private Label createCommentText(Comment comment) {
+        Label label = new Label(comment.getText());
+        label.setWrapText(true);
+        return label;
+    }
+
+    private TitledPane createTitledPane(String title, Region content) {
+        TitledPane pane = new TitledPane(title, content);
+        pane.setExpanded(false);
+        return pane;
+    }
+
+    private String sentimentIcon(Comment comment) {
+        return switch (comment.getSentiment()) {
+            case "Positive" -> "😊";
+            case "Negative" -> "😞";
+            default -> "😐";
+        };
+    }
+
+
+    private TitledPane buildReactionsPane(String medicine) {
+        reactionsListView = new ListView<>();
+
+        reactionsListView.setItems(FXCollections.observableArrayList(
+                dataMart.getMedicineReactions(medicine)
+        ));
+        reactionsListView.setPrefHeight(250);
+        reactionsListView.setCellFactory(lv -> createReactionCell());
+
+        return createTitledPane("⚠ Reactions", reactionsListView);
+    }
+
+    private ListCell<String> createReactionCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(String reaction, boolean empty) {
+                super.updateItem(reaction, empty);
+
+                if (empty || reaction == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(createReactionLabel(reaction));
+            }
+        };
+    }
+
+    private Label createReactionLabel(String reaction) {
+        Label label = new Label("⚠ " + reaction);
+        label.setWrapText(true);
+        label.setStyle("""
+            -fx-font-size: 14px;
+            -fx-padding: 8;
+        """);
+        return label;
     }
 
     private void startAutoRefresh() {
         Timeline refresher = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> refreshList())
+                new KeyFrame(Duration.seconds(5), e -> refreshList())
         );
         refresher.setCycleCount(Animation.INDEFINITE);
         refresher.play();
     }
 
     private void refreshList() {
-        applyFilter();
-    }
-
-    private void applyFilter() {
         String search = searchField.getText().toLowerCase().trim();
 
         var all = dataMart.getAllStats().keySet();
@@ -260,6 +442,20 @@ public class MainView {
                     .toList();
 
             medicineList.setItems(FXCollections.observableArrayList(filtered));
+        }
+        if (currentMedicine != null) {  // TODO: Hacer que no se reinicie la barra desplegable
+
+            if (commentsListView != null) {
+                commentsListView.setItems(FXCollections.observableArrayList(
+                        dataMart.getMedicineComments(currentMedicine)
+                ));
+            }
+
+            if (reactionsListView != null) {
+                reactionsListView.setItems(FXCollections.observableArrayList(
+                        dataMart.getMedicineReactions(currentMedicine)
+                ));  // TODO: Refactorizar
+            }
         }
     }
 }

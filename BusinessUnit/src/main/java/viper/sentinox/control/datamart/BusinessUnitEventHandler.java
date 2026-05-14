@@ -2,7 +2,6 @@ package viper.sentinox.control.datamart;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import viper.sentinox.control.MedicineDataMart;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;

@@ -1,5 +1,7 @@
-package viper.sentinox.control;
+package viper.sentinox.control.datamart;
 
+import viper.sentinox.control.JointAnalysisCalculator;
+import viper.sentinox.control.RegisterEvents;
 import viper.sentinox.model.Comment;
 import viper.sentinox.model.JointAnalysis;
 import viper.sentinox.model.MedicineStats;

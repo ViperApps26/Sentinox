@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
 
 import static org.junit.jupiter.api.Assertions.*;

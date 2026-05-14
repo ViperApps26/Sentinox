@@ -1,6 +1,7 @@
 package viper.sentinox.control;
 
 import viper.sentinox.control.datamart.EventStoreReader;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
 import viper.sentinox.control.datamart.BusinessUnitEventHandler;
 
