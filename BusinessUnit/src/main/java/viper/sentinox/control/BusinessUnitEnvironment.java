@@ -1,8 +1,8 @@
 package viper.sentinox.control;
 
-import viper.sentinox.control.DataMartFeader.EventStoreReader;
+import viper.sentinox.control.datamart.EventStoreReader;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
-import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
+import viper.sentinox.control.datamart.BusinessUnitEventHandler;
 
 public class BusinessUnitEnvironment {
 

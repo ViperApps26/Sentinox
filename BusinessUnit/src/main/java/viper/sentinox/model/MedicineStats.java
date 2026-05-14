@@ -8,12 +8,12 @@ public class MedicineStats {
     private final List<String> reactions;
     private final List<Comment> comments;
 
-    private JointAnalysisResult jointAnalysisResult;
+    private JointAnalysis jointAnalysis;
 
     public MedicineStats() {
         this.reactions = new ArrayList<>();
         this.comments = new ArrayList<>();
-        this.jointAnalysisResult = new JointAnalysisResult(
+        this.jointAnalysis = new JointAnalysis(
                 0,
                 0,
                 0,
@@ -47,11 +47,11 @@ public class MedicineStats {
                 .toList();
     }
 
-    public JointAnalysisResult getJointAnalysisResult() {
-        return jointAnalysisResult;
+    public JointAnalysis getJointAnalysisResult() {
+        return jointAnalysis;
     }
 
-    public void setJointAnalysisResult(JointAnalysisResult jointAnalysisResult) {
-        this.jointAnalysisResult = jointAnalysisResult;
+    public void setJointAnalysisResult(JointAnalysis jointAnalysis) {
+        this.jointAnalysis = jointAnalysis;
     }
 }

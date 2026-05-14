@@ -1,4 +1,4 @@
-package viper.sentinox.control.DataMartFeader;
+package viper.sentinox.control.datamart;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -1,19 +1,19 @@
 package viper.sentinox.control;
 
 import viper.sentinox.model.Comment;
-import viper.sentinox.model.JointAnalysisResult;
+import viper.sentinox.model.JointAnalysis;
 import viper.sentinox.model.MedicineStats;
 
 import java.util.List;
 
 public class JointAnalysisCalculator {
 
-    public JointAnalysisResult analyze(MedicineStats stats) {
+    public JointAnalysis analyze(MedicineStats stats) {
         List<String> reactions = stats.getReactions();
         List<Comment> comments = stats.getComments();
 
         if (reactions.isEmpty() || comments.isEmpty()) {
-            return new JointAnalysisResult(
+            return new JointAnalysis(
                     0,
                     reactions.size(),
                     0,
@@ -24,7 +24,7 @@ public class JointAnalysisCalculator {
         int matchedReactions = countMatchedReactions(reactions, comments);
         double percentage = calculatePercentage(matchedReactions, reactions.size());
 
-        return new JointAnalysisResult(
+        return new JointAnalysis(
                 matchedReactions,
                 reactions.size(),
                 percentage,

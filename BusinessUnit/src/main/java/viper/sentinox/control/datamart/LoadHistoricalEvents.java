@@ -1,4 +1,4 @@
-package viper.sentinox.control.DataMartFeader;
+package viper.sentinox.control.datamart;
 
 public interface LoadHistoricalEvents {
     void loadHistoricalEvents();

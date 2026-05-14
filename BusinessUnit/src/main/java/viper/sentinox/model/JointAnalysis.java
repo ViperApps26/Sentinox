@@ -1,16 +1,16 @@
 package viper.sentinox.model;
 
-public class JointAnalysisResult {
+public class JointAnalysis {
 
     private final int matchedReactions;
     private final int totalReactions;
     private final double agreementPercentage;
     private final String conclusion;
 
-    public JointAnalysisResult(int matchedReactions,
-                               int totalReactions,
-                               double agreementPercentage,
-                               String conclusion) {
+    public JointAnalysis(int matchedReactions,
+                         int totalReactions,
+                         double agreementPercentage,
+                         String conclusion) {
         this.matchedReactions = matchedReactions;
         this.totalReactions = totalReactions;
         this.agreementPercentage = agreementPercentage;
