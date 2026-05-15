@@ -16,8 +16,8 @@ import javafx.util.Duration;
 import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.model.JointAnalysis;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class MainView {
 
@@ -39,7 +39,7 @@ public class MainView {
     public MainView(MedicineDataMart dataMart) {
         this.dataMart = dataMart;
         this.allMedicines = FXCollections.observableArrayList(
-                dataMart.getAllStats().keySet()
+                dataMart.getAllMedicinesSorted()
         );
         this.commentsSection = new CommentsSection(dataMart);
         this.reactionsSection = new ReactionsSection(dataMart);
@@ -287,7 +287,7 @@ public class MainView {
 
     private void refreshList() {
         String search = searchField.getText().toLowerCase().trim();
-        var all = dataMart.getAllStats().keySet();
+        var all = dataMart.getAllMedicinesSorted();
 
         filterMedicinesList(search, all);
         if (currentMedicine != null) {
@@ -295,7 +295,7 @@ public class MainView {
         }
     }
 
-    private void filterMedicinesList(String search, Set<String> all) {
+    private void filterMedicinesList(String search, List<String> all) {
         if (search.isEmpty()) {
             medicineList.setItems(
                     FXCollections.observableArrayList(all)

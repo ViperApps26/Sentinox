@@ -9,6 +9,10 @@ import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.model.Comment;
 import javafx.scene.layout.Priority;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+
 public class CommentsSection {
 
     private final MedicineDataMart dataMart;
@@ -37,13 +41,34 @@ public class CommentsSection {
     private void rebuildContent(String medicine) {
         content.getChildren().clear();
 
-        for (Comment comment : dataMart.getMedicineComments(medicine)) {
-            content.getChildren().add(
-                    buildCommentCard(comment)
-            );
-        }
+        setTextContent(medicine);
         content.setVisible(expanded);
         content.setManaged(expanded);
+    }
+
+    private void setTextContent(String medicine) {
+        dataMart.getMedicineComments(medicine)
+                .stream()
+                .sorted(getDateOrder())
+                .forEach(comment ->
+                        content.getChildren().add(
+                                buildCommentCard(comment)
+                        )
+                );
+    }
+
+    private static Comparator<Comment> getDateOrder() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                "dd MMM yyyy, HH:mm"
+        );
+
+        return Comparator.comparing(
+                (Comment comment) ->
+                        LocalDateTime.parse(
+                                comment.getDate(),
+                                formatter
+                        )
+        ).reversed();
     }
 
     private Button buildToggleButton(String medicine) {

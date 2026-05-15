@@ -93,4 +93,8 @@ public class MedicineDataMart implements RegisterEvents {
     public Map<String, MedicineStats> getAllStats() {
         return medicineStatsMap;
     }
+
+    public List<String> getAllMedicinesSorted() {
+        return medicineStatsMap.keySet().stream().sorted().toList();
+    }
 }
