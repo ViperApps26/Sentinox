@@ -15,6 +15,8 @@ public class ReactionsSection {
 
     private boolean expanded = false;
 
+    private String currentMedicine;
+
     public ReactionsSection(MedicineDataMart dataMart) {
 
         this.dataMart = dataMart;
@@ -23,6 +25,10 @@ public class ReactionsSection {
     }
 
     public VBox getView(String medicine) {
+        if (currentMedicine == null || !currentMedicine.equals(medicine)) {
+            expanded = false;
+        }
+        currentMedicine = medicine;
         rebuildContent(medicine);
         Button toggle = buildToggleButton(medicine);
 
