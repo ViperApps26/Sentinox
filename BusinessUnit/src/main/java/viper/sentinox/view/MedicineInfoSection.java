@@ -22,10 +22,11 @@ public class MedicineInfoSection {
 
         content.getChildren().addAll(
                 buildTitle(medicine),
-                buildStatsCard(medicine),
-                buildAnalysisCard(result)
+                buildStatsCard(medicine)
         );
-
+        if (dataMart.medicineHasComments(medicine) && dataMart.medicineHasReactions(medicine)) {
+            content.getChildren().add(buildAnalysisCard(result));
+        }
         return content;
     }
 

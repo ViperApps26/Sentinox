@@ -97,4 +97,12 @@ public class MedicineDataMart implements RegisterEvents {
     public List<String> getAllMedicinesSorted() {
         return medicineStatsMap.keySet().stream().sorted().toList();
     }
+
+    public boolean medicineHasReactions(String medicine) {
+        return !medicineStatsMap.get(medicine).getReactions().isEmpty();
+    }
+
+    public boolean medicineHasComments(String medicine) {
+        return !medicineStatsMap.get(medicine).getComments().isEmpty();
+    }
 }

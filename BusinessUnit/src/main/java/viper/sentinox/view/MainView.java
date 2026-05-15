@@ -198,11 +198,14 @@ public class MainView {
             summaryContent.getChildren().add(welcomeSection.getView());
             return;
         }
-        summaryContent.getChildren().addAll(
-                medicineInfoSection.getView(medicine),
-                commentsSection.getView(medicine),
-                reactionsSection.getView(medicine)
-        );
+
+        summaryContent.getChildren().add(medicineInfoSection.getView(medicine));
+        if (dataMart.medicineHasComments(medicine)) {
+            summaryContent.getChildren().add(commentsSection.getView(medicine));
+        }
+        if (dataMart.medicineHasReactions(medicine)) {
+            summaryContent.getChildren().add(reactionsSection.getView(medicine));
+        }
     }
 
     private void startAutoRefresh() {
