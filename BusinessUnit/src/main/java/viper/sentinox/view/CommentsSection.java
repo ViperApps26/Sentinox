@@ -22,16 +22,94 @@ public class CommentsSection {
 
     private boolean expanded = false;
 
+    private final HBox languageFilter = new HBox(8);
+    private String selectedLanguage = "All";
+
+    private String currentMedicine;
+
     public CommentsSection(MedicineDataMart dataMart) {
         this.dataMart = dataMart;
         content.setFillWidth(true);
+
+        buildLanguageFilter();
+    }
+
+    private void buildLanguageFilter() {
+        languageFilter.setAlignment(Pos.CENTER_LEFT);
+
+        languageFilter.getChildren().addAll(
+                createLanguageButton("🌍", "All"),
+                createLanguageButton("🇬🇧", "English"),
+                createLanguageButton("🇪🇸", "Spanish"),
+                createLanguageButton("🇫🇷", "French"),
+                createLanguageButton("🇩🇪", "German"),
+                createLanguageButton("🇮🇹", "Italian"),
+                createLanguageButton("🇵🇹", "Portuguese")
+        );
+    }
+
+    private Button createLanguageButton(String flag, String language) {
+        Button button = new Button(flag);
+
+        button.setStyle(getLanguageButtonStyle(language));
+
+        button.setOnAction(e -> {
+            selectedLanguage = language;
+            refreshLanguageButtons();
+
+            rebuildContent(currentMedicine);
+        });
+        return button;
+    }
+
+    private void refreshLanguageButtons() {
+        languageFilter.getChildren().forEach(node -> {
+            if (node instanceof Button button) {
+                String language = switch (button.getText()) {
+                    case "🇬🇧" -> "English";
+                    case "🇪🇸" -> "Spanish";
+                    case "🇫🇷" -> "French";
+                    case "🇩🇪" -> "German";
+                    case "🇮🇹" -> "Italian";
+                    case "🇵🇹" -> "Portuguese";
+                    default -> "All";
+                };
+                button.setStyle(
+                        getLanguageButtonStyle(language)
+                );
+            }
+        });
+    }
+
+    private String getLanguageButtonStyle(String language) {
+        boolean selected = selectedLanguage.equals(language);
+
+        return """
+                -fx-font-size: 18px;
+                -fx-background-radius: 20;
+                -fx-cursor: hand;
+                -fx-padding: 6 12 6 12;
+                -fx-background-color: %s;
+                -fx-border-color: rgba(0,0,0,0.08);
+                -fx-border-radius: 20;
+                """
+                .formatted(
+                        selected
+                                ? "#d5f5e3"
+                                : "white"
+                );
     }
 
     public VBox getView(String medicine) {
+        if (currentMedicine == null || !currentMedicine.equals(medicine)) {
+            expanded = false;
+        }
+        currentMedicine = medicine;
         rebuildContent(medicine);
         Button toggle = buildToggleButton(medicine);
 
         container.getChildren().setAll(
+                languageFilter,
                 toggle,
                 content
         );
@@ -47,8 +125,14 @@ public class CommentsSection {
     }
 
     private void setTextContent(String medicine) {
+        String selectedLanguage = this.selectedLanguage;
+
         dataMart.getMedicineComments(medicine)
                 .stream()
+                .filter(comment ->
+                        selectedLanguage.equals("All")
+                                || comment.getLanguage().equals(selectedLanguage)
+                )
                 .sorted(getDateOrder())
                 .forEach(comment ->
                         content.getChildren().add(
@@ -80,11 +164,11 @@ public class CommentsSection {
         toggle.setMaxWidth(Double.MAX_VALUE);
 
         toggle.setStyle("""
-                -fx-font-size: 16px;
-                -fx-font-weight: bold;
-                -fx-background-radius: 12;
-                -fx-background-color: #ecf0f1;
-        """);
+                        -fx-font-size: 16px;
+                        -fx-font-weight: bold;
+                        -fx-background-radius: 12;
+                        -fx-background-color: #ecf0f1;
+                """);
 
         toggle.setOnAction(e -> {
             expanded = !expanded;
@@ -117,18 +201,18 @@ public class CommentsSection {
     private static Label getAuthorLabel(Comment comment) {
         Label author = new Label(comment.getAuthor());
         author.setStyle("""
-                -fx-font-weight: bold;
-                -fx-font-size: 14px;
-        """);
+                        -fx-font-weight: bold;
+                        -fx-font-size: 14px;
+                """);
         return author;
     }
 
     private static Label getDateLabel(Comment comment) {
         Label date = new Label(comment.getDate());
         date.setStyle("""
-                -fx-font-size: 11px;
-                -fx-text-fill: gray;
-        """);
+                        -fx-font-size: 11px;
+                        -fx-text-fill: gray;
+                """);
         return date;
     }
 
@@ -163,11 +247,11 @@ public class CommentsSection {
         VBox card = new VBox(row);
         card.setPadding(new Insets(15));
         card.setStyle("""
-                -fx-background-color: white;
-                -fx-background-radius: 15;
-                -fx-border-radius: 15;
-                -fx-border-color: rgba(0,0,0,0.08);
-        """);
+                        -fx-background-color: white;
+                        -fx-background-radius: 15;
+                        -fx-border-radius: 15;
+                        -fx-border-color: rgba(0,0,0,0.08);
+                """);
         return card;
     }
 

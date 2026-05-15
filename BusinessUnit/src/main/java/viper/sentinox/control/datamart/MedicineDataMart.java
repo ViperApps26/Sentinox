@@ -6,6 +6,7 @@ import viper.sentinox.model.Comment;
 import viper.sentinox.model.JointAnalysis;
 import viper.sentinox.model.MedicineStats;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class MedicineDataMart implements RegisterEvents {
     private final Map<String, MedicineStats> medicineStatsMap;
     private final JointAnalysisCalculator jointAnalysisCalculator;
 
-    public MedicineDataMart() {
+    public MedicineDataMart() throws IOException {
         this.medicineStatsMap = new HashMap<>();
         this.jointAnalysisCalculator = new JointAnalysisCalculator();
     }
@@ -40,7 +41,7 @@ public class MedicineDataMart implements RegisterEvents {
     public synchronized void registerPubChemEvent(String medicine, String reaction) {
         MedicineStats stats = getOrCreateStats(medicine);
 
-        if (!stats.getReactions().contains(reaction)) {
+        if (!stats.getReactions().contains(reaction) && !isGenericReaction(reaction)) {
             stats.addReaction(reaction);
             updateJointAnalysis(stats);
         }
@@ -48,6 +49,16 @@ public class MedicineDataMart implements RegisterEvents {
 
     private MedicineStats getOrCreateStats(String medicine) {
         return medicineStatsMap.computeIfAbsent(medicine, key -> new MedicineStats());
+    }
+
+    private boolean isGenericReaction(String reaction) {
+        String r = reaction.toLowerCase();
+
+        return r.contains("drug interactions")
+                || r.contains("adverse drug reactions")
+                || r.contains("common adverse")
+                || r.contains("postmarketing")
+                || r.contains("test interactions");
     }
 
     private void updateJointAnalysis(MedicineStats stats) {
