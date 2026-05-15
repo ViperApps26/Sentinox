@@ -7,11 +7,13 @@ import viper.sentinox.view.ViperApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length != 2) {
             log.error("Use: java viper.sentinox.Main <ActiveMQUrl> <clientID>");
             return;
@@ -22,7 +24,7 @@ public class Main {
         start(brokerUrl, clientID, args);
     }
 
-    private static void start(String brokerUrl, String clientID, String[] args) {
+    private static void start(String brokerUrl, String clientID, String[] args) throws IOException {
         MedicineDataMart dataMart = new MedicineDataMart();
         BusinessUnitEnvironment environment = new BusinessUnitEnvironment();
         BusinessUnitController controller = environment.prepare(brokerUrl, clientID, dataMart);
