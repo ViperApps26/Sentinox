@@ -4,11 +4,15 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventStoreReader implements LoadHistoricalEvents {
 
     private final BusinessUnitEventHandler handler;
     private final File eventStoreRoot;
+
+    private static final Logger log = LoggerFactory.getLogger(EventStoreReader.class);
 
     public EventStoreReader(BusinessUnitEventHandler handler) {
         this.handler = handler;
@@ -17,15 +21,15 @@ public class EventStoreReader implements LoadHistoricalEvents {
 
     public void loadHistoricalEvents() {
         if (!eventStoreRoot.exists()) {
-            System.out.println("Event store directory not found: " + eventStoreRoot.getAbsolutePath());
+            log.warn("Event store directory not found: {}", eventStoreRoot.getAbsolutePath());
             return;
         }
-        System.out.println("Loading historical events from: " + eventStoreRoot.getAbsolutePath());
+        log.debug("Loading historical events from: {}", eventStoreRoot.getAbsolutePath());
 
         loadTopic("BlueskyPosts");
         loadTopic("PubChemReactions");
 
-        System.out.println("Historical events loaded successfully.");
+        log.info("Historical events loaded successfully.");
     }
 
     private void loadTopic(String topicName) {
@@ -40,12 +44,12 @@ public class EventStoreReader implements LoadHistoricalEvents {
     }
 
     private void loadEventFile(File file, String topicName) {
-        System.out.println("Reading file: " + file.getName() + ", from: " + topicName);
+        log.debug("Reading file: {}, from: {}", file.getName(), topicName);
 
         try (Stream<String> lines = Files.lines(file.toPath())) {
             lines.forEach(line -> handler.handleEvent(line, topicName));
         } catch (Exception e) {
-            System.out.println("Error reading event file: " + file.getName());
+            log.error("Error reading event file: {}", file.getName());
         }
     }
 }

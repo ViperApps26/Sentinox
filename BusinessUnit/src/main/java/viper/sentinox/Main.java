@@ -4,11 +4,16 @@ import viper.sentinox.control.BusinessUnitController;
 import viper.sentinox.control.BusinessUnitEnvironment;
 import viper.sentinox.control.datamart.MedicineDataMart;
 import viper.sentinox.view.ViperApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Use: java viper.sentinox.Main <ActiveMQUrl> <clientID>");
+            log.error("Use: java viper.sentinox.Main <ActiveMQUrl> <clientID>");
             return;
         }
         String brokerUrl = args[0];

@@ -5,6 +5,8 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import javax.jms.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventStoreSubscriber {
 
@@ -14,6 +16,8 @@ public class EventStoreSubscriber {
 
     private Connection connection;
     private Session session;
+
+    private static final Logger log = LoggerFactory.getLogger(EventStoreSubscriber.class);
 
     public EventStoreSubscriber(String brokerUrl, String clientId) {
         this.brokerUrl = brokerUrl;
@@ -40,11 +44,11 @@ public class EventStoreSubscriber {
         consumer.setMessageListener(listener);
         consumers.add(consumer);
 
-        System.out.println("Subscribed to topic: " + topicName);
+        log.info("Subscribed to topic: {}", topicName);
     }
 
     public void waitForever() throws InterruptedException {
-        System.out.println("Event Store Subscriber running...");
+        log.info("Event Store Subscriber running...");
         Thread.sleep(Long.MAX_VALUE);
     }
 

@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import viper.sentinox.control.datamart.MedicineDataMart;
-import viper.sentinox.model.JointAnalysis;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +30,8 @@ public class MainView {
 
     private final ObservableList<String> allMedicines;
 
+    private final WelcomeSection welcomeSection;
+    private final MedicineInfoSection medicineInfoSection;
     private final CommentsSection commentsSection;
     private final ReactionsSection reactionsSection;
 
@@ -41,6 +42,8 @@ public class MainView {
         this.allMedicines = FXCollections.observableArrayList(
                 dataMart.getAllMedicinesSorted()
         );
+        this.welcomeSection = new WelcomeSection();
+        this.medicineInfoSection = new MedicineInfoSection(dataMart);
         this.commentsSection = new CommentsSection(dataMart);
         this.reactionsSection = new ReactionsSection(dataMart);
 
@@ -120,25 +123,25 @@ public class MainView {
         searchBox.setAlignment(Pos.CENTER_LEFT);
         searchBox.setPadding(new Insets(10));
         searchBox.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.85);
-                -fx-background-radius: 15;
-        """);
+                        -fx-background-color: rgba(255,255,255,0.85);
+                        -fx-background-radius: 15;
+                """);
         return searchBox;
     }
 
     private void configureMedicineList() {
         medicineList.setItems(allMedicines);
         medicineList.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.92);
-                -fx-background-radius: 20;
-                -fx-border-radius: 20;
-                -fx-padding: 10;
-                -fx-font-size: 14px;
-        """);
+                        -fx-background-color: rgba(255,255,255,0.92);
+                        -fx-background-radius: 20;
+                        -fx-border-radius: 20;
+                        -fx-padding: 10;
+                        -fx-font-size: 14px;
+                """);
     }
 
     private ScrollPane buildSummaryBox() {
-        summaryContent.setPadding(new Insets(20));
+        summaryContent.getChildren().add(welcomeSection.getView());
         VBox container = getContainer();
 
         return getScrollPane(container);
@@ -148,11 +151,11 @@ public class MainView {
         VBox container = new VBox(summaryContent);
         container.setPadding(new Insets(15));
         container.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.92);
-                -fx-background-radius: 20;
-                -fx-border-radius: 20;
-                -fx-border-color: rgba(0,0,0,0.08);
-        """);
+                        -fx-background-color: rgba(255,255,255,0.92);
+                        -fx-background-radius: 20;
+                        -fx-border-radius: 20;
+                        -fx-border-color: rgba(0,0,0,0.08);
+                """);
         return container;
     }
 
@@ -192,85 +195,14 @@ public class MainView {
         summaryContent.getChildren().clear();
 
         if (medicine == null) {
+            summaryContent.getChildren().add(welcomeSection.getView());
             return;
         }
-        JointAnalysis result = dataMart.getMedicineJointAnalysis(medicine);
-
         summaryContent.getChildren().addAll(
-                buildTitle(medicine),
-                buildStatsCard(medicine),
-                buildAnalysisCard(result),
+                medicineInfoSection.getView(medicine),
                 commentsSection.getView(medicine),
                 reactionsSection.getView(medicine)
         );
-    }
-
-    private Label buildTitle(String medicine) {
-        Label title = new Label("💊 " + medicine);
-        title.setStyle("""
-                -fx-font-size: 24px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #145a32;
-        """);
-
-        return title;
-    }
-
-    private VBox buildStatsCard(String medicine) {
-        return createCard("""
-                📊 General Statistics
-
-                • Reactions detected: %d
-                • User comments: %d
-                """.formatted(
-                dataMart.getMedicineReactions(medicine).size(),
-                dataMart.getMedicineComments(medicine).size()
-        ));
-    }
-
-    private VBox buildAnalysisCard(JointAnalysis result) {
-        return createCard("""
-                🔬 Joint Analysis
-
-                ✔ Matched reactions: %d
-                📈 Total known reactions: %d
-                🤝 Agreement level: %.2f%%
-
-                🔍 Conclusion:
-                %s
-                """.formatted(
-                result.getMatchedReactions(),
-                result.getTotalReactions(),
-                result.getAgreementPercentage(),
-                result.getConclusion()
-        ));
-    }
-
-    private VBox createCard(String text) {
-        Label label = getCardLabel(text);
-        return getCardBox(label);
-    }
-
-    private static Label getCardLabel(String text) {
-        Label label = new Label(text);
-        label.setWrapText(true);
-        label.setStyle("""
-                -fx-font-size: 14px;
-                -fx-text-fill: #2c3e50;
-        """);
-        return label;
-    }
-
-    private static VBox getCardBox(Label label) {
-        VBox box = new VBox(label);
-        box.setPadding(new Insets(15));
-        box.setStyle("""
-                -fx-background-color: white;
-                -fx-background-radius: 15;
-                -fx-border-radius: 15;
-                -fx-border-color: rgba(0,0,0,0.05);
-        """);
-        return box;
     }
 
     private void startAutoRefresh() {

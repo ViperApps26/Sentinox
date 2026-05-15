@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BlueskyConnector {
     private final String baseUrl;
@@ -18,6 +20,8 @@ public class BlueskyConnector {
     private int limit;
     private String startDate;
     private String finalDate;
+
+    private static final Logger log = LoggerFactory.getLogger(BlueskyConnector.class);
 
     public BlueskyConnector() {
         this.baseUrl = "https://bsky.social/xrpc";
@@ -75,7 +79,7 @@ public class BlueskyConnector {
         if (newDate.matches(datePattern)) {
             this.startDate = newDate + "T00:00:00Z";
         } else {
-            System.out.println("Invalid format, use YYYY-MM-DD");
+            log.error("Invalid start date format, use YYYY-MM-DD");
         }
     }
 
@@ -83,7 +87,7 @@ public class BlueskyConnector {
         if (newDate.matches(datePattern)) {
             this.finalDate = newDate + "T00:00:00Z";
         } else {
-            System.out.println("Invalid format, use YYYY-MM-DD");
+            log.error("Invalid final date format, use YYYY-MM-DD");
         }
     }
 

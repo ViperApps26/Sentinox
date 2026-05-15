@@ -5,12 +5,16 @@ import viper.sentinox.control.datamart.EventStoreReader;
 import viper.sentinox.control.subscriber.BusinessUnitSubscriber;
 
 import javax.jms.JMSException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BusinessUnitController {
 
     private final BusinessUnitSubscriber subscriber;
     private final BusinessUnitEventHandler handler;
     private final EventStoreReader eventStoreReader;
+
+    private static final Logger log = LoggerFactory.getLogger(BusinessUnitController.class);
 
     public BusinessUnitController(BusinessUnitSubscriber subscriber,
                                   BusinessUnitEventHandler handler,
@@ -25,7 +29,7 @@ public class BusinessUnitController {
             eventStoreReader.loadHistoricalEvents();
             storeMessages();
         } catch (Exception e) {
-            System.out.println("Error in Business Unit: " + e.getMessage());
+            log.error("Error in Business Unit: {}", e.getMessage());
         } finally {
             subscriber.close();
         }

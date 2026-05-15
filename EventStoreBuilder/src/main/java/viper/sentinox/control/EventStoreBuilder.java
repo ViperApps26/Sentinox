@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventStoreBuilder implements EventStore {
 
@@ -20,6 +22,8 @@ public class EventStoreBuilder implements EventStore {
     private final Gson gson = new Gson();
     private final DateTimeFormatter dateFormatter
             = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.of("UTC"));
+
+    private static final Logger log = LoggerFactory.getLogger(EventStoreBuilder.class);
 
     public EventStoreBuilder(String brokerUrl, String clientID){
         this.brokerUrl = brokerUrl;
@@ -32,7 +36,7 @@ public class EventStoreBuilder implements EventStore {
         try {
             sendMessages(subscriber);
         } catch (Exception e) {
-            System.out.println("Error in Event Store Builder");
+            log.error("Error in Event Store Builder");
         } finally {
             subscriber.close();
         }
@@ -57,7 +61,7 @@ public class EventStoreBuilder implements EventStore {
                 handleEvent(json, topicName);
             }
         } catch (Exception e) {
-            System.out.println("Error handling event for topic " + topicName);
+            log.error("Error handling event for topic {}", topicName);
         }
     }
 
@@ -72,14 +76,14 @@ public class EventStoreBuilder implements EventStore {
             writeEventToFile(file, json);
 
         } catch (Exception e) {
-            System.out.println("Error handling event: " + e.getMessage());
+            log.error("Error handling event: {}", e.getMessage());
         }
     }
 
     private File resolveEventFile(String topicName, String ss, String date) {
         File path = new File(baseDir + File.separator + topicName + File.separator + ss);
         if (!path.exists() && !path.mkdirs()) {
-            System.out.println("Warning: could not create directory " + path.getAbsolutePath());
+            log.warn("Warning: could not create directory {}", path.getAbsolutePath());
         }
         return new File(path, date + ".events");
     }
@@ -88,9 +92,9 @@ public class EventStoreBuilder implements EventStore {
         try (FileWriter fw = new FileWriter(file, true)) {
             fw.write(json);
             fw.write("\n");
-            System.out.println("Event stored in: " + file.getAbsolutePath());
+            log.trace("Event stored in: {}", file.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("Error writing event to file: " + e.getMessage());
+            log.error("Error writing event to file: {}", e.getMessage());
         }
     }
 }

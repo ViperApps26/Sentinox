@@ -9,11 +9,16 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 6) {
-            System.out.println("Use: java viper.sentinox.Main <refreshToken> <user> <password> <ActiveMQUrl> <topicName> <medicinesListPath>");
+            log.error("Use: java viper.sentinox.Main <refreshToken> <user> <password> <ActiveMQUrl> <topicName> <medicinesListPath>");
             return;
         }
         String refreshToken = args[0];
@@ -32,6 +37,7 @@ public class Main {
     private static void autoExecute(ScheduledExecutorService scheduler,
                                     BlueskyController control,
                                     String medicinesListPath) {
+        log.info("Bluesky is running...");
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 control.execute(medicinesListPath);
