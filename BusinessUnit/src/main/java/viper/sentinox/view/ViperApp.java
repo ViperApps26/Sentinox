@@ -3,7 +3,7 @@ package viper.sentinox.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import viper.sentinox.control.MedicineDataMart;
+import viper.sentinox.control.datamart.MedicineDataMart;
 import javafx.scene.image.Image;
 
 import java.util.Objects;
@@ -18,7 +18,7 @@ public class ViperApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        MainView mainView = new MainView(stage, dataMart);
+        MainView mainView = new MainView(dataMart);
         Scene scene = new Scene(mainView.getRoot(), 1000, 650);
         stage.setTitle("ViperApps");
         stage.getIcons().add(

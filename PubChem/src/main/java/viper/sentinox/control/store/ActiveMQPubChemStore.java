@@ -5,12 +5,16 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import viper.sentinox.model.PubChemEvent;
 
 import javax.jms.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActiveMQPubChemStore implements PubChemSaveEvents {
 
     private final Gson gson;
     private final String url;
     private final String topic;
+
+    private static final Logger log = LoggerFactory.getLogger(ActiveMQPubChemStore.class);
 
     public ActiveMQPubChemStore(String url,
                                 String topic) {
@@ -35,7 +39,7 @@ public class ActiveMQPubChemStore implements PubChemSaveEvents {
 
             sendMessage(session, producer, jsonMessage);
         } catch (Exception e) {
-            System.out.println("Error publishing message to ActiveMQ");
+            log.error("Error publishing message to ActiveMQ");
         } finally {
             closeResources(producer, session, connection);
         }
@@ -60,7 +64,7 @@ public class ActiveMQPubChemStore implements PubChemSaveEvents {
     private void sendMessage(Session session, MessageProducer producer, String jsonMessage) throws JMSException {
         TextMessage message = session.createTextMessage(jsonMessage);
         producer.send(message);
-        System.out.println(jsonMessage + " sent to topic " + topic);
+        log.trace("{} sent to topic {}", jsonMessage, topic);
     }
 
     private static void closeResources(MessageProducer producer, Session session, Connection connection) {
@@ -75,7 +79,7 @@ public class ActiveMQPubChemStore implements PubChemSaveEvents {
                 connection.close();
             }
         } catch (Exception e) {
-            System.out.println("Error closing ActiveMQ resources");
+            log.error("Error closing ActiveMQ resources");
         }
     }
 }

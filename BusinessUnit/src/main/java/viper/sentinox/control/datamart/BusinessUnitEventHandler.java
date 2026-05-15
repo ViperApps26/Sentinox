@@ -2,16 +2,19 @@ package viper.sentinox.control.datamart;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import viper.sentinox.control.MedicineDataMart;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;
 import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BusinessUnitEventHandler implements EventHandler {
 
     private final Gson gson = new Gson();
     private final MedicineDataMart dataMart;
+
+    private static final Logger log = LoggerFactory.getLogger(BusinessUnitEventHandler.class);
 
     public BusinessUnitEventHandler(MedicineDataMart dataMart) {
         this.dataMart = dataMart;
@@ -24,7 +27,7 @@ public class BusinessUnitEventHandler implements EventHandler {
                 handleEvent(json, topicName);
             }
         } catch (Exception e) {
-            System.out.println("Error handling event for topic " + topicName);
+            log.error("Error handling event for topic {}", topicName);
         }
     }
 
@@ -35,7 +38,7 @@ public class BusinessUnitEventHandler implements EventHandler {
         switch (topicName) {
             case "BlueskyPosts" -> handleBlueskyEvent(event);
             case "PubChemReactions" -> handlePubChemEvent(event);
-            default -> System.out.println("Unknown topic received: " + topicName);
+            default -> log.warn("Unknown topic received: {}", topicName);
         }
     }
 
@@ -47,7 +50,7 @@ public class BusinessUnitEventHandler implements EventHandler {
         Instant date = Instant.parse(event.get("createdAt").getAsString());
 
         dataMart.registerBlueskyEvent(medicine, author, text, sentiment, date);
-        System.out.println("Bluesky event registered for " + medicine);
+        log.trace("Bluesky event registered for {}", medicine);
     }
 
     private void handlePubChemEvent(JsonObject event) {
@@ -55,6 +58,6 @@ public class BusinessUnitEventHandler implements EventHandler {
         String reaction = event.get("reaction").getAsString();
 
         dataMart.registerPubChemEvent(medicine, reaction);
-        System.out.println("PubChem event registered for " + medicine);
+        log.trace("PubChem event registered for {}", medicine);
     }
 }
