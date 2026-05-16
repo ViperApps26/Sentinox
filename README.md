@@ -92,6 +92,12 @@ We shall now discuss the application architecture after outlining the fundamenta
 <img width="382" height="575" alt="Screenshot 2026-05-13 at 22 39 02" src="https://github.com/user-attachments/assets/b23a3ab6-0a15-416f-aeed-b144ba325e26" />
 
 
+Besides from this, we also created a use case diagram to display all functions the user can carry out with our application:
+
+
+<img width="708" height="417" alt="PHOTO-2026-05-16-17-31-23" src="https://github.com/user-attachments/assets/a276b6be-a32f-4ac8-836a-c96634721202" />
+
+
 
 ### Principles and patterns
 
