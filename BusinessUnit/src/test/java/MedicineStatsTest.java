@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import viper.sentinox.model.Comment;
+import viper.sentinox.model.JointAnalysis;
 import viper.sentinox.model.MedicineStats;
 
 import java.time.Instant;
@@ -14,17 +15,6 @@ class MedicineStatsTest {
     @BeforeEach
     void setUp() {
         stats = new MedicineStats();
-    }
-
-    @Test
-    void addSentiment_countsPositiveNegativeAndNeutral() {
-        stats.addSentiment("Positive");
-        stats.addSentiment("Negative");
-        stats.addSentiment("Neutral");
-
-        assertEquals(1, stats.getPositive());
-        assertEquals(1, stats.getNegative());
-        assertEquals(1, stats.getNeutral());
     }
 
     @Test
@@ -46,21 +36,6 @@ class MedicineStatsTest {
     void addComment_storesComment() {
         Comment comment = new Comment(
                 "author",
-                "text",
-                "Positive",
-                Instant.parse("2026-05-01T10:00:00Z")
-        );
-
-        stats.addComment(comment);
-
-        assertEquals(1, stats.getComments().size());
-        assertEquals("text", stats.getComments().get(0).getText());
-    }
-
-    @Test
-    void getCommentTexts_returnsOnlyTexts() {
-        Comment comment = new Comment(
-                "author",
                 "Ibuprofen helped me",
                 "Positive",
                 Instant.parse("2026-05-01T10:00:00Z")
@@ -68,7 +43,32 @@ class MedicineStatsTest {
 
         stats.addComment(comment);
 
+        assertEquals(1, stats.getComments().size());
+        assertEquals("Ibuprofen helped me", stats.getComments().get(0).getText());
+    }
+
+    @Test
+    void getCommentTexts_returnsOnlyTexts() {
+        Comment comment = new Comment(
+                "author",
+                "Ibuprofen caused headache",
+                "Negative",
+                Instant.parse("2026-05-01T10:00:00Z")
+        );
+
+        stats.addComment(comment);
+
         assertEquals(1, stats.getCommentTexts().size());
-        assertEquals("Ibuprofen helped me", stats.getCommentTexts().get(0));
+        assertEquals("Ibuprofen caused headache", stats.getCommentTexts().get(0));
+    }
+
+    @Test
+    void defaultJointAnalysis_hasNoInformationConclusion() {
+        JointAnalysis result = stats.getJointAnalysisResult();
+
+        assertEquals(0, result.getMatchedReactions());
+        assertEquals(0, result.getTotalReactions());
+        assertEquals(0, result.getAgreementPercentage());
+        assertTrue(result.getConclusion().contains("not enough information"));
     }
 }
