@@ -2,6 +2,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import viper.sentinox.control.datamart.MedicineDataMart;
 
+import java.io.IOException;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,24 +12,21 @@ class MedicineDataMartTest {
     private MedicineDataMart dataMart;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         dataMart = new MedicineDataMart();
     }
 
     @Test
-    void registerBlueskyEvent_storesCommentAndSentiment() {
+    void registerBlueskyEvent_storesComment() {
         dataMart.registerBlueskyEvent(
                 "ibuprofen",
                 "user.bsky.social",
-                "Ibuprofen helped me",
-                "Positive",
+                "Ibuprofen caused headache",
+                "Negative",
                 Instant.parse("2026-05-01T10:00:00Z")
         );
 
         assertEquals(1, dataMart.getMedicineComments("ibuprofen").size());
-        assertEquals(1, dataMart.getMedicineSentimentPositive("ibuprofen"));
-        assertEquals(0, dataMart.getMedicineSentimentNegative("ibuprofen"));
-        assertEquals(0, dataMart.getMedicineSentimentNeutral("ibuprofen"));
     }
 
     @Test
@@ -50,8 +48,6 @@ class MedicineDataMartTest {
         );
 
         assertEquals(1, dataMart.getMedicineComments("ibuprofen").size());
-        assertEquals(1, dataMart.getMedicineSentimentPositive("ibuprofen"));
-        assertEquals(0, dataMart.getMedicineSentimentNegative("ibuprofen"));
     }
 
     @Test
@@ -71,9 +67,36 @@ class MedicineDataMartTest {
     }
 
     @Test
-    void getAllStats_returnsStoredMedicines() {
-        dataMart.registerPubChemEvent("ibuprofen", "Headache");
+    void registerPubChemEvent_ignoresGenericReaction() {
+        dataMart.registerPubChemEvent("ibuprofen", "Drug Interactions");
 
-        assertTrue(dataMart.getAllStats().containsKey("ibuprofen"));
+        assertTrue(dataMart.getMedicineReactions("ibuprofen").isEmpty());
+    }
+
+    @Test
+    void getAllMedicinesSorted_returnsAlphabeticalList() {
+        dataMart.registerPubChemEvent("naproxen", "Headache");
+        dataMart.registerPubChemEvent("aspirin", "Nausea");
+
+        assertEquals("aspirin", dataMart.getAllMedicinesSorted().get(0));
+        assertEquals("naproxen", dataMart.getAllMedicinesSorted().get(1));
+    }
+
+    @Test
+    void registerEvents_updatesJointAnalysis() {
+        dataMart.registerPubChemEvent("ibuprofen", "headache");
+
+        dataMart.registerBlueskyEvent(
+                "ibuprofen",
+                "user1",
+                "Ibuprofen caused headache",
+                "Negative",
+                Instant.parse("2026-05-01T10:00:00Z")
+        );
+
+        assertEquals(
+                1,
+                dataMart.getMedicineJointAnalysis("ibuprofen").getMatchedReactions()
+        );
     }
 }
