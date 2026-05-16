@@ -11,14 +11,15 @@ class CommentTest {
     void constructor_storesValuesCorrectly() {
         Comment comment = new Comment(
                 "user.bsky.social",
-                "Ibuprofen gave me headache",
+                "Ibuprofen gave me a headache",
                 "Negative",
                 Instant.parse("2026-05-01T10:00:00Z")
         );
 
         assertEquals("user.bsky.social", comment.getAuthor());
-        assertEquals("Ibuprofen gave me headache", comment.getText());
+        assertEquals("Ibuprofen gave me a headache", comment.getText());
         assertEquals("Negative", comment.getSentiment());
+        assertEquals("English", comment.getLanguage());
         assertNotNull(comment.getDate());
     }
 }
