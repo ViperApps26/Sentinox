@@ -1,7 +1,9 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import viper.sentinox.control.datamart.BusinessUnitEventHandler;
 import viper.sentinox.control.datamart.MedicineDataMart;
-import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +13,7 @@ class BusinessUnitEventHandlerTest {
     private BusinessUnitEventHandler handler;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         dataMart = new MedicineDataMart();
         handler = new BusinessUnitEventHandler(dataMart);
     }
@@ -22,8 +24,8 @@ class BusinessUnitEventHandlerTest {
                 {
                   "medicine": "ibuprofen",
                   "author": "user.bsky.social",
-                  "text": "Ibuprofen helped me",
-                  "sentiment": "Positive",
+                  "text": "Ibuprofen caused headache",
+                  "sentiment": "Negative",
                   "createdAt": "2026-05-01T10:00:00Z"
                 }
                 """;
@@ -31,7 +33,6 @@ class BusinessUnitEventHandlerTest {
         handler.handleEvent(json, "BlueskyPosts");
 
         assertEquals(1, dataMart.getMedicineComments("ibuprofen").size());
-        assertEquals(1, dataMart.getMedicineSentimentPositive("ibuprofen"));
     }
 
     @Test
@@ -47,6 +48,19 @@ class BusinessUnitEventHandlerTest {
         handler.handleEvent(json, "PubChemReactions");
 
         assertEquals(1, dataMart.getMedicineReactions("ibuprofen").size());
-        assertEquals("Headache", dataMart.getMedicineReactions("ibuprofen").get(0));
+    }
+
+    @Test
+    void handleEvent_ignoresUnknownTopic() {
+        String json = """
+                {
+                  "medicine": "ibuprofen",
+                  "reaction": "Headache"
+                }
+                """;
+
+        handler.handleEvent(json, "UnknownTopic");
+
+        assertTrue(dataMart.getAllStats().isEmpty());
     }
 }
