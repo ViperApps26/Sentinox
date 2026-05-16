@@ -70,6 +70,8 @@ Each event is stored in a structured file system using JSON Lines format. The fi
 
 To execute this module, ActiveMQ must be running, since it needs to subscribe to the broker topics and listen for incoming events.
 
+Additionally, the ActiveMQ connection URLs included a failover configuration. This guarantees continuous event consumption and publication by enabling the modules to automatically reconnect to the broker in the event of brief connection failures.
+
 **BusinessUnit module**
 
 The BusinessUnit module is the part of the system that gives value to the final user. It consumes real-time events from ActiveMQ and updates a local datamart with aggregated information about each medicine.
