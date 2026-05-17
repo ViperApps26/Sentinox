@@ -26,7 +26,7 @@ Finally, we used a sentiment analysis tool to process the qualitative informatio
 
 **DataMart Structure**
 
-ViperApps' datamart is an in-memory structure created to arrange and offer quick access to all the drug-related data gathered from Bluesky and PubChem.
+ViperApps datamart is an in-memory structure created to arrange and offer quick access to all the drug-related data gathered from Bluesky and PubChem.
 The MedicineDataMart class, which internally contains a Map<String, MedicineStats>, is the main part of the datamart. The name of the medication is represented by the map's key, and all the statistics and information pertaining to that medication are stored in the accompanying value.
 
 The MedicineStats class represents each medication and includes:
