@@ -22,7 +22,7 @@ class MedicineStatsTest {
         stats.addReaction("Headache");
 
         assertEquals(1, stats.getReactions().size());
-        assertEquals("Headache", stats.getReactions().get(0));
+        assertEquals("Headache", stats.getReactions().getFirst());
     }
 
     @Test
@@ -44,7 +44,7 @@ class MedicineStatsTest {
         stats.addComment(comment);
 
         assertEquals(1, stats.getComments().size());
-        assertEquals("Ibuprofen helped me", stats.getComments().get(0).getText());
+        assertEquals("Ibuprofen helped me", stats.getComments().getFirst().getText());
     }
 
     @Test
@@ -59,7 +59,7 @@ class MedicineStatsTest {
         stats.addComment(comment);
 
         assertEquals(1, stats.getCommentTexts().size());
-        assertEquals("Ibuprofen caused headache", stats.getCommentTexts().get(0));
+        assertEquals("Ibuprofen caused headache", stats.getCommentTexts().getFirst());
     }
 
     @Test
