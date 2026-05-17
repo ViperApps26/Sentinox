@@ -55,7 +55,7 @@ class MedicineDataMartTest {
         dataMart.registerPubChemEvent("ibuprofen", "Headache");
 
         assertEquals(1, dataMart.getMedicineReactions("ibuprofen").size());
-        assertEquals("Headache", dataMart.getMedicineReactions("ibuprofen").get(0));
+        assertEquals("Headache", dataMart.getMedicineReactions("ibuprofen").getFirst());
     }
 
     @Test
