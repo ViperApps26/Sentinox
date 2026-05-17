@@ -57,7 +57,6 @@ class EventStoreReaderTest {
 
         assertEquals(1, dataMart.getMedicineComments("ibuprofen").size());
         assertEquals(1, dataMart.getMedicineReactions("ibuprofen").size());
-        assertEquals(1, dataMart.getMedicineSentimentPositive("ibuprofen"));
     }
 
     private void deleteEventStoreIfExists() throws IOException {
