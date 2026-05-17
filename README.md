@@ -51,7 +51,7 @@ The Bluesky module is responsible for collecting public opinions about different
 
 After retrieving the posts, the module applies sentiment analysis to classify each opinion as positive, negative, or neutral. Once the event is created, it is published to ActiveMQ through the BlueskyPosts topic, so that the rest of the system can consume it in real time.
 
-__To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where the events will be published -> BlueskyPosts and the route of the file with the list of medicines -> MedicinesList.txt.__
+_To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where the events will be published -> BlueskyPosts and the route of the file with the list of medicines -> MedicinesList.txt._
 
 
 **PubChem module**
@@ -60,7 +60,7 @@ The PubChem module is in charge of retrieving scientific information about medic
 
 Each adverse effect is transformed into an event containing the medicine name, its PubChem CID, and the reaction or side effect found. These events are then sent to ActiveMQ through the PubChemReactions topic. This module provides the medical and scientific context needed to complement the social media information obtained from Bluesky.
 
-__To execute this module, it needs the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where PubChem events will be published -> PubChemReactions and the file -> MedicinesList.txt.__
+_To execute this module, it needs the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where PubChem events will be published -> PubChemReactions and the file -> MedicinesList.txt._
 
 **EventStoreBuilder module**
 
@@ -68,7 +68,7 @@ The EventStoreBuilder module is responsible for consuming the events published i
 
 Each event is stored in a structured file system using JSON Lines format. The files are organized by topic, source system, and date, which makes it possible to recover historical information later. This module acts as the bridge between the real-time event flow and the historical event storage.
 
-__To execute this module, the Brocker URL is needed -> failover:(tcp://localhost:61616) and the client ID -> EventStoreBuilder.__
+_To execute this module, the Brocker URL is needed -> failover:(tcp://localhost:61616) and the client ID -> EventStoreBuilder._
 
 Additionally, the ActiveMQ connection URLs included a failover configuration. This guarantees continuous event consumption and publication by enabling the modules to automatically reconnect to the broker in the event of brief connection failures.
 
@@ -78,7 +78,7 @@ The BusinessUnit module is the part of the system that gives value to the final 
 
 For every medicine, the datamart stores sentiment information from Bluesky posts and adverse reactions from PubChem. This allows the system to compare public perception with known medical effects. At this stage, the datamart is implemented in memory, which keeps the design simple and makes real-time updates fast.
 
-__To execute this module, it needs the broker URL -> failover:(tcp://localhost:61616) and the client ID -> BusinessUnit.__
+_To execute this module, it needs the broker URL -> failover:(tcp://localhost:61616) and the client ID -> BusinessUnit._
 
 
 ### System and application arquitecture
