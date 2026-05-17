@@ -51,7 +51,7 @@ The Bluesky module is responsible for collecting public opinions about different
 
 After retrieving the posts, the module applies sentiment analysis to classify each opinion as positive, negative, or neutral. Once the event is created, it is published to ActiveMQ through the BlueskyPosts topic, so that the rest of the system can consume it in real time.
 
-__To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where the events will be published -> BlueskyPosts and the route of the file with the list of medicines -> MedicinesList.txt.__
+<u>To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where the events will be published -> BlueskyPosts and the route of the file with the list of medicines -> MedicinesList.txt.</u>
 
 
 **PubChem module**
