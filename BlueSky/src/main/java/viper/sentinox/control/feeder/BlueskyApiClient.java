@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlueskyGet {
+public class BlueskyApiClient {
 
     private final BlueskyConnector connector;
 
-    public BlueskyGet(BlueskyConnector connector) {
+    public BlueskyApiClient(BlueskyConnector connector) {
         this.connector = connector;
     }
 

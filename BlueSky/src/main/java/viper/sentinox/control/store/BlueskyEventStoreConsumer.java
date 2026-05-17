@@ -8,16 +8,16 @@ import javax.jms.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ActiveMQBlueskyStore implements BlueskySaveEvents {
+public class BlueskyEventStoreConsumer implements BlueskySaveEvents {
 
     private final Gson gson;
     private final String url;
     private final String topic;
 
-    private static final Logger log = LoggerFactory.getLogger(ActiveMQBlueskyStore.class);
+    private static final Logger log = LoggerFactory.getLogger(BlueskyEventStoreConsumer.class);
 
-    public ActiveMQBlueskyStore(String url,
-                                String topic) {
+    public BlueskyEventStoreConsumer(String url,
+                                     String topic) {
         this.url = url;
         this.topic = topic;
         this.gson = new Gson();

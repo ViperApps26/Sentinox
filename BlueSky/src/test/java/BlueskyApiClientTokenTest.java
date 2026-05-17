@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import viper.sentinox.control.oauth.BlueskyGetToken;
+import viper.sentinox.control.oauth.BlueskyTokenManager;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class BlueskyGetTokenTest {
+class BlueskyApiClientTokenTest {
 
     private static final Path TOKEN_FILE = Path.of("BlueskyToken.txt");
 
@@ -38,9 +38,9 @@ class BlueskyGetTokenTest {
         when(response.body()).thenReturn(responseBody);
         when(client.send(any(), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        BlueskyGetToken blueskyGetToken = new BlueskyGetToken("old-refresh-token", "user123", "password123");
+        BlueskyTokenManager blueskyTokenManager = new BlueskyTokenManager("old-refresh-token", "user123", "password123");
 
-        String token = blueskyGetToken.getAccessToken();
+        String token = blueskyTokenManager.getAccessToken();
 
         assertEquals("new-access-token", token);
         assertEquals("new-refresh-token", Files.readString(TOKEN_FILE));

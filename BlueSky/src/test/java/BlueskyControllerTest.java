@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import viper.sentinox.control.BlueskyController;
 import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.ActiveMQBlueskyStore;
+import viper.sentinox.control.store.BlueskyEventStoreConsumer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ class BlueskyControllerTest {
     private BlueskyController controller;
 
     private BlueskyFeeder feeder;
-    private ActiveMQBlueskyStore store;
+    private BlueskyEventStoreConsumer store;
 
     @TempDir
     Path tempDir;
@@ -26,7 +26,7 @@ class BlueskyControllerTest {
     @BeforeEach
     void setUp() {
         feeder = mock(BlueskyFeeder.class);
-        store = mock(ActiveMQBlueskyStore.class);
+        store = mock(BlueskyEventStoreConsumer.class);
 
         controller = new BlueskyController(feeder, store);
     }

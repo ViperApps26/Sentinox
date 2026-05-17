@@ -1,8 +1,8 @@
 package viper.sentinox.control.feeder;
 
 import com.google.gson.JsonArray;
-import viper.sentinox.control.oauth.BlueskyGetToken;
-import viper.sentinox.control.sentimentanalysis.SentimentAnalysis;
+import viper.sentinox.control.oauth.BlueskyTokenManager;
+import viper.sentinox.control.sentimentanalysis.AnalyzeSentimentAnalysis;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;
@@ -11,16 +11,16 @@ import java.util.List;
 
 public class BlueskyFeeder implements BlueskyGetEvents {
 
-    private final BlueskyGetToken getToken;
+    private final BlueskyTokenManager getToken;
     private final BlueskyConnector connector;
-    private final BlueskyGet get;
-    private final SentimentAnalysis sentimentAnalysis;
+    private final BlueskyApiClient get;
+    private final AnalyzeSentimentAnalysis sentimentAnalysis;
 
-    public BlueskyFeeder(BlueskyGetToken getToken) {
+    public BlueskyFeeder(BlueskyTokenManager getToken) {
         this.getToken = getToken;
         this.connector = new BlueskyConnector();
-        this.get = new BlueskyGet(connector);
-        this.sentimentAnalysis = new SentimentAnalysis();
+        this.get = new BlueskyApiClient(connector);
+        this.sentimentAnalysis = new AnalyzeSentimentAnalysis();
     }
 
     public List<BlueskyEvent> get(String medicine) throws IOException, InterruptedException {

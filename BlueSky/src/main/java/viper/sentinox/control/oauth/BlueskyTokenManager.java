@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
-public class BlueskyGetToken implements BlueskyGetAccessToken {
+public class BlueskyTokenManager implements BlueskyGetAccessToken {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
@@ -23,7 +23,7 @@ public class BlueskyGetToken implements BlueskyGetAccessToken {
     private String refreshToken;
     private Instant accessExpiration;
 
-    public BlueskyGetToken(String refreshToken, String user, String password) throws IOException, InterruptedException {
+    public BlueskyTokenManager(String refreshToken, String user, String password) throws IOException, InterruptedException {
         this.refreshToken = refreshToken;
         this.user = user;
         this.password = password;

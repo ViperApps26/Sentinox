@@ -5,11 +5,11 @@ import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class SentimentAnalysis implements Sentiment {
+public class AnalyzeSentimentAnalysis implements AnalyzeSentiment {
 
     private final StanfordCoreNLP pipeline;
 
-    public SentimentAnalysis() {
+    public AnalyzeSentimentAnalysis() {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize,parse,sentiment");
         this.pipeline = new StanfordCoreNLP(props);

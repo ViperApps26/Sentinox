@@ -1,7 +1,7 @@
 package viper.sentinox.control;
 
 import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.ActiveMQBlueskyStore;
+import viper.sentinox.control.store.BlueskyEventStoreConsumer;
 import viper.sentinox.model.BlueskyEvent;
 
 import java.io.IOException;
@@ -13,9 +13,9 @@ import java.util.List;
 public class BlueskyController {
 
     private final BlueskyFeeder feeder;
-    private final ActiveMQBlueskyStore store;
+    private final BlueskyEventStoreConsumer store;
 
-    public BlueskyController(BlueskyFeeder blueskyFeeder, ActiveMQBlueskyStore store) {
+    public BlueskyController(BlueskyFeeder blueskyFeeder, BlueskyEventStoreConsumer store) {
         this.feeder = blueskyFeeder;
         this.store = store;
     }

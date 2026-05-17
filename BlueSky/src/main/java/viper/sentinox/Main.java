@@ -1,9 +1,9 @@
 package viper.sentinox;
 
 import viper.sentinox.control.BlueskyController;
-import viper.sentinox.control.oauth.BlueskyGetToken;
+import viper.sentinox.control.oauth.BlueskyTokenManager;
 import viper.sentinox.control.feeder.BlueskyFeeder;
-import viper.sentinox.control.store.ActiveMQBlueskyStore;
+import viper.sentinox.control.store.BlueskyEventStoreConsumer;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -48,9 +48,9 @@ public class Main {
     }
 
     private static BlueskyController createBlueskyEnvironment(String url, String topic, String refreshToken, String user, String password) throws IOException, InterruptedException {
-        BlueskyGetToken getToken = new BlueskyGetToken(refreshToken, user, password);
+        BlueskyTokenManager getToken = new BlueskyTokenManager(refreshToken, user, password);
 
-        ActiveMQBlueskyStore store = new ActiveMQBlueskyStore(url, topic);
+        BlueskyEventStoreConsumer store = new BlueskyEventStoreConsumer(url, topic);
         BlueskyFeeder feeder = new BlueskyFeeder(getToken);
 
         return new BlueskyController(feeder, store);
