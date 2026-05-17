@@ -45,7 +45,7 @@ The BusinessUnit module updates the datamart on a regular basis. The BusinessUni
 
 ### Modules
 
-**Bluesky module**
+- **Bluesky module**
 
 The Bluesky module is responsible for collecting public opinions about different medicines from the Bluesky social media platform. It searches for posts related to a predefined list of medicines and extracts relevant information such as the post text, author, creation date, and the medicine being mentioned.
 
@@ -54,7 +54,7 @@ After retrieving the posts, the module applies sentiment analysis to classify ea
 _To execute this module, it is necessary to provide the Bluesky token, an user, a password, the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where the events will be published -> BlueskyPosts and the route of the file with the list of medicines -> MedicinesList.txt._
 
 
-**PubChem module**
+- **PubChem module**
 
 The PubChem module is in charge of retrieving scientific information about medicines from the PubChem API. For each medicine in the list, it searches for the corresponding compound and extracts information related to adverse effects.
 
@@ -62,7 +62,7 @@ Each adverse effect is transformed into an event containing the medicine name, i
 
 _To execute this module, it needs the ActiveMQ broker URL -> failover:(tcp://localhost:61616), the topic where PubChem events will be published -> PubChemReactions and the file -> MedicinesList.txt._
 
-**EventStoreBuilder module**
+- **EventStoreBuilder module**
 
 The EventStoreBuilder module is responsible for consuming the events published in ActiveMQ and storing them locally. It subscribes to the topics used by the feeders, mainly BlueskyPosts and PubChemReactions, and receives the events as they are produced.
 
@@ -72,7 +72,7 @@ _To execute this module, the Brocker URL is needed -> failover:(tcp://localhost:
 
 Additionally, the ActiveMQ connection URLs included a failover configuration. This guarantees continuous event consumption and publication by enabling the modules to automatically reconnect to the broker in the event of brief connection failures.
 
-**BusinessUnit module**
+- **BusinessUnit module**
 
 The BusinessUnit module is the part of the system that gives value to the final user. It consumes real-time events from ActiveMQ and updates a local datamart with aggregated information about each medicine.
 
