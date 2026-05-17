@@ -2,8 +2,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import viper.sentinox.control.datamart.MedicineDataMart;
-import viper.sentinox.control.DataMartFeader.BusinessUnitEventHandler;
-import viper.sentinox.control.DataMartFeader.EventStoreReader;
+import viper.sentinox.control.datamart.BusinessUnitEventHandler;
+import viper.sentinox.control.datamart.EventStoreReader;
 
 import java.io.IOException;
 import java.nio.file.Files;
